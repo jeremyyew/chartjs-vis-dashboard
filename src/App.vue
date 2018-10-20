@@ -48,7 +48,7 @@
                 novalidate
               >
                 <!--The type multipart/form-data is important, otherwise Django will not accept-->
-                <h1>Upload File</h1>
+                <h2>Upload File</h2>
                 <div class="dropbox">
                   <input
                     type="file"

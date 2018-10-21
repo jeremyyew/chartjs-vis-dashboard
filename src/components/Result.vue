@@ -313,6 +313,7 @@
   import EditableText from '@/components/EditableText'
 
   import Const from './const'
+  const VIZ_TYPES = Const;
 
   import VueWordCloud from 'vuewordcloud'
   import jsPDF from 'jspdf'
@@ -322,7 +323,7 @@
     name: 'Chart',
     props: ['chartData', 'infoType', 'inputFileName'],
     data: function () {
-      if (this.infoType == 'author') { // author.csv input
+      if (this.infoType === VIZ_TYPES.AUTHOR) { // author.csv input
 
         var authorInitialText = "So it's rather clear that the one with the largest number of submissions this year is: " + this.chartData.topAuthors.labels[0] + ", and all the top " + String(3) + ", putting together, contribute " + String(this.chartData.topAuthors.data.slice(0, 3).reduce(function (a, b) {
           return a + b;
@@ -380,35 +381,36 @@
           topCountryData: this.computeCountryData(3),
           topAffiliationData: this.computeAffiliationData(3),
         }
-      } else if (this.infoType == 'reviewScore') {
-        return {
-          msg: 'Statistics',
-          yesPercentage: this.chartData.yesPercentage.toFixed(2),
-          meanScore: this.chartData.meanScore,
-          meanConfidence: this.chartData.meanConfidence,
-          totalReview: this.chartData.totalReview,
-          tableData: [
-            {
-              field: 'Mean Score',
-              value: this.chartData.meanScore.toFixed(2)
-            }, {
-              field: 'Mean Confidence',
-              value: this.chartData.meanConfidence.toFixed(2)
-            }
-          ],
-          options: [
-            {
-              value: 'line',
-              label: 'Line Chart'
-            }, {
-              value: 'bar',
-              label: 'Bar Chart'
-            }
-          ],
-          type: 'bar'
-        }
-
-      } else if (this.infoType == 'submission') {
+      }
+      // else if (this.infoType === VIZ_TYPES.REVIEW) {
+      //   return {
+      //     msg: 'Statistics',
+      //     yesPercentage: this.chartData.yesPercentage.toFixed(2),
+      //     meanScore: this.chartData.meanScore,
+      //     meanConfidence: this.chartData.meanConfidence,
+      //     totalReview: this.chartData.totalReview,
+      //     tableData: [
+      //       {
+      //         field: 'Mean Score',
+      //         value: this.chartData.meanScore.toFixed(2)
+      //       }, {
+      //         field: 'Mean Confidence',
+      //         value: this.chartData.meanConfidence.toFixed(2)
+      //       }
+      //     ],
+      //     options: [
+      //       {
+      //         value: 'line',
+      //         label: 'Line Chart'
+      //       }, {
+      //         value: 'bar',
+      //         label: 'Bar Chart'
+      //       }
+      //     ],
+      //     type: 'bar'
+      //   }
+      // }
+      else if (this.infoType === VIZ_TYPES.SUBMISSION) {
 
         // console.log("inside submission subsection");
         var tracks = this.computeAcceptanceRateByTrack().labels;
@@ -491,7 +493,7 @@
           wordCloudByTrackIncluded: true,
         }
 
-      } else if (this.infoType == 'review') {
+      } else if (this.infoType === VIZ_TYPES.REVIEW) {
         var scoreRanges = this.computeScoreDistributionData("score").labels;
         var scoreCounts = this.computeScoreDistributionData("score").datasets[0].data;
 

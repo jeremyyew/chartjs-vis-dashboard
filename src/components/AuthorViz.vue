@@ -1,7 +1,6 @@
 <template>
   <div>
     <el-select v-model="authorDataLength" placeholder="Select Length" style="margin-top: 10px;margin-right: 40px">
-      <p> AuthorViz Component </p>
       <el-option
         v-for="item in dataLengthOptions"
         :key="item.value"
@@ -107,6 +106,7 @@
       EditableText,
     },
     data() {
+      console.log("chartData:",this.chartData);
       var authorInitialText = "So it's rather clear that the one with the largest number of submissions this year is: " + this.chartData.topAuthors.labels[0] + ", and all the top " + String(3) + ", putting together, contribute " + String(this.chartData.topAuthors.data.slice(0, 3).reduce(function (a, b) {
         return a + b;
       })) + " submissions in total.";

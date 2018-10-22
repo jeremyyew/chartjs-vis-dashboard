@@ -74,7 +74,7 @@
             </center>
           </el-aside>
           <el-main>
-            <ResultTabs :result="result"/>
+            <ResultTabs :result="result" :lastUpdatedViz="lastUpdatedViz" />
             <center>
               <router-view :key="$route.fullPath"/>
             </center>
@@ -127,13 +127,13 @@
         uploadFieldName: 'file',
         testChartsDataInput: null,
         result: {
-          author: {
-            chartData: null,
-            inputFileName: null
-          },
+          author: {},
           review: {},
           submission: {}
-          // lastUpdatedViz: "author"
+        },
+        lastUpdatedViz: {
+          value: "author",
+          id: 0
         },
         options: [
           {
@@ -199,14 +199,12 @@
             const nameArray = document.querySelector('.input-file').value.split('\\');
             const inputFileName = nameArray[nameArray.length - 1];
 
-            // Pass result to ResultTabs
-            // console.log("BEFORE save():");
-            // this.result.lastUpdatedViz = infoType;
+            // Update result props passed to ResultTabs
+            this.lastUpdatedViz = { value: infoType, id: this.lastUpdatedViz.id  + 1 };
             this.result[infoType] = {
               inputFileName,
               chartData: infoData,
             };
-            // console.log("AFTER save():");
 
             // Note: use router.push to navigate through diff pages programmatically
             router.push({

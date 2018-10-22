@@ -1293,7 +1293,7 @@
       [VueWordCloud.name]: VueWordCloud,
     },
     beforeRouteUpdate(to, from, next) {
-      console.log("inside haha");
+      // console.log("inside haha");
       next();
     },
   }

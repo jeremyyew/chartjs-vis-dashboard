@@ -1,19 +1,20 @@
 <template>
+  <!--Dynamic binding of value enables auto switch tab on upload. This is actually necessary, otherwise we get the responsive canvas problem-->
   <el-tabs
     id="main-tabs"
     type="border-card"
+    :value="activeTab"
+    @tab-click="handleTabClick"
   >
-    <el-tab-pane label="Authors" name="author">
-      <div>
-        <div v-if="author.chartData && author.inputFileName">
-          <AuthorViz :chartData="author.chartData" :inputFileName="author.inputFileName"/>
-        </div>
-        <div v-else>
-          No author data
-        </div>
+    <el-tab-pane label="Authors" name="author" lazy>
+      <div v-if="author.chartData && author.inputFileName">
+        <AuthorViz :chartData="author.chartData" :inputFileName="author.inputFileName"/>
+      </div>
+      <div v-else>
+        No author data
       </div>
     </el-tab-pane>
-    <el-tab-pane label="Submissions" name="submission">
+    <el-tab-pane label="Submissions" name="submission" lazy>
       <div v-if="submission.chartData && submission.inputFileName">
         <AuthorViz :chartData="submission.chartData" :inputFileName="submission.inputFileName"/>
       </div>
@@ -21,7 +22,7 @@
         No submission data
       </div>
     </el-tab-pane>
-    <el-tab-pane label="Reviews" name="review">
+    <el-tab-pane label="Reviews" name="review" lazy>
       <div v-if="review.chartData && review.inputFileName">
         <ReviewViz :chartData="review.chartData" :inputFileName="review.inputFileName"/>
       </div>
@@ -29,7 +30,7 @@
         No review data
       </div>
     </el-tab-pane>
-    <el-tab-pane label="Reviews x Submissions">Reviews x Submissions</el-tab-pane>
+    <el-tab-pane label="Reviews x Submissions" name="reviewXSubmission"  lazy>Reviews x Submissions</el-tab-pane>
   </el-tabs>
 </template>
 
@@ -40,18 +41,52 @@
   export default {
     name: "ResultTabs",
     components: {ReviewViz, AuthorViz},
-    props: [
-      'result'
-    ],
+    props: {
+      result: {
+        type: Object,
+        required: true
+      },
+      lastUpdatedViz: {
+        value: {
+          type: String,
+          default: "author",
+          required: true
+        },
+        id: {
+          type: Number,
+          required: true
+        }
+      }
+    },
     data() {
-      // const {author, review, submission } = this.result;
-      // return {
-      //   author,
-      //   review,
-      //   submission,
-      //   // activeTab: lastUpdatedViz
-      // }
-      return this.result
+      return {
+        activeTab: this.lastUpdatedViz.value
+      }
+      // return this.result
+    },
+    methods: {
+      handleTabClick(tab) {
+        console.log(tab.name);
+        this.activeTab = tab.name;
+        // return true
+      }
+    },
+    computed: {
+      author() {
+        return this.result.author
+      },
+      review() {
+        return this.result.review
+      },
+      submission() {
+        return this.result.submission
+      }
+    },
+    watch: {
+      lastUpdatedViz(next, prev) {
+        console.log(next);
+        this.activeTab = next.value
+      }
     }
   }
 </script>

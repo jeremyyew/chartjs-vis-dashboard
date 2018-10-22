@@ -131,10 +131,7 @@
           review: {},
           submission: {}
         },
-        lastUpdatedViz: {
-          value: "author",
-          id: 0
-        },
+        lastUpdatedViz: {value: "author"},
         options: [
           {
             value: 'author',
@@ -200,7 +197,7 @@
             const inputFileName = nameArray[nameArray.length - 1];
 
             // Update result props passed to ResultTabs
-            this.lastUpdatedViz = { value: infoType, id: this.lastUpdatedViz.id  + 1 };
+            this.lastUpdatedViz = { value: infoType };
             this.result[infoType] = {
               inputFileName,
               chartData: infoData,

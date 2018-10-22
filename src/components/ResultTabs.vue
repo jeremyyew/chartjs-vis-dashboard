@@ -49,14 +49,15 @@
       lastUpdatedViz: {
         value: {
           type: String,
-          default: "author",
-          required: true
-        },
-        id: {
-          type: Number,
-          required: true
+          required: true,
+          default: "author"
         }
       }
+        // {
+        //   type: String,
+        //   default: "author",
+        //   required: true
+        // },
     },
     data() {
       return {
@@ -66,9 +67,8 @@
     },
     methods: {
       handleTabClick(tab) {
-        console.log(tab.name);
         this.activeTab = tab.name;
-        // return true
+        console.log(this.activeTab)
       }
     },
     computed: {
@@ -83,9 +83,10 @@
       }
     },
     watch: {
-      lastUpdatedViz(next, prev) {
-        console.log(next);
-        this.activeTab = next.value
+      lastUpdatedViz(next) {
+        if (next.value !== this.activeTab) {
+          this.activeTab = next.value
+        }
       }
     }
   }

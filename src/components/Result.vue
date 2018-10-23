@@ -243,6 +243,16 @@
 
     <div v-else-if="infoType === 'review'"> <!--Start of Review Component-->
       <el-switch
+        v-model="scoreRecommendationChartIncluded"
+        active-color="#13ce66"
+        active-text="Included in Report"
+        inactive-text="Not Included">
+      </el-switch>
+      <bar-chart :data-input="scoreRecommendationData" :title-text="'Score vs Recommendation'" class="chart" id="scorerecommendationchart"
+                 ref="scorechart"></bar-chart>
+
+
+      <el-switch
         v-model="scoreDistributionChartIncluded"
         active-color="#13ce66"
         active-text="Included in Report"
@@ -317,6 +327,11 @@
   import VueWordCloud from 'vuewordcloud'
   import jsPDF from 'jspdf'
   import html2canvas from 'html2canvas'
+
+  import {
+    dummyLabels,
+    dummyData
+  } from '../mocks/ScoreRecommendationMock';
 
   export default {
     name: 'Chart',
@@ -505,6 +520,7 @@
 
         return {
           msg: 'Review Info Analysis',
+          scoreRecommendationData: this.computeScoreRecommendationData(),
           scoreDistributionData: this.computeScoreDistributionData("score"),
           recommendDistributionData: this.computeScoreDistributionData("recommend"),
           reviewTableData: [
@@ -519,6 +535,7 @@
               value: this.chartData.meanConfidence.toFixed(2)
             }
           ],
+          scoreRecommendationChartIncluded: true,
           scoreDistributionChartIncluded: true,
           recommendDistributionChartIncluded: true,
           reviewTableIncluded: true,
@@ -1222,7 +1239,8 @@
         // Type: "score" or "recommend"
         var label = type == "score" ? 'Score Counts' : 'Recommendation Counts';
         var rawData = type == "score" ? this.chartData.scoreDistribution : this.chartData.recommendDistribution;
-        return {
+
+        const return_obj =  {
           labels: rawData.labels,
           datasets: [{
             label: label,
@@ -1232,7 +1250,25 @@
             borderWidth: 1,
             pointBorderColor: '#249EBF',
           }]
-        }
+        };
+        console.log(`************\n${JSON.stringify(return_obj, undefined, 4)}`);
+        return return_obj;
+      },
+      computeScoreRecommendationData: function () {
+        const return_obj =  {
+          labels: dummyLabels,
+          datasets: [{
+            label: 'No. of Recommendations',
+            data: [50, 45, 40, 35, 30, 25, 20, 15, 10, 5],
+            backgroundColor: 'rgba(52, 152, 219, 0.4)',
+            pointBackgroundColor: 'white',
+            borderWidth: 1,
+            pointBorderColor: '#249EBF',
+          }]
+        };
+        console.log(`************\n${JSON.stringify(return_obj, undefined, 4)}`);
+        return return_obj;
+
       },
     },
     watch: {

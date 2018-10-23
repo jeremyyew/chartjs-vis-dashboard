@@ -1258,7 +1258,7 @@
         const return_obj =  {
           labels: dummyLabels,
           datasets: [{
-            label: 'Score vs Recommendations',
+            label: 'No. of Recommendations',
             data: [50, 45, 40, 35, 30, 25, 20, 15, 10, 5],
             backgroundColor: 'rgba(52, 152, 219, 0.4)',
             pointBackgroundColor: 'white',

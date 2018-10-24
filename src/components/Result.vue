@@ -186,6 +186,9 @@
       </div>
       <editable-text v-bind:text.sync="acceptanceRateByTrackText"></editable-text>
 
+
+
+
       <el-select v-model="topAcceptedAuthorsDataLength" placeholder="Select Length"
                  style="margin-top: 20px;margin-right: 30px">
         <el-option
@@ -204,6 +207,12 @@
       <hori-bar-chart :data-input="topAcceptedAuthorsData" :title-text="'Top Accepted Authors/Contributors'"
                       class="chart" id="topacceptedauthorchart" ref="topacceptedauthorchart"></hori-bar-chart>
       <editable-text v-bind:text.sync="topAcceptedAuthorsText" style="margin-bottom: 20px;"></editable-text>
+
+
+
+
+
+
 
       <el-select v-model="topAcceptedAuthorsByTrackLength" placeholder="Select Length"
                  style="margin-top: 20px;margin-right: 10px">
@@ -233,7 +242,12 @@
                       id="topacceptedauthorbytrackchart" ref="topacceptedauthorbytrackchart"></hori-bar-chart>
       <editable-text v-bind:text.sync="topAcceptedAuthorsByTrackText" style="margin-bottom: 20px;"></editable-text>
 
-      <!--Note: due to the constraint of the component, the style width and height must be specified-->
+
+
+
+
+
+      Note: due to the constraint of the component, the style width and height must be specified
       <el-switch
         v-model="wordCloudAllIncluded"
         active-color="#13ce66"
@@ -281,6 +295,24 @@
             :value="item.value">
           </el-option>
         </el-select>
+
+
+
+
+        <!--visualization 1.2-->
+        <el-select v-model="wordCloudSelectedFilter" placeholder="Select a Filter"
+                   style="margin-top: 10px;margin-right: 10px">
+          <el-option
+            v-for="item in filterOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+
+
+
+
         <vue-word-cloud :words="wordCloudByTrack[wordCloudSelectedTrack]"
                         :animationDuration="100"
                         :color="([, weight]) => weight > 10 ? 'Red' : weight > 5 ? 'Blue' : 'Black'"
@@ -457,7 +489,8 @@
           topAccetedAffiliationDataLength: 3,
           topAcceptedAffiliationData: this.computeTopAcceptedAffiliationData(3),
         }
-      } else if (this.infoType == 'reviewScore') {
+      }
+      else if (this.infoType == 'reviewScore') {
         return {
           msg: 'Statistics',
           yesPercentage: this.chartData.yesPercentage.toFixed(2),
@@ -485,7 +518,8 @@
           type: 'bar'
         }
 
-      } else if (this.infoType == 'submission') {
+      }
+      else if (this.infoType == 'submission') {
 
         // console.log("inside submission subsection");
         var tracks = this.computeAcceptanceRateByTrack().labels;
@@ -528,7 +562,6 @@
           acceptanceRateChartType: 'bar',
           wordCloudTotal: this.chartData.overallKeywordList,
           acceptedWordCloud: this.chartData.acceptedKeywordList,
-          wordCloudByTrack: this.chartData.keywordsByTrack,
           acceptanceRateByTrackData: this.computeAcceptanceRateByTrack(),
           topAcceptedAuthorsData: this.computeTopAcceptedAuthors(3),
           topAcceptedAuthorsDataLength: 3,
@@ -566,9 +599,30 @@
           wordCloudAllIncluded: true,
           wordCloudAcceptedIncluded: true,
           wordCloudByTrackIncluded: true,
+
+          // visualization 1.2
+          wordCloudSelectedFilter: 'Select a Filter',
+          filterOptions: [
+            {
+              value: 'All',
+              label: 'All Submissions'
+            },
+            {
+              value: 'Accepted',
+              label: 'Accepted Submissions'
+            },
+            {
+              value: 'Rejected',
+              label: 'Rejected Submissions'
+            }
+          ],
+          wordCloudByTrack: this.computeFilteredWordCloudByTrack(),
+
+
         }
 
-      } else if (this.infoType == 'review') {
+      }
+      else if (this.infoType == 'review') {
         var scoreRanges = this.computeScoreDistributionData("score").labels;
         var scoreCounts = this.computeScoreDistributionData("score").datasets[0].data;
 
@@ -615,7 +669,8 @@
           }
         }
 
-      } else { // dummy data input
+      }
+      else { // dummy data input
         var yearInfo = this.chartData.year;
         var inCitations = this.chartData.inCitations;
         var outCitations = this.chartData.outCitations;
@@ -1350,6 +1405,46 @@
           ]
         };
       },
+      // visualization 1.2
+      computeFilteredWordCloudByTrack: function (filter) {
+        const {acceptedKeywordList} = this.chartData;
+        const acceptedList = acceptedKeywordList.map(keyword => keyword[0]);
+
+        const {rejectedKeywordMap} = this.chartData;
+        const rejectedList = Object.keys(rejectedKeywordMap);
+
+        const {keywordsByTrack} =  this.chartData;
+
+        let filteredTrack = {};
+
+        if (filter === 'Accepted'){
+          Object.keys(keywordsByTrack).forEach(function (key) {
+            // console.log(`**************key: ${key}`);
+            filteredTrack[key] = keywordsByTrack[key].filter(function (value, index, array) {
+              console.log(value);
+              return acceptedList.indexOf(value[0]) > -1;
+            });
+            // console.log(JSON.stringify(filteredTrack[key], undefined, 4));
+          });
+        }
+        else if (filter === 'Rejected') {
+          Object.keys(keywordsByTrack).forEach(function (key) {
+            // console.log(`**************key: ${key}`);
+            filteredTrack[key] = keywordsByTrack[key].filter(function (value, index, array) {
+              console.log(value);
+              return rejectedList.indexOf(value[0]) > -1;
+            });
+            // console.log(JSON.stringify(filteredTrack[key], undefined, 4));
+          });
+        }
+        else {
+          filteredTrack = keywordsByTrack;
+        }
+
+        // return this.chartData.keywordsByTrack;
+
+        return filteredTrack;
+      }
     },
     watch: {
       authorDataLength: function (newValue, oldValue) {
@@ -1397,7 +1492,11 @@
       // visualization 4.1
       topAccetedAffiliationDataLength: function (newValue, oldValue)  {
         this.topAcceptedAffiliationData = this.computeTopAcceptedAffiliationData(newValue);
-      }
+      },
+      // visualization 1.2
+      wordCloudSelectedFilter: function (newValue, oldValue) {
+        this.wordCloudByTrack = this.computeFilteredWordCloudByTrack(newValue);
+      },
     },
     components: {
       LineChart,
@@ -1429,7 +1528,7 @@
   }
 
   .center-line {
-    float: center;
+    /*float: center;*/
   }
 
   h1, h2 {

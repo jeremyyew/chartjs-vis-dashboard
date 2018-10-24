@@ -464,12 +464,38 @@
           affiliationChartType: 'bar',
           dataLengthOptions: [
             {
+              value: 2,
+              label: '2'
+            },
+            {
               value: 3,
               label: '3'
-            }, {
+            },
+            {
+              value: 4,
+              label: '4'
+            },
+            {
               value: 5,
               label: '5'
-            }, {
+            },
+            {
+              value: 6,
+              label: '6'
+            },
+            {
+              value: 7,
+              label: '7'
+            },
+            {
+              value: 8,
+              label: '8'
+            },
+            {
+              value: 9,
+              label: '9'
+            },
+            {
               value: 10,
               label: '10'
             }
@@ -549,12 +575,38 @@
           ],
           dataLengthOptions: [
             {
+              value: 2,
+              label: '2'
+            },
+            {
               value: 3,
               label: '3'
-            }, {
+            },
+            {
+              value: 4,
+              label: '4'
+            },
+            {
               value: 5,
               label: '5'
-            }, {
+            },
+            {
+              value: 6,
+              label: '6'
+            },
+            {
+              value: 7,
+              label: '7'
+            },
+            {
+              value: 8,
+              label: '8'
+            },
+            {
+              value: 9,
+              label: '9'
+            },
+            {
               value: 10,
               label: '10'
             }
@@ -1108,10 +1160,22 @@
       },
       chooseColorScheme: function (len) {
         switch (len) {
+          case 2:
+            return Const.colorScheme2;
           case 3:
+            return Const.colorScheme3;
+          case 4:
             return Const.colorScheme3;
           case 5:
             return Const.colorScheme5;
+          case 6:
+            return Const.colorScheme6;
+          case 7:
+            return Const.colorScheme7;
+          case 8:
+            return Const.colorScheme8;
+          case 9:
+            return Const.colorScheme9;
           default:
             return Const.colorScheme10;
         }

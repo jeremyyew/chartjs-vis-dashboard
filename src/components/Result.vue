@@ -2,6 +2,46 @@
   <div class="hello">
     <h1>{{ msg }}</h1>
     <div v-if="infoType === 'author'"> <!--Start of Author Component-->
+      <!--&lt;!&ndash;Visualization 4.1&ndash;&gt;-->
+      <el-select v-model="topAcceptedAffiliationChartType" placeholder="Select Chart" style="margin-top: 20px; margin-right: 10px">
+        <el-option
+          v-for="item in chartOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
+      <el-select v-model="topAccetedAffiliationDataLength" placeholder="Select Length"
+                 style="margin-top: 20px;margin-right: 10px">
+        <el-option
+          v-for="item in dataLengthOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
+      <el-switch
+        v-model="topAcceptedAffiliationChartIncluded"
+        active-color="#13ce66"
+        active-text="Included in Report"
+        inactive-text="Not Included">
+      </el-switch>
+      <div id="topAcceptedAffiliationChart" ref="topAcceptedAffiliationChart">
+        <hori-bar-chart :data-input="topAcceptedAffiliationData" :title-text="'Top Affiliations'" class="chart"
+                        v-if="topAcceptedAffiliationChartType=='bar'"></hori-bar-chart>
+        <pie-chart :data-input="topAcceptedAffiliationData" :title-text="'Top Affiliations'" class="chart"
+                   v-else-if="topAcceptedAffiliationChartType=='pie'"></pie-chart>
+      </div>
+      <!--End of Visualization 4.1-->
+
+
+
+
+
+
+
+
+
 
       <el-select v-model="authorDataLength" placeholder="Select Length" style="margin-top: 10px;margin-right: 40px">
         <el-option
@@ -17,13 +57,17 @@
         active-text="Included in Report"
         inactive-text="Not Included">
       </el-switch>
-      <!-- <P>
-        {{authorChartIncluded}}
-      </p> -->
       <bar-chart :data-input="topAuthorData" :title-text="'Top Authors'" class="chart" id="topauthorchart"
                  ref="topauthorchart"></bar-chart>
       <!--using text.sync for two-way data binding to editable text child component-->
       <editable-text v-bind:text.sync="authorText"></editable-text>
+
+
+
+
+
+
+
 
       <el-select v-model="countryChartType" placeholder="Select Chart" style="margin-top: 20px;margin-right: 10px">
         <el-option
@@ -54,6 +98,13 @@
                    v-else-if="countryChartType=='pie'"></pie-chart>
       </div>
       <editable-text v-bind:text.sync="countryText"></editable-text>
+
+
+
+
+
+
+
 
       <el-select v-model="affiliationChartType" placeholder="Select Chart" style="margin-top: 20px; margin-right: 10px">
         <el-option
@@ -328,10 +379,16 @@
   import jsPDF from 'jspdf'
   import html2canvas from 'html2canvas'
 
+  // visualization 2.1
   import {
     dummyLabels,
     dummyData
   } from '../mocks/ScoreRecommendationMock';
+
+  // visualization 4.1
+  import {
+    dummyTopAcceptedAffiliationData,
+  } from '../mocks/TopAcceptedAffiliationMock';
 
   export default {
     name: 'Chart',
@@ -394,6 +451,11 @@
           topAuthorData: this.computeAuthorData(3),
           topCountryData: this.computeCountryData(3),
           topAffiliationData: this.computeAffiliationData(3),
+          //  visualization 4.1
+          topAcceptedAffiliationChartType: 'bar',
+          topAcceptedAffiliationChartIncluded: true,
+          topAccetedAffiliationDataLength: 3,
+          topAcceptedAffiliationData: this.computeTopAcceptedAffiliationData(3),
         }
       } else if (this.infoType == 'reviewScore') {
         return {
@@ -1270,6 +1332,24 @@
         return return_obj;
 
       },
+      // visualization 4.1
+      computeTopAcceptedAffiliationData: function (len) {
+        var scheme = this.chooseColorScheme(len);
+
+        return {
+          labels: dummyTopAcceptedAffiliationData.labels.slice(0, len),
+          datasets: [
+            {
+              label: 'No. of Accepted Papers',
+              backgroundColor: scheme,
+              pointBackgroundColor: 'white',
+              borderWidth: 1,
+              pointBorderColor: '#249EBF',
+              data: dummyTopAcceptedAffiliationData.data.slice(0, len),
+            }
+          ]
+        };
+      },
     },
     watch: {
       authorDataLength: function (newValue, oldValue) {
@@ -1312,6 +1392,11 @@
       topAcceptedAuthorsByTrackLength: function (newValue, oldValue) {
         var len = newValue;
         this.topAcceptedAuthorsByTrackData = this.computeTopAcceptedAuthorsByTrack(len, this.topAcceptedAuthorsSelectedTrack);
+      },
+
+      // visualization 4.1
+      topAccetedAffiliationDataLength: function (newValue, oldValue)  {
+        this.topAcceptedAffiliationData = this.computeTopAcceptedAffiliationData(newValue);
       }
     },
     components: {

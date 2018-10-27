@@ -197,14 +197,14 @@ export default {
             submission: {}
           };
           // Note: use router.push to navigate through diff pages programmatically
-          router.push({
-            name: 'Result',
-            params: {
-              inputFileName,
-              chartData: infoData,
-              infoType,
-            },
-          });
+          // router.push({
+          //   name: 'Result',
+          //   params: {
+          //     inputFileName,
+          //     chartData: infoData,
+          //     infoType,
+          //   },
+          // });
 
           // Note: adding the below code to make sure that reuploading the same file will give you sth
           // Can consider changing this and the same code in catch block to finally();

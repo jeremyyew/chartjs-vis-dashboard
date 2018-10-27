@@ -242,12 +242,7 @@
                       id="topacceptedauthorbytrackchart" ref="topacceptedauthorbytrackchart"></hori-bar-chart>
       <editable-text v-bind:text.sync="topAcceptedAuthorsByTrackText" style="margin-bottom: 20px;"></editable-text>
 
-
-
-
-
-
-      Note: due to the constraint of the component, the style width and height must be specified
+      <!--Note: due to the constraint of the component, the style width and height must be specified-->
       <el-switch
         v-model="wordCloudAllIncluded"
         active-color="#13ce66"
@@ -407,6 +402,8 @@
 
   import Const from './const'
 
+  const {VIZ_TYPES} = Const;
+
   import VueWordCloud from 'vuewordcloud'
   import jsPDF from 'jspdf'
   import html2canvas from 'html2canvas'
@@ -426,7 +423,7 @@
     name: 'Chart',
     props: ['chartData', 'infoType', 'inputFileName'],
     data: function () {
-      if (this.infoType == 'author') { // author.csv input
+      if (this.infoType === VIZ_TYPES.AUTHOR) { // author.csv input
 
         var authorInitialText = "So it's rather clear that the one with the largest number of submissions this year is: " + this.chartData.topAuthors.labels[0] + ", and all the top " + String(3) + ", putting together, contribute " + String(this.chartData.topAuthors.data.slice(0, 3).reduce(function (a, b) {
           return a + b;
@@ -670,11 +667,7 @@
           ],
           wordCloudByTrack: this.computeFilteredWordCloudByTrack(),
 
-
-        }
-
-      }
-      else if (this.infoType == 'review') {
+      } else if (this.infoType === VIZ_TYPES.REVIEW) {
         var scoreRanges = this.computeScoreDistributionData("score").labels;
         var scoreCounts = this.computeScoreDistributionData("score").datasets[0].data;
 
@@ -747,7 +740,7 @@
               data: outCitations,
             }
           ]
-        }
+        };
 
         return {
           msg: 'Chart View Component',
@@ -887,7 +880,7 @@
               var countryTextLines = doc.splitTextToSize(this.countryText.val, contentWidth);
               doc.text(leftMargin, topMarginAfterAuthor + countryImageHeight + 20, countryTextLines);
 
-              if (numOfAddedSections % 2 == 1) {
+              if (numOfAddedSections % 2 === 1) {
                 var countryTextLinesHeight = Const.pdfLineHeight * Const.pdfTextFontSize * countryTextLines.length;
                 topMarginAfterCountry = topMarginAfterAuthor + countryImageHeight + countryTextLinesHeight + 20;
 
@@ -1195,7 +1188,7 @@
               data: this.chartData.topAuthors.data.slice(0, len),
             }
           ]
-        }
+        };
         return topAuthorData;
       },
       computeCountryData: function (len) {
@@ -1213,7 +1206,7 @@
               data: this.chartData.topCountries.data.slice(0, len),
             }
           ]
-        }
+        };
         return topCountryData;
       },
       computeAffiliationData: function (len) {
@@ -1231,7 +1224,7 @@
               data: this.chartData.topAffiliations.data.slice(0, len),
             }
           ]
-        }
+        };
         return topAffiliationData;
       },
       getTrackInSubmission: function () {
@@ -1519,7 +1512,7 @@
         this.authorText = {
           val: authorInitialText,
           edit: false
-        }
+        };
         this.topAuthorData = this.computeAuthorData(len);
       },
       countryDataLength: function (newValue, oldValue) {
@@ -1528,7 +1521,7 @@
         this.countryText = {
           val: countryInitialText,
           edit: false
-        }
+        };
         console.log("Inside the data length trigger!");
         this.topCountryData = this.computeCountryData(len);
       },
@@ -1538,7 +1531,7 @@
         this.affiliationText = {
           val: affiliationInitialText,
           edit: false
-        }
+        };
         this.topAffiliationData = this.computeAffiliationData(len);
       },
       topAcceptedAuthorsDataLength: function (newValue, oldValue) {
@@ -1574,7 +1567,7 @@
       [VueWordCloud.name]: VueWordCloud,
     },
     beforeRouteUpdate(to, from, next) {
-      console.log("inside haha");
+      // console.log("inside haha");
       next();
     },
   }

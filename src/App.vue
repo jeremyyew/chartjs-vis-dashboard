@@ -5,25 +5,65 @@
       style="width:85%;"
     >
       <el-container id="main">
-        <el-header id="main-header">
+        <el-header
+          id="main-header"
+          height="90px"
+        >
           <el-row
             type="flex"
             class="row-bg"
             justify="space-between"
+            align="middle"
             style="height: inherit"
           >
             <el-col :span="4" />
-            <el-col :span="12">
-              <b>Conference Visualization</b>
+            <el-col
+              :span="12"
+            >
+              <span
+                id="app-title"
+                :style="{marginTop: 30 }"
+              >Conference Visualizer</span>
             </el-col>
-            <el-col :span="4">
-              <router-link to="/">
+            <el-col
+              id="sign-in-col"
+              :span="4"
+            >
+              <el-button
+                id="sign-in"
+                type="primary"
+                @click="signInDialogOpen = true"
+              >
+                Log In
+              </el-button>
+              <el-dialog
+                title="Log in or sign up with:"
+                :visible.sync="signInDialogOpen"
+                width="50%"
+              >
                 <el-button
-                  id="sign-in"
                   type="primary"
-                >Sign In
+                  @click="authenticate('facebook')"
+                >
+                  Facebook
                 </el-button>
-              </router-link>
+                <el-button
+                  type="primary"
+                  @click="authenticate('github')"
+                >
+                  Github
+                </el-button>
+                <span
+                  slot="footer"
+                  class="dialog-footer"
+                >
+                  <el-button
+                    @click="signInDialogOpen = false"
+                  >
+                    Cancel
+                  </el-button>
+                </span>
+              </el-dialog>
             </el-col>
           </el-row>
         </el-header>
@@ -58,7 +98,8 @@
                     :disable="isSaving"
                     accept=".csv"
                     class="input-file"
-                    @change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length"
+                    @change="filesChange($event.target.name, $event.target.files);
+                             fileCount = $event.target.files.length"
                   >
                   <p
                     v-if="isInitial || isSuccess"
@@ -108,9 +149,8 @@
 
 <script>
 import { upload } from './components/Upload';
-
-import router from './router';
 import ResultTabs from '@/components/ResultTabs';
+import Auth from '@/components/Auth';
 
 const STATUS_INITIAL = 0;
 const STATUS_SAVING = 1;
@@ -124,6 +164,7 @@ export default {
 
   data() {
     return {
+      signInDialogOpen: false,
       uploadedFiles: [],
       uploadError: null,
       currentStatus: null,
@@ -167,13 +208,16 @@ export default {
     this.reset();
   },
   methods: {
-    startHacking() {
-      this.$notify({
-        title: 'It works!',
-        type: 'success',
-        message: 'We\'ve laid the ground work for you. It\'s time for you to build something epic!',
-        duration: 2500,
-      });
+    // startHacking() {
+    //   this.$notify({
+    //     title: 'It works!',
+    //     type: 'success',
+    //     message: 'We\'ve laid the ground work for you.',
+    //     duration: 2500,
+    //   });
+    // },
+    authenticate(provider) {
+      Auth.authenticate(provider);
     },
     reset() {
       // reset form to initial state
@@ -207,14 +251,14 @@ export default {
           };
 
           // Note: use router.push to navigate through diff pages programmatically
-          router.push({
-            name: 'Result',
-            params: {
-              inputFileName,
-              chartData: infoData,
-              infoType,
-            },
-          });
+          // router.push({
+          //   name: 'Result',
+          //   params: {
+          //     inputFileName,
+          //     chartData: infoData,
+          //     infoType,
+          //   },
+          // });
 
           // Note: adding the below code to make sure that reuploading the same file will give you sth
           // Can consider changing this and the same code in catch block to finally();
@@ -342,6 +386,21 @@ export default {
   }
 
   #sign-in {
+    margin-top: 15px;
+    left: 0px;
+  }
+
+  #sign-in-col {
+  }
+
+  #app-title-col {
+
+  }
+
+  #app-title {
+    font-weight: bolder;
+    font-size: 30px;
+    margin-top: 50px;
   }
 
   #main-header {

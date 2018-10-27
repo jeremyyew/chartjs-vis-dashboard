@@ -105,7 +105,7 @@ import {
   dummyData,
 } from '../mocks/ScoreRecommendationMock';
 
-import Const from './const';
+import Const from './Const';
 
 export default {
   name: 'ReviewViz',

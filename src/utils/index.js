@@ -1,4 +1,4 @@
-import Const from '@/components/const';
+import Const from '@/components/Const';
 
 function indexOfMax(arr) {
   if (arr.length === 0) {

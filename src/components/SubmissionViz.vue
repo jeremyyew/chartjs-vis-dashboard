@@ -252,7 +252,7 @@ import PieChart from '@/components/PieChart';
 
 import EditableText from '@/components/EditableText';
 import Utils from '@/utils';
-import Const from './const';
+import Const from './Const';
 
 import VueWordCloud from 'vuewordcloud';
 import jsPDF from 'jspdf';

@@ -77,7 +77,7 @@
       class="chart"
     />
     <!--using text.sync for two-way data binding to editable text child component-->
-    <editable-text :text.sync="authorText"/>
+    <editable-text :text.sync="authorText" />
 
 
     <el-select
@@ -127,7 +127,7 @@
         class="chart"
       />
     </div>
-    <editable-text :text.sync="countryText"/>
+    <editable-text :text.sync="countryText" />
 
 
     <el-select
@@ -177,7 +177,7 @@
         class="chart"
       />
     </div>
-    <editable-text :text.sync="affiliationText"/>
+    <editable-text :text.sync="affiliationText" />
 
     <el-button
       type="success"
@@ -196,7 +196,7 @@ import PieChart from '@/components/PieChart';
 
 import EditableText from '@/components/EditableText';
 
-import Const from './const';
+import Const from './Const';
 
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -503,7 +503,7 @@ export default {
         });
       });
     },
-  }
+  },
 };
 </script>
 

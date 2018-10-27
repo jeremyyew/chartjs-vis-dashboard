@@ -12,7 +12,7 @@
             justify="space-between"
             style="height: inherit"
           >
-            <el-col :span="4"/>
+            <el-col :span="4" />
             <el-col :span="12">
               <b>Conference Visualization</b>
             </el-col>
@@ -74,9 +74,12 @@
             </center>
           </el-aside>
           <el-main>
-            <ResultTabs :result="result" :lastUpdatedViz="lastUpdatedViz" />
+            <ResultTabs
+              :result="result"
+              :last-updated-viz="lastUpdatedViz"
+            />
             <center>
-              <router-view :key="$route.fullPath"/>
+              <router-view :key="$route.fullPath" />
             </center>
           </el-main>
         </el-container>
@@ -87,8 +90,8 @@
             justify="space-between"
             style="height: inherit"
           >
-            <el-col :span="4"/>
-            <el-col :span="12"/>
+            <el-col :span="4" />
+            <el-col :span="12" />
             <el-col :span="4">
               <img
                 src="./assets/logo.png"
@@ -104,144 +107,144 @@
 </template>
 
 <script>
-  import {upload} from './components/Upload';
+import { upload } from './components/Upload';
 
-  import router from './router';
-  import ResultTabs from '@/components/ResultTabs'
+import router from './router';
+import ResultTabs from '@/components/ResultTabs';
 
-  const STATUS_INITIAL = 0;
-  const STATUS_SAVING = 1;
-  const STATUS_SUCCESS = 2;
-  const
-    STATUS_FAILED = 3;
+const STATUS_INITIAL = 0;
+const STATUS_SAVING = 1;
+const STATUS_SUCCESS = 2;
+const
+  STATUS_FAILED = 3;
 
-  export default {
-    name: 'App',
-    components: {ResultTabs},
+export default {
+  name: 'App',
+  components: { ResultTabs },
 
-    data() {
-      return {
-        uploadedFiles: [],
-        uploadError: null,
-        currentStatus: null,
-        uploadFieldName: 'file',
-        testChartsDataInput: null,
-        result: {
-          author: {},
-          review: {},
-          submission: {}
+  data() {
+    return {
+      uploadedFiles: [],
+      uploadError: null,
+      currentStatus: null,
+      uploadFieldName: 'file',
+      testChartsDataInput: null,
+      result: {
+        author: {},
+        review: {},
+        submission: {},
+      },
+      lastUpdatedViz: { value: 'author' },
+      options: [
+        {
+          value: 'author',
+          label: 'Author File',
+        }, {
+          value: 'submission',
+          label: 'Submission File',
+        }, {
+          value: 'review',
+          label: 'Review File',
         },
-        lastUpdatedViz: {value: "author"},
-        options: [
-          {
-            value: 'author',
-            label: 'Author File',
-          }, {
-            value: 'submission',
-            label: 'Submission File',
-          }, {
-            value: 'review',
-            label: 'Review File',
-          },
-        ],
-      };
+      ],
+    };
+  },
+  computed: {
+    isInitial() {
+      return this.currentStatus === STATUS_INITIAL;
     },
-    computed: {
-      isInitial() {
-        return this.currentStatus === STATUS_INITIAL;
-      },
-      isSaving() {
-        return this.currentStatus === STATUS_SAVING;
-      },
-      isSuccess() {
-        return this.currentStatus === STATUS_SUCCESS;
-      },
-      isFailed() {
-        return this.currentStatus === STATUS_FAILED;
-      },
+    isSaving() {
+      return this.currentStatus === STATUS_SAVING;
     },
-    mounted() {
-      this.reset();
+    isSuccess() {
+      return this.currentStatus === STATUS_SUCCESS;
     },
-    methods: {
-      startHacking() {
-        this.$notify({
-          title: 'It works!',
-          type: 'success',
-          message: 'We\'ve laid the ground work for you. It\'s time for you to build something epic!',
-          duration: 2500,
-        });
-      },
-      reset() {
-        // reset form to initial state
-        this.currentStatus = STATUS_INITIAL;
-        this.uploadedFiles = [];
-        this.uploadError = null;
-      },
-      save(formData) {
-        // upload data to the server
-        this.currentStatus = STATUS_SAVING;
+    isFailed() {
+      return this.currentStatus === STATUS_FAILED;
+    },
+  },
+  mounted() {
+    this.reset();
+  },
+  methods: {
+    startHacking() {
+      this.$notify({
+        title: 'It works!',
+        type: 'success',
+        message: 'We\'ve laid the ground work for you. It\'s time for you to build something epic!',
+        duration: 2500,
+      });
+    },
+    reset() {
+      // reset form to initial state
+      this.currentStatus = STATUS_INITIAL;
+      this.uploadedFiles = [];
+      this.uploadError = null;
+    },
+    save(formData) {
+      // upload data to the server
+      this.currentStatus = STATUS_SAVING;
 
-        upload(formData)
-          .then((x) => {
-            // console.log("inside success function!");
-            // console.log(x);
-            // this.uploadedFiles = [].concat(x);
-            this.currentStatus = STATUS_SUCCESS;
-            this.testChartsDataInput = x;
+      upload(formData)
+        .then((x) => {
+          // console.log("inside success function!");
+          // console.log(x);
+          // this.uploadedFiles = [].concat(x);
+          this.currentStatus = STATUS_SUCCESS;
+          this.testChartsDataInput = x;
 
-            const infoType = x.infoType;
-            const infoData = x.infoData;
+          const infoType = x.infoType;
+          const infoData = x.infoData;
 
-            const nameArray = document.querySelector('.input-file').value.split('\\');
-            const inputFileName = nameArray[nameArray.length - 1];
+          const nameArray = document.querySelector('.input-file').value.split('\\');
+          const inputFileName = nameArray[nameArray.length - 1];
 
-            // Update result props passed to ResultTabs
-            this.lastUpdatedViz = { value: infoType };
-            this.result[infoType] = {
+          // Update result props passed to ResultTabs
+          this.lastUpdatedViz = { value: infoType };
+          this.result[infoType] = {
+            inputFileName,
+            chartData: infoData,
+          };
+
+          // Note: use router.push to navigate through diff pages programmatically
+          router.push({
+            name: 'Result',
+            params: {
               inputFileName,
               chartData: infoData,
-            };
-
-            // Note: use router.push to navigate through diff pages programmatically
-            router.push({
-              name: 'Result',
-              params: {
-                inputFileName,
-                chartData: infoData,
-                infoType,
-              },
-            });
-
-            // Note: adding the below code to make sure that reuploading the same file will give you sth
-            // Can consider changing this and the same code in catch block to finally();
-            document.querySelector('.input-file').value = '';
-          })
-          .catch((err) => {
-            this.uploadError = err.response;
-            this.currentStatus = STATUS_FAILED;
-            document.querySelector('.input-file').value = '';
-          });
-      },
-      filesChange(fieldName, fileList) {
-        console.log(document.querySelector('.input-file').value.split('\\'));
-        // handle file changes
-        const formData = new FormData();
-
-        if (!fileList.length) return;
-
-        // append the files to FormData
-        Array
-          .from(Array(fileList.length).keys())
-          .map((x) => {
-            formData.append(fieldName, fileList[x], fileList[x].name);
+              infoType,
+            },
           });
 
-        // save it
-        this.save(formData);
-      },
+          // Note: adding the below code to make sure that reuploading the same file will give you sth
+          // Can consider changing this and the same code in catch block to finally();
+          document.querySelector('.input-file').value = '';
+        })
+        .catch((err) => {
+          this.uploadError = err.response;
+          this.currentStatus = STATUS_FAILED;
+          document.querySelector('.input-file').value = '';
+        });
     },
-  };
+    filesChange(fieldName, fileList) {
+      console.log(document.querySelector('.input-file').value.split('\\'));
+      // handle file changes
+      const formData = new FormData();
+
+      if (!fileList.length) return;
+
+      // append the files to FormData
+      Array
+        .from(Array(fileList.length).keys())
+        .map((x) => {
+          formData.append(fieldName, fileList[x], fileList[x].name);
+        });
+
+      // save it
+      this.save(formData);
+    },
+  },
+};
 
 </script>
 

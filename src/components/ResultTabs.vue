@@ -6,90 +6,116 @@
     :value="activeTab"
     @tab-click="handleTabClick"
   >
-    <el-tab-pane label="Authors" name="author" lazy>
+    <el-tab-pane
+      label="Authors"
+      name="author"
+      lazy
+    >
       <div v-if="author.chartData && author.inputFileName">
-        <AuthorViz :chartData="author.chartData" :inputFileName="author.inputFileName"/>
+        <AuthorViz
+          :chart-data="author.chartData"
+          :input-file-name="author.inputFileName"
+        />
       </div>
       <div v-else>
         No author data
       </div>
     </el-tab-pane>
-    <el-tab-pane label="Submissions" name="submission" lazy>
+    <el-tab-pane
+      label="Submissions"
+      name="submission"
+      lazy
+    >
       <div v-if="submission.chartData && submission.inputFileName">
-        <AuthorViz :chartData="submission.chartData" :inputFileName="submission.inputFileName"/>
+        <SubmissionViz
+          :chart-data="submission.chartData"
+          :input-file-name="submission.inputFileName"
+        />
       </div>
       <div v-else>
         No submission data
       </div>
     </el-tab-pane>
-    <el-tab-pane label="Reviews" name="review" lazy>
+    <el-tab-pane
+      label="Reviews"
+      name="review"
+      lazy
+    >
       <div v-if="review.chartData && review.inputFileName">
-        <ReviewViz :chartData="review.chartData" :inputFileName="review.inputFileName"/>
+        <ReviewViz
+          :chart-data="review.chartData"
+          :input-file-name="review.inputFileName"
+        />
       </div>
       <div v-else>
         No review data
       </div>
     </el-tab-pane>
-    <el-tab-pane label="Reviews x Submissions" name="reviewXSubmission"  lazy>Reviews x Submissions</el-tab-pane>
+    <el-tab-pane
+      label="Reviews x Submissions"
+      name="reviewXSubmission"
+      lazy
+    >Reviews x Submissions</el-tab-pane>
   </el-tabs>
 </template>
 
 <script>
-  import AuthorViz from '@/components/AuthorViz';
-  import ReviewViz from '@/components/ReviewViz';
+import AuthorViz from '@/components/AuthorViz';
+import ReviewViz from '@/components/ReviewViz';
+import SubmissionViz from './SubmissionViz';
 
-  export default {
-    name: "ResultTabs",
-    components: {ReviewViz, AuthorViz},
-    props: {
-      result: {
-        type: Object,
-        required: true
+export default {
+  name: 'ResultTabs',
+  components: { SubmissionViz, ReviewViz, AuthorViz },
+  props: {
+    result: {
+      type: Object,
+      required: true,
+    },
+    lastUpdatedViz: {
+      value: {
+        type: String,
+        required: true,
+        default: 'author',
       },
-      lastUpdatedViz: {
-        value: {
-          type: String,
-          required: true,
-          default: "author"
-        }
-      }
-        // {
-        //   type: String,
-        //   default: "author",
-        //   required: true
-        // },
     },
-    data() {
-      return {
-        activeTab: this.lastUpdatedViz.value
-      }
-      // return this.result
+    // {
+    //   type: String,
+    //   default: "author",
+    //   required: true
+    // },
+  },
+  data() {
+    return {
+      activeTab: this.lastUpdatedViz.value,
+    };
+    // return this.result
+  },
+  computed: {
+    author() {
+      return this.result.author;
     },
-    methods: {
-      handleTabClick(tab) {
-        this.activeTab = tab.name;
-        console.log(this.activeTab)
-      }
+    review() {
+      return this.result.review;
     },
-    computed: {
-      author() {
-        return this.result.author
-      },
-      review() {
-        return this.result.review
-      },
-      submission() {
-        return this.result.submission
+    submission() {
+      return this.result.submission;
+    },
+  },
+  watch: {
+    lastUpdatedViz(next) {
+      if (next.value !== this.activeTab) {
+        this.activeTab = next.value;
       }
     },
-    watch: {
-      lastUpdatedViz(next) {
-        if (next.value !== this.activeTab) {
-          this.activeTab = next.value
-        }
-      }
-    }
-  }
+  },
+  methods: {
+    handleTabClick(tab) {
+      this.activeTab = tab.name;
+      console.log(this.activeTab);
+    },
+  },
+};
 </script>
 
 <style scoped lang="sass">

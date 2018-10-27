@@ -21,7 +21,8 @@
                 <el-button
                   id="sign-in"
                   type="primary"
-                >Sign In</el-button>
+                >Sign In
+                </el-button>
               </router-link>
             </el-col>
           </el-row>
@@ -73,7 +74,10 @@
             </center>
           </el-aside>
           <el-main>
-              <ResultTabs :result="result"/>
+            <ResultTabs
+              :result="result"
+              :last-updated-viz="lastUpdatedViz"
+            />
             <center>
               <router-view :key="$route.fullPath" />
             </center>
@@ -106,9 +110,12 @@
 import { upload } from './components/Upload';
 
 import router from './router';
-import ResultTabs from '@/components/ResultTabs'
+import ResultTabs from '@/components/ResultTabs';
 
-const STATUS_INITIAL = 0; const STATUS_SAVING = 1; const STATUS_SUCCESS = 2; const
+const STATUS_INITIAL = 0;
+const STATUS_SAVING = 1;
+const STATUS_SUCCESS = 2;
+const
   STATUS_FAILED = 3;
 
 export default {
@@ -122,7 +129,12 @@ export default {
       currentStatus: null,
       uploadFieldName: 'file',
       testChartsDataInput: null,
-      result: {},
+      result: {
+        author: {},
+        review: {},
+        submission: {},
+      },
+      lastUpdatedViz: { value: 'author' },
       options: [
         {
           value: 'author',
@@ -175,8 +187,8 @@ export default {
 
       upload(formData)
         .then((x) => {
-          // console.log("inside success function!")
-          console.log(x);
+          // console.log("inside success function!");
+          // console.log(x);
           // this.uploadedFiles = [].concat(x);
           this.currentStatus = STATUS_SUCCESS;
           this.testChartsDataInput = x;
@@ -187,15 +199,13 @@ export default {
           const nameArray = document.querySelector('.input-file').value.split('\\');
           const inputFileName = nameArray[nameArray.length - 1];
 
-          // Pass result to ResultTabs
-          this.result = {
-            author: {
-              inputFileName,
-              chartData: infoData,
-            },
-            review: {},
-            submission: {}
+          // Update result props passed to ResultTabs
+          this.lastUpdatedViz = { value: infoType };
+          this.result[infoType] = {
+            inputFileName,
+            chartData: infoData,
           };
+
           // Note: use router.push to navigate through diff pages programmatically
           // router.push({
           //   name: 'Result',

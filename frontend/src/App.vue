@@ -14,9 +14,9 @@
             class="row-bg"
             justify="space-between"
             align="middle"
-            style="height: inherit"
+            style="height: inherit; line-height: 15px;"
           >
-            <el-col :span="4" />
+            <el-col :span="6" />
             <el-col
               :span="12"
             >
@@ -27,18 +27,29 @@
             </el-col>
             <el-col
               id="sign-in-col"
-              :span="4"
+              :span="6"
             >
-              <el-button
-                id="sign-in"
-                type="primary"
-                @click="signInDialogOpen = true"
-              >
-                Log In
-              </el-button>
+              <div v-if="storeState.loggedIn && storeState.username">
+                <el-button
+                  icon="el-icon-info"
+                  type="success"
+                  @click="logout"
+                >
+                  {{ storeState.username }}
+                </el-button>
+              </div>
+              <div v-else>
+                <el-button
+                  id="sign-in"
+                  type="primary"
+                  @click="authDialogOpen = true"
+                >
+                  Log In
+                </el-button>
+              </div>
               <el-dialog
                 title="Log in or sign up with:"
-                :visible.sync="signInDialogOpen"
+                :visible.sync="authDialogOpen"
                 width="50%"
               >
                 <el-button
@@ -57,11 +68,6 @@
                   slot="footer"
                   class="dialog-footer"
                 >
-                  <el-button
-                    @click="signInDialogOpen = false"
-                  >
-                    Cancel
-                  </el-button>
                 </span>
               </el-dialog>
             </el-col>
@@ -151,6 +157,7 @@
 import { upload } from './components/Upload';
 import ResultTabs from '@/components/ResultTabs';
 import Auth from '@/components/Auth';
+import Store from '@/store';
 
 const STATUS_INITIAL = 0;
 const STATUS_SAVING = 1;
@@ -158,13 +165,15 @@ const STATUS_SUCCESS = 2;
 const
   STATUS_FAILED = 3;
 
+
 export default {
   name: 'App',
   components: { ResultTabs },
 
   data() {
     return {
-      signInDialogOpen: false,
+      storeState: Store.state,
+      authDialogOpen: false,
       uploadedFiles: [],
       uploadError: null,
       currentStatus: null,
@@ -216,8 +225,13 @@ export default {
     //     duration: 2500,
     //   });
     // },
+    logout() {
+      Store.logout();
+    },
     authenticate(provider) {
       Auth.authenticate(provider);
+      Store.login('jeremy.yew@u.yale-nus.edu.sg');
+      this.authDialogOpen = false;
     },
     reset() {
       // reset form to initial state
@@ -240,7 +254,9 @@ export default {
           const infoType = x.infoType;
           const infoData = x.infoData;
 
-          const nameArray = document.querySelector('.input-file').value.split('\\');
+          const nameArray = document.querySelector('.input-file')
+            .value
+            .split('\\');
           const inputFileName = nameArray[nameArray.length - 1];
 
           // Update result props passed to ResultTabs
@@ -271,7 +287,9 @@ export default {
         });
     },
     filesChange(fieldName, fileList) {
-      console.log(document.querySelector('.input-file').value.split('\\'));
+      console.log(document.querySelector('.input-file')
+        .value
+        .split('\\'));
       // handle file changes
       const formData = new FormData();
 
@@ -279,7 +297,8 @@ export default {
 
       // append the files to FormData
       Array
-        .from(Array(fileList.length).keys())
+        .from(Array(fileList.length)
+          .keys())
         .map((x) => {
           formData.append(fieldName, fileList[x], fileList[x].name);
         });
@@ -386,8 +405,6 @@ export default {
   }
 
   #sign-in {
-    margin-top: 15px;
-    left: 0px;
   }
 
   #sign-in-col {

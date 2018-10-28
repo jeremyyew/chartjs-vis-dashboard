@@ -16,7 +16,7 @@
         />
       </el-select>
       <el-select
-        v-model="topAccetedAffiliationDataLength"
+        v-model="topAcceptedAffiliationDataLength"
         placeholder="Select Length"
         style="margin-top: 20px;margin-right: 10px"
       >

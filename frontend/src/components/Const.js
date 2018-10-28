@@ -1,5 +1,6 @@
 export default {
   BASE_URL: 'https://aqueous-springs-39027.herokuapp.com/polls/',
+  DEFAULT_STORE_NAME: 'persist:store',
   VIZ_TYPES: {
     AUTHOR: 'author',
     REVIEW: 'review',

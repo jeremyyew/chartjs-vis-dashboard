@@ -67,8 +67,7 @@
                 <span
                   slot="footer"
                   class="dialog-footer"
-                >
-                </span>
+                />
               </el-dialog>
             </el-col>
           </el-row>
@@ -158,6 +157,7 @@ import { upload } from './components/Upload';
 import ResultTabs from '@/components/ResultTabs';
 import Auth from '@/components/Auth';
 import Store from '@/store';
+import utils from '@/utils'
 
 const STATUS_INITIAL = 0;
 const STATUS_SAVING = 1;
@@ -165,11 +165,11 @@ const STATUS_SUCCESS = 2;
 const
   STATUS_FAILED = 3;
 
+const { stringify } = utils;
 
 export default {
   name: 'App',
   components: { ResultTabs },
-
   data() {
     return {
       storeState: Store.state,
@@ -212,6 +212,13 @@ export default {
     isFailed() {
       return this.currentStatus === STATUS_FAILED;
     },
+  },
+  watch: {
+  },
+  created() {
+    console.log(`Store.state: ${stringify(Store.state)}`);
+    console.log(`storeState: ${stringify(this.storeState)}`);
+    this.$persist(['storeState']);
   },
   mounted() {
     this.reset();

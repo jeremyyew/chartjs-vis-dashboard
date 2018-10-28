@@ -1,5 +1,9 @@
 import Const from '@/components/Const';
 
+function stringify (obj) {
+  return JSON.stringify(obj, null, 4);
+}
+
 function indexOfMax(arr) {
   if (arr.length === 0) {
     return -1;
@@ -43,5 +47,6 @@ function chooseColorScheme(len) {
 
 export default {
   indexOfMax,
-  chooseColorScheme
+  chooseColorScheme,
+  stringify,
 };

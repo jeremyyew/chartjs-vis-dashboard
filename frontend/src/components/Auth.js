@@ -3,7 +3,7 @@ import Const from './Const';
 // const BASE_URL = 'http://localhost:8000';
 const { BASE_URL } = Const;
 
-function login(data) {
+function authenticate(data) {
   const url = `${BASE_URL}/login`;
   // const url = '/upload/'
   return axios({
@@ -19,4 +19,4 @@ function login(data) {
   });
 }
 
-export default { login };
+export default { authenticate };

@@ -112,7 +112,6 @@ export default {
   methods: {
     handleTabClick(tab) {
       this.activeTab = tab.name;
-      console.log(this.activeTab);
     },
   },
 };

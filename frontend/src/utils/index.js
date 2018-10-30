@@ -1,6 +1,7 @@
 import Const from '@/components/Const';
+import Save from './Save';
 
-function stringify (obj) {
+function stringify(obj) {
   return JSON.stringify(obj, null, 4);
 }
 
@@ -55,4 +56,5 @@ export default {
   chooseColorScheme,
   labelUtil,
   stringify,
+  Save,
 };

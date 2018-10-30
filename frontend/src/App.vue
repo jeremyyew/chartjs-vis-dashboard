@@ -157,7 +157,7 @@ import { upload } from './components/Upload';
 import ResultTabs from '@/components/ResultTabs';
 import Auth from '@/components/Auth';
 import Store from '@/store';
-import utils from '@/utils'
+import Utils from '@/Utils'
 
 const STATUS_INITIAL = 0;
 const STATUS_SAVING = 1;
@@ -165,7 +165,7 @@ const STATUS_SUCCESS = 2;
 const
   STATUS_FAILED = 3;
 
-const { stringify } = utils;
+const { stringify } = Utils;
 
 export default {
   name: 'App',

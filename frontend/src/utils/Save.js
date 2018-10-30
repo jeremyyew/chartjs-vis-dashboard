@@ -4,7 +4,7 @@ import html2canvas from 'html2canvas';
 
 const PDF_FILE_NAME = 'Conference Visualization Report';
 
-class PDFGenerator {
+class PdfGenerator {
   constructor(sections) {
     this.doc = new jsPDF('p', 'pt');
     this.setPdfParams();
@@ -51,5 +51,5 @@ class PDFGenerator {
 
 
 export default {
-  PDFGenerator,
+  PdfGenerator,
 };

@@ -1,11 +1,10 @@
 <script>
-// Importing Line class from the vue-chartjs wrapper
-import { Bar } from 'vue-chartjs';
-// Exporting this so it can be used in other components
+import { Scatter } from 'vue-chartjs';
+import Utils from '@/Utils';
 
 export default {
-  extends: Bar,
-  props: ['dataInput', 'titleText'],
+  extends: Scatter,
+  props: ['dataInput', 'titleText', 'xLabel', 'yLabel'],
   data() {
     return {
       // Chart.js options that controls the appearance of the chart
@@ -17,6 +16,7 @@ export default {
         },
         scales: {
           yAxes: [{
+            scaleLabel: Utils.labelUtil(this.yLabel),
             ticks: {
               beginAtZero: true,
               callback(value, index, values) {
@@ -31,6 +31,7 @@ export default {
             },
           }],
           xAxes: [{
+            scaleLabel: Utils.labelUtil(this.xLabel),
             gridLines: {
               display: false,
             },
@@ -72,3 +73,7 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+
+</style>

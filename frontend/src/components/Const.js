@@ -1,4 +1,8 @@
 export default {
+  scaleLabelConfig: {
+    display: true,
+    fontStyle: 'bold',
+  },
   BASE_URL: 'https://aqueous-springs-39027.herokuapp.com/polls/',
   VIZ_TYPES: {
     AUTHOR: 'author',

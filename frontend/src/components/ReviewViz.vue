@@ -1,5 +1,14 @@
 <template>
   <div>
+    <scatter-chart
+      id="scorerecommendationscatterchart"
+      ref="scorescatterchart"
+      :data-input="scoreRecommendationScatterData"
+      :title-text="'Score vs Recommendation Scatter Plot'"
+      :x-label="'Total number of recommendations'"
+      :y-label="'Overall review score'"
+      class="chart"
+    />
     <el-switch
       v-model="scoreRecommendationChartIncluded"
       active-color="#13ce66"
@@ -13,7 +22,6 @@
       :title-text="'Score vs Recommendation'"
       class="chart"
     />
-
 
     <el-switch
       v-model="scoreDistributionChartIncluded"
@@ -81,7 +89,7 @@
         />
       </el-table>
     </div>
-    <editable-text :text.sync="reviewTableText"/>
+    <editable-text :text.sync="reviewTableText" />
     <el-button
       type="success"
       plain
@@ -95,6 +103,7 @@
 <script>
 import BarChart from '@/components/BarChart';
 import EditableText from '@/components/EditableText';
+import ScatterChart from '@/components/ScatterChart';
 
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -105,6 +114,9 @@ import {
   dummyData,
 } from '../mocks/ScoreRecommendationMock';
 
+// visualization 2.1.2
+import scoreRecommendationScatterMock from '../mocks/ScoreRecommendationScatterMock';
+
 import Const from './Const';
 
 export default {
@@ -112,13 +124,14 @@ export default {
   components: {
     BarChart,
     EditableText,
+    ScatterChart,
   },
   props: ['chartData', 'inputFileName'],
   data() {
     const scoreRanges = this.computeScoreDistributionData('score').labels;
     const scoreCounts = this.computeScoreDistributionData('score').datasets[0].data;
 
-    var topIndex = this.indexOfMax(scoreCounts);
+    const topIndex = this.indexOfMax(scoreCounts);
     const topRange = scoreRanges[topIndex];
 
     const recommendCounts = this.computeScoreDistributionData('recommend').datasets[0].data;
@@ -126,6 +139,7 @@ export default {
 
     return {
       msg: 'Review Info Analysis',
+      scoreRecommendationScatterData: this.computeScoreRecommendationScatterData(),
       scoreRecommendationData: this.computeScoreRecommendationData(),
       scoreDistributionData: this.computeScoreDistributionData('score'),
       recommendDistributionData: this.computeScoreDistributionData('recommend'),
@@ -160,6 +174,14 @@ export default {
     };
   },
   methods: {
+    computeScoreRecommendationScatterData() {
+      return {
+        datasets: [{
+          label: 'Accepted papers',
+          data: scoreRecommendationScatterMock.data,
+        }],
+      };
+    },
     computeScoreRecommendationData() {
       const return_obj = {
         labels: dummyLabels,
@@ -228,60 +250,63 @@ export default {
 
       let numOfAddedSections = 0;
 
-      html2canvas(document.getElementById('scorechart')).then((scoreCanvas) => {
-        var topMarginAfterScore = startingTopMargin;
-        if (this.scoreDistributionChartIncluded) {
-          numOfAddedSections += 1;
-
-          const scoreImageData = scoreCanvas.toDataURL('image/png');
-          const scoreImageWidth = Const.imageWidth;
-          const scoreImageHeight = scoreCanvas.height * scoreImageWidth / scoreCanvas.width;
-          doc.addImage(scoreImageData, 'PNG', leftMargin, startingTopMargin, scoreImageWidth, scoreImageHeight);
-
-          const scoreTextLines = doc.splitTextToSize(this.scoreDistributionText.val, contentWidth);
-          doc.text(leftMargin, startingTopMargin + scoreImageHeight + 20, scoreTextLines);
-
-          const scoreTextHeight = Const.pdfLineHeight * Const.pdfTextFontSize * scoreTextLines.length;
-          var topMarginAfterScore = startingTopMargin + scoreImageHeight + scoreTextHeight + 20;
-        }
-
-        html2canvas(document.getElementById('recommendchart')).then((recommendCanvas) => {
-          let topMarginAfterRecommend = topMarginAfterScore;
-          if (this.recommendDistributionChartIncluded) {
+      html2canvas(document.getElementById('scorechart'))
+        .then((scoreCanvas) => {
+          var topMarginAfterScore = startingTopMargin;
+          if (this.scoreDistributionChartIncluded) {
             numOfAddedSections += 1;
-            const recommendImageData = recommendCanvas.toDataURL('image/png');
-            const recommendImageWidth = Const.imageWidth;
-            const recommendImageHeight = recommendCanvas.height * recommendImageWidth / recommendCanvas.width;
-            doc.addImage(recommendImageData, 'PNG', leftMargin, topMarginAfterScore, recommendImageWidth, recommendImageHeight);
 
-            const recommendTextLines = doc.splitTextToSize(this.recommendDistributionText.val, contentWidth);
-            doc.text(leftMargin, topMarginAfterScore + recommendImageHeight + 20, recommendTextLines);
+            const scoreImageData = scoreCanvas.toDataURL('image/png');
+            const scoreImageWidth = Const.imageWidth;
+            const scoreImageHeight = scoreCanvas.height * scoreImageWidth / scoreCanvas.width;
+            doc.addImage(scoreImageData, 'PNG', leftMargin, startingTopMargin, scoreImageWidth, scoreImageHeight);
 
-            if (numOfAddedSections % 2 == 1) {
-              const recommendTextLinesHeight = Const.pdfLineHeight * Const.pdfTextFontSize * recommendTextLines.length;
-              topMarginAfterRecommend = topMarginAfterScore + recommendImageHeight + recommendTextLinesHeight + 20;
-            }
+            const scoreTextLines = doc.splitTextToSize(this.scoreDistributionText.val, contentWidth);
+            doc.text(leftMargin, startingTopMargin + scoreImageHeight + 20, scoreTextLines);
+
+            const scoreTextHeight = Const.pdfLineHeight * Const.pdfTextFontSize * scoreTextLines.length;
+            var topMarginAfterScore = startingTopMargin + scoreImageHeight + scoreTextHeight + 20;
           }
 
-          html2canvas(document.getElementById('reviewtable')).then((tableCanvas) => {
-            if (this.reviewTableIncluded) {
-              if (numOfAddedSections % 2 == 0 && numOfAddedSections > 0) {
-                doc.addPage();
-                topMarginAfterRecommend = Const.topMargin;
+          html2canvas(document.getElementById('recommendchart'))
+            .then((recommendCanvas) => {
+              let topMarginAfterRecommend = topMarginAfterScore;
+              if (this.recommendDistributionChartIncluded) {
+                numOfAddedSections += 1;
+                const recommendImageData = recommendCanvas.toDataURL('image/png');
+                const recommendImageWidth = Const.imageWidth;
+                const recommendImageHeight = recommendCanvas.height * recommendImageWidth / recommendCanvas.width;
+                doc.addImage(recommendImageData, 'PNG', leftMargin, topMarginAfterScore, recommendImageWidth, recommendImageHeight);
+
+                const recommendTextLines = doc.splitTextToSize(this.recommendDistributionText.val, contentWidth);
+                doc.text(leftMargin, topMarginAfterScore + recommendImageHeight + 20, recommendTextLines);
+
+                if (numOfAddedSections % 2 == 1) {
+                  const recommendTextLinesHeight = Const.pdfLineHeight * Const.pdfTextFontSize * recommendTextLines.length;
+                  topMarginAfterRecommend = topMarginAfterScore + recommendImageHeight + recommendTextLinesHeight + 20;
+                }
               }
-              const tableImageData = tableCanvas.toDataURL('image/png');
-              const tableImageWidth = Const.imageWidth;
-              const tableImageHeight = tableCanvas.height * tableImageWidth / tableCanvas.width;
-              doc.addImage(tableImageData, 'PNG', leftMargin, topMarginAfterRecommend, tableImageWidth, tableImageHeight);
 
-              const tableTextLines = doc.splitTextToSize(this.reviewTableText.val, contentWidth);
-              doc.text(leftMargin, topMarginAfterRecommend + tableImageHeight + 20, tableTextLines);
-            }
+              html2canvas(document.getElementById('reviewtable'))
+                .then((tableCanvas) => {
+                  if (this.reviewTableIncluded) {
+                    if (numOfAddedSections % 2 == 0 && numOfAddedSections > 0) {
+                      doc.addPage();
+                      topMarginAfterRecommend = Const.topMargin;
+                    }
+                    const tableImageData = tableCanvas.toDataURL('image/png');
+                    const tableImageWidth = Const.imageWidth;
+                    const tableImageHeight = tableCanvas.height * tableImageWidth / tableCanvas.width;
+                    doc.addImage(tableImageData, 'PNG', leftMargin, topMarginAfterRecommend, tableImageWidth, tableImageHeight);
 
-            doc.save(`${fileName}.pdf`);
-          });
+                    const tableTextLines = doc.splitTextToSize(this.reviewTableText.val, contentWidth);
+                    doc.text(leftMargin, topMarginAfterRecommend + tableImageHeight + 20, tableTextLines);
+                  }
+
+                  doc.save(`${fileName}.pdf`);
+                });
+            });
         });
-      });
     },
   },
 };

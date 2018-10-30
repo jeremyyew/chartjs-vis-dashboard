@@ -41,7 +41,13 @@ function chooseColorScheme(len) {
   }
 }
 
+const labelUtil = label => ({
+  ...Const.scaleLabelConfig,
+  labelString: label,
+});
+
 export default {
   indexOfMax,
-  chooseColorScheme
+  chooseColorScheme,
+  labelUtil,
 };

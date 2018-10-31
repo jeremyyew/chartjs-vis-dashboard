@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 import json
 
-from utils import parseCSVFileFromDjangoFile, isNumber, returnTestChartData
+from utils import parseCSVFileFromDjangoFile, isNumber, returnTestChartData, parseCSVFile
 from getInsight import parseAuthorCSVFile, getReviewScoreInfo, getAuthorInfo, getReviewInfo, getSubmissionInfo
 
 # Create your views here.
@@ -52,3 +52,12 @@ def uploadCSV(request):
 	else:
 		print "Not found the file!"
 		return HttpResponseNotFound('Page not found for CSV')
+
+
+@csrf_exempt
+def parseCSV(request):
+	csvFile = request.FILES['file']
+	rowCSV = parseCSVFile(csvFile)
+	colCSV = zip(*rowCSV)
+
+	return HttpResponse(json.dumps({'columns' : colCSV}))

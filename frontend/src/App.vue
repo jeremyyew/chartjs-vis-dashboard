@@ -74,6 +74,26 @@
                 :visible.sync="mapAuthorHeadersDialogOpen"
                 width="85%"
               >
+                <table>
+                  <thead>
+                    <tr>
+                      <th v-for="col in authorColumns">
+                        <select v-model="selected">
+                          <option>Name</option>
+                          <option>Country</option>
+                          <option>Affilation</option>
+
+                        </select>
+                        <br>{{ col[0] }}
+                      </th>
+                    </tr>
+                    <tr v-for="i in (1, Math.min(5, numAuthorRows))">
+                      <td v-for="col in authorColumns">
+                        {{ col[i] }}
+                      </td>
+                    </tr>
+                  </thead>
+                </table>
                 <el-button
                   type="primary"
                   @click="parseCsvFile()"
@@ -141,7 +161,6 @@
                     class="input-file"
                     @change="filesChange($event.target.name, $event.target.files);
                              uploadAuthorCSV($event.target.name, $event.target.files);
-                             mapAuthorHeadersDialogOpen = true;
                              fileCount = $event.target.files.length"
                   >
                   <p
@@ -247,7 +266,7 @@ import { parse } from './components/Parse';
 import ResultTabs from '@/components/ResultTabs';
 import Auth from '@/components/Auth';
 import Store from '@/store';
-import utils from '@/utils'
+import utils from '@/utils';
 
 const STATUS_INITIAL = 0;
 const STATUS_SAVING = 1;
@@ -280,6 +299,9 @@ export default {
       authorColumns: [],
       submissionColumns: [],
       reviewColumns: [],
+      numAuthorRows: 0,
+      numSubmissionRows: 0,
+      numReviewRows: 0,
       lastUpdatedViz: { value: 'author' },
       options: [
         {
@@ -411,10 +433,11 @@ export default {
           formData.append(fieldName, fileList[x], fileList[x].name);
         });
 
-      // save it
+      this.mapAuthorHeadersDialogOpen = true;
       parse(formData)
         .then((x) => {
-          this.authorColumns = x;
+          this.authorColumns = x.columns;
+          this.numAuthorRows = x.columns[0].length;
         });
     },
     filesChange(fieldName, fileList) {

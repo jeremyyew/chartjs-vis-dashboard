@@ -69,6 +69,42 @@
                   class="dialog-footer"
                 />
               </el-dialog>
+              <el-dialog
+                title="Map author.csv headers"
+                :visible.sync="mapAuthorHeadersDialogOpen"
+                width="85%"
+              >
+                <el-button
+                  type="primary"
+                  @click="parseCsvFile()"
+                >
+                  Submit
+                </el-button>
+              </el-dialog>
+              <el-dialog
+                title="Map submission.csv headers"
+                :visible.sync="mapSubmissionHeadersDialogOpen"
+                width="85%"
+              >
+                <el-button
+                  type="primary"
+                  @click="parseCsvFile()"
+                >
+                  Submit
+                </el-button>
+              </el-dialog>
+              <el-dialog
+                title="Map review.csv headers"
+                :visible.sync="mapReviewHeadersDialogOpen"
+                width="85%"
+              >
+                <el-button
+                  type="primary"
+                  @click="parseCsvFile()"
+                >
+                  Submit
+                </el-button>
+              </el-dialog>
             </el-col>
           </el-row>
         </el-header>
@@ -94,26 +130,79 @@
                 novalidate
               >
                 <!--The type multipart/form-data is important, otherwise Django will not accept-->
-                <h2>Upload File</h2>
+                <h2>Upload Files</h2>
+                <h4>Drag files into their respective boxes, or click to browse</h4>
                 <div class="dropbox">
                   <input
                     type="file"
-                    multiple
                     :name="uploadFieldName"
                     :disable="isSaving"
                     accept=".csv"
                     class="input-file"
                     @change="filesChange($event.target.name, $event.target.files);
+                             uploadAuthorCSV($event.target.name, $event.target.files);
+                             mapAuthorHeadersDialogOpen = true;
                              fileCount = $event.target.files.length"
                   >
                   <p
                     v-if="isInitial || isSuccess"
-                    style="margin-bottom:0px;padding-top:20px;font-size:15px"
+                    style="margin-bottom:0px;padding-top:32px;font-size:18px"
                   >
-                    Drag your file(s) here to begin<br> or click to browse
+                    <strong>author.csv</strong>
                   </p>
-                  <p v-if="isSaving">
-                    Uploading {{ fileCount }} files...
+                  <p
+                    v-if="isSaving"
+                    style="margin-bottom:0px;padding-top:32px;font-size:18px"
+                  >
+                    Uploading <strong>author.csv</strong> file...
+                  </p>
+                </div>
+                <div class="dropbox">
+                  <input
+                    type="file"
+                    :name="uploadFieldName"
+                    :disable="isSaving"
+                    accept=".csv"
+                    class="input-file"
+                    @change="filesChange($event.target.name, $event.target.files);
+                             mapSubmissionHeadersDialogOpen = true;
+                             fileCount = $event.target.files.length"
+                  >
+                  <p
+                    v-if="isInitial || isSuccess"
+                    style="margin-bottom:0px;padding-top:32px;font-size:18px"
+                  >
+                    <strong>submission.csv</strong>
+                  </p>
+                  <p
+                    v-if="isSaving"
+                    style="margin-bottom:0px;padding-top:32px;font-size:18px"
+                  >
+                    Uploading <strong>submission.csv</strong> file...
+                  </p>
+                </div>
+                <div class="dropbox">
+                  <input
+                    type="file"
+                    :name="uploadFieldName"
+                    :disable="isSaving"
+                    accept=".csv"
+                    class="input-file"
+                    @change="filesChange($event.target.name, $event.target.files);
+                             mapReviewHeadersDialogOpen = true;
+                             fileCount = $event.target.files.length"
+                  >
+                  <p
+                    v-if="isInitial || isSuccess"
+                    style="margin-bottom:0px;padding-top:32px;font-size:18px"
+                  >
+                    <strong>review.csv</strong>
+                  </p>
+                  <p
+                    v-if="isSaving"
+                    style="margin-bottom:0px;padding-top:32px;font-size:18px"
+                  >
+                    Uploading <strong>review.csv</strong> file...
                   </p>
                 </div>
               </form>
@@ -154,6 +243,7 @@
 
 <script>
 import { upload } from './components/Upload';
+import { parse } from './components/Parse';
 import ResultTabs from '@/components/ResultTabs';
 import Auth from '@/components/Auth';
 import Store from '@/store';
@@ -174,6 +264,9 @@ export default {
     return {
       storeState: Store.state,
       authDialogOpen: false,
+      mapAuthorHeadersDialogOpen: false,
+      mapSubmissionHeadersDialogOpen: false,
+      mapReviewHeadersDialogOpen: false,
       uploadedFiles: [],
       uploadError: null,
       currentStatus: null,
@@ -184,6 +277,9 @@ export default {
         review: {},
         submission: {},
       },
+      authorColumns: [],
+      submissionColumns: [],
+      reviewColumns: [],
       lastUpdatedViz: { value: 'author' },
       options: [
         {
@@ -234,6 +330,11 @@ export default {
     // },
     logout() {
       Store.logout();
+    },
+    parseCsvFile() {
+      this.mapAuthorHeadersDialogOpen = false;
+      this.mapSubmissionHeadersDialogOpen = false;
+      this.mapReviewHeadersDialogOpen = false;
     },
     authenticate(provider) {
       Auth.authenticate(provider);
@@ -291,6 +392,29 @@ export default {
           this.uploadError = err.response;
           this.currentStatus = STATUS_FAILED;
           document.querySelector('.input-file').value = '';
+        });
+    },
+    uploadAuthorCSV(fieldName, fileList) {
+      console.log(document.querySelector('.input-file')
+        .value
+        .split('\\'));
+      // handle file changes
+      const formData = new FormData();
+
+      if (!fileList.length) return;
+
+      // append the files to FormData
+      Array
+        .from(Array(fileList.length)
+          .keys())
+        .map((x) => {
+          formData.append(fieldName, fileList[x], fileList[x].name);
+        });
+
+      // save it
+      parse(formData)
+        .then((x) => {
+          this.authorColumns = x;
         });
     },
     filesChange(fieldName, fileList) {

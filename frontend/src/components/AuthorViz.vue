@@ -1,6 +1,13 @@
 <template>
   <div>
     <!--&lt;!&ndash;Visualization 4.1&ndash;&gt;-->
+    <div><el-button
+      type="success"
+      plain
+      style="margin-top: 10px"
+      @click="generatePdf"
+    >Save all
+    </el-button></div>
     <el-select
       v-model="topAcceptedAffiliationChartType"
       placeholder="Select Chart"
@@ -193,11 +200,9 @@
 import BarChart from '@/components/BarChart';
 import HoriBarChart from '@/components/HoriBarChart';
 import PieChart from '@/components/PieChart';
-
+import Utils from '@/Utils';
 import EditableText from '@/components/EditableText';
-
 import Const from './Const';
-
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
@@ -302,6 +307,22 @@ export default {
       topAcceptedAffiliationData: this.computeTopAcceptedAffiliationData(3),
     };
   },
+  computed: {
+    sections() {
+      return [
+        {
+          id: 'topauthorchart',
+          caption: this.authorText.val,
+          included: this.authorChartIncluded,
+        },
+        {
+          id: 'topcountrychart',
+          caption: this.countryText.val,
+          included: this.countryChartIncluded,
+        },
+      ];
+    },
+  },
   watch: {
     authorDataLength(newValue, oldValue) {
       const len = newValue;
@@ -337,6 +358,9 @@ export default {
     },
   },
   methods: {
+    generatePdf() {
+      let pdfGenerator = new Utils.PdfGenerator(this.sections);
+    },
     chooseColorScheme(len) {
       switch (len) {
         case 2:

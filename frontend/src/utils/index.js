@@ -1,5 +1,5 @@
 import Const from '@/components/Const';
-import Save from './Save';
+import PdfGenerator from './PdfGenerator';
 
 function stringify(obj) {
   return JSON.stringify(obj, null, 4);
@@ -56,5 +56,5 @@ export default {
   chooseColorScheme,
   labelUtil,
   stringify,
-  Save,
+  PdfGenerator,
 };

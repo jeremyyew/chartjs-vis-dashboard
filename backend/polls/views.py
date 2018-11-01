@@ -29,9 +29,7 @@ def uploadCSV(request):
 		fileName = str(csvFile.name)
 		rowContent = ""
 
-		if "author.csv" in fileName:
-			rowContent = getAuthorInfo(csvFile)
-		elif "score.csv" in fileName:
+		if "score.csv" in fileName:
 			rowContent = getReviewScoreInfo(csvFile)
 		elif "review.csv" in fileName:
 			rowContent = getReviewInfo(csvFile)

@@ -3,9 +3,8 @@ import * as axios from 'axios';
 const BASE_URL = 'http://localhost:8000';
 //const BASE_URL = 'http://chairdatavis.herokuapp.com';
 
-function upload(formData) {
-  const url = `${BASE_URL}/upload/`;
-  // const url = '/upload/'
+function upload(formData, functionUrl) {
+  const url = `${BASE_URL}${functionUrl}`;
   return axios({
     method: 'post',
     url,

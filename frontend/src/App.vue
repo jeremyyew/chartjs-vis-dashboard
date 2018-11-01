@@ -77,18 +77,18 @@
                 <table>
                   <thead>
                     <tr>
-                      <th v-for="col in authorColumns">
-                        <select v-model="selected">
-                          <option>Name</option>
-                          <option>Country</option>
-                          <option>Affilation</option>
-
+                      <th v-for="(col, i) in authorData.columns">
+                        <select>
+                          <option
+                            v-for="(value, key) in authorData.fields">
+                            {{ key }}
+                          </option>
                         </select>
                         <br>{{ col[0] }}
                       </th>
                     </tr>
-                    <tr v-for="i in (1, Math.min(5, numAuthorRows))">
-                      <td v-for="col in authorColumns">
+                    <tr v-for="i in (1, Math.min(5, authorData.columns.length))">
+                      <td v-for="col in authorData.columns">
                         {{ col[i] }}
                       </td>
                     </tr>
@@ -96,7 +96,7 @@
                 </table>
                 <el-button
                   type="primary"
-                  @click="parseCsvFile()"
+                  @click="getAuthorData()"
                 >
                   Submit
                 </el-button>
@@ -159,8 +159,7 @@
                     :disable="isSaving"
                     accept=".csv"
                     class="input-file"
-                    @change="filesChange($event.target.name, $event.target.files);
-                             uploadAuthorCSV($event.target.name, $event.target.files);
+                    @change="uploadAuthorCSV($event.target.name, $event.target.files);
                              fileCount = $event.target.files.length"
                   >
                   <p
@@ -296,10 +295,20 @@ export default {
         review: {},
         submission: {},
       },
-      authorColumns: [],
       submissionColumns: [],
       reviewColumns: [],
-      numAuthorRows: 0,
+      authorData: {
+        fileName: '',
+        columns: [],
+        name: [],
+        country: [],
+        affiliation: [],
+        fields: {
+          Name: -1,
+          Affiliation: -1,
+          Country: -1,
+        },
+      },
       numSubmissionRows: 0,
       numReviewRows: 0,
       lastUpdatedViz: { value: 'author' },
@@ -373,7 +382,7 @@ export default {
       // upload data to the server
       this.currentStatus = STATUS_SAVING;
 
-      upload(formData)
+      upload(formData, '/upload/')
         .then((x) => {
           // console.log("inside success function!");
           // console.log(x);
@@ -417,10 +426,12 @@ export default {
         });
     },
     uploadAuthorCSV(fieldName, fileList) {
-      console.log(document.querySelector('.input-file')
+      const nameArray = document.querySelector('.input-file')
         .value
-        .split('\\'));
-      // handle file changes
+        .split('\\');
+      const inputFileName = nameArray[nameArray.length - 1];
+      this.authorData.fileName = inputFileName;
+
       const formData = new FormData();
 
       if (!fileList.length) return;
@@ -434,10 +445,33 @@ export default {
         });
 
       this.mapAuthorHeadersDialogOpen = true;
-      parse(formData)
+      upload(formData, '/parse/')
         .then((x) => {
-          this.authorColumns = x.columns;
-          this.numAuthorRows = x.columns[0].length;
+          this.authorData.columns = x.columns;
+        });
+
+      document.querySelector('.input-file').value = '';
+    },
+    getAuthorData() {
+      this.mapAuthorHeadersDialogOpen = false;
+      const rawAuthorLines = [];
+      var i;
+      for (i = 1; i < this.authorData.columns[0].length; i++) {
+        rawAuthorLines.push({
+          name: this.authorData.columns[1][i] + ' ' + this.authorData.columns[2][i],
+          country: this.authorData.columns[4][i],
+          affiliation: this.authorData.columns[5][i],
+        });
+      }
+      upload(rawAuthorLines, '/getAuthorInfo/')
+        .then((x) => {
+          const authorFileName = this.authorData.fileName;
+
+          this.lastUpdatedViz = { value: x.infoType };
+          this.result[x.infoType] = {
+            authorFileName,
+            chartData: x.infoData,
+          };
         });
     },
     filesChange(fieldName, fileList) {

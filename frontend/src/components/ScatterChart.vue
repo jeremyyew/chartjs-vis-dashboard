@@ -1,6 +1,6 @@
 <script>
 import { Scatter } from 'vue-chartjs';
-import Utils from '@/Utils';
+import utils from '@/utils';
 
 export default {
   extends: Scatter,
@@ -16,7 +16,7 @@ export default {
         },
         scales: {
           yAxes: [{
-            scaleLabel: Utils.labelUtil(this.yLabel),
+            scaleLabel: utils.labelUtil(this.yLabel),
             ticks: {
               beginAtZero: true,
               callback(value, index, values) {
@@ -31,7 +31,7 @@ export default {
             },
           }],
           xAxes: [{
-            scaleLabel: Utils.labelUtil(this.xLabel),
+            scaleLabel: utils.labelUtil(this.xLabel),
             gridLines: {
               display: false,
             },

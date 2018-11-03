@@ -1,1 +1,1 @@
-web: gunicorn be.wsgi --log-file -
+web: gunicorn chairdatavis.wsgi --log-file -

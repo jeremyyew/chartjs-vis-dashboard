@@ -29,41 +29,160 @@
               id="sign-in-col"
               :span="6"
             >
-              <div v-if="storeState.loggedIn && storeState.username">
-                <el-button
-                  icon="el-icon-info"
-                  type="success"
-                  @click="logout"
-                >
-                  {{ storeState.username }}
-                </el-button>
-              </div>
-              <div v-else>
-                <el-button
-                  id="sign-in"
-                  type="primary"
-                  @click="authDialogOpen = true"
-                >
-                  Log In
-                </el-button>
-              </div>
+              <el-button
+                v-if="!isAuthenticated"
+                id="sign-in"
+                type="primary"
+                @click="authDialogOpen = true"
+              >
+                Log In
+              </el-button>
+              <el-button
+                v-if="isAuthenticated"
+                id="sign-out"
+                type="primary"
+                @click="logout"
+              >
+                Log Out ({{ username }})
+              </el-button>
               <el-dialog
-                title="Log in or sign up with:"
+                title="Log in or Sign Up"
                 :visible.sync="authDialogOpen"
                 width="50%"
               >
-                <el-button
-                  type="primary"
-                  @click="authenticate('facebook')"
+                <el-tabs
+                  v-model="loginFormActiveTabName"
+                  :stretch="true"
                 >
-                  Facebook
-                </el-button>
-                <el-button
-                  type="primary"
-                  @click="authenticate('github')"
-                >
-                  Github
-                </el-button>
+                  <el-tab-pane
+                    label="Log In"
+                    name="loginTab"
+                  >
+                    <el-form
+                      ref="loginForm"
+                      v-loading="isLoginLoading"
+                      :rules="loginRules"
+                      :model="loginForm"
+                      label-width="120px"
+                    >
+                      <el-form-item
+                        label="Username"
+                        prop="username"
+                      >
+                        <el-input v-model="loginForm.username" />
+                      </el-form-item>
+                      <el-form-item
+                        label="Password"
+                        prop="password"
+                      >
+                        <el-input
+                          v-model="loginForm.password"
+                          type="password"
+                        />
+                      </el-form-item>
+                      <el-form-item>
+                        <el-button
+                          type="primary"
+                          class="btn-block"
+                          @click="login"
+                        >
+                          Login
+                        </el-button>
+                      </el-form-item>
+                      <el-form-item>
+                        <div class="side-line">or</div>
+                      </el-form-item>
+                      <el-form-item>
+                        <el-button
+                          type="primary"
+                          class="btn-facebook btn-block"
+                          icon="fab fa-facebook"
+                          @click="authenticate('facebook')"
+                        >
+                          Login with Facebook
+                        </el-button>
+                      </el-form-item>
+                      <el-form-item>
+                        <el-button
+                          type="primary"
+                          class="btn-google btn-block"
+                          icon="fab fa-google"
+                          @click="authenticate('google')"
+                        >
+                          Login with Google
+                        </el-button>
+                      </el-form-item>
+                      <el-form-item>
+                        <el-button
+                          type="primary"
+                          class="btn-github btn-block"
+                          icon="fab fa-github"
+                          @click="authenticate('github')"
+                        >
+                          Login with Github
+                        </el-button>
+                      </el-form-item>
+                    </el-form>
+                  </el-tab-pane>
+                  <el-tab-pane
+                    label="Sign Up"
+                    name="signupTab"
+                  >
+                    <el-form
+                      ref="registerForm"
+                      v-loading="isRegistrationLoading"
+                      :rules="registerRules"
+                      :model="registerForm"
+                      label-width="120px"
+                    >
+                      <el-form-item
+                        label="Email"
+                        prop="email"
+                      >
+                        <el-input
+                          v-model="registerForm.email"
+                          type="email"
+                        />
+                      </el-form-item>
+                      <el-form-item
+                        label="Username"
+                        prop="username"
+                      >
+                        <el-input
+                          v-model="registerForm.username"
+                        />
+                      </el-form-item>
+                      <el-form-item
+                        label="Password"
+                        prop="password"
+                      >
+                        <el-input
+                          v-model="registerForm.password"
+                          type="password"
+                        />
+                      </el-form-item>
+                      <el-form-item
+                        label="Confirm"
+                        prop="checkPassword"
+                      >
+                        <el-input
+                          v-model="registerForm.checkPassword"
+                          type="password"
+                        />
+                      </el-form-item>
+                      <el-form-item>
+                        <el-button
+                          type="primary"
+                          class="btn-block"
+                          @click="register"
+                        >
+                          Sign Up
+                        </el-button>
+                      </el-form-item>
+                    </el-form>
+                  </el-tab-pane>
+                </el-tabs>
+
                 <span
                   slot="footer"
                   class="dialog-footer"
@@ -158,6 +277,8 @@ import ResultTabs from '@/components/ResultTabs';
 import Auth from '@/components/Auth';
 import Store from '@/store';
 import utils from '@/utils'
+import axios from 'axios';
+import jwt_decode from 'jwt-decode';
 
 const STATUS_INITIAL = 0;
 const STATUS_SAVING = 1;
@@ -167,13 +288,103 @@ const
 
 const { stringify } = utils;
 
+const REFRESH_TOKEN_MS = 15 * 60 * 1000;
+let refreshTokenTimer;
+
 export default {
   name: 'App',
   components: { ResultTabs },
   data() {
+    const validatePassword = (rule, value, callback) => {
+      if (this.registerForm.checkPassword !== '') {
+        this.$refs.registerForm.validateField('checkPassword');
+      }
+      callback();
+    };
+    const validateCheckPassword = (rule, value, callback) => {
+      if (value !== this.registerForm.password) {
+        callback(new Error('Please confirm your password again because it is not matching.'));
+      } else {
+        callback();
+      }
+    };
     return {
       storeState: Store.state,
       authDialogOpen: false,
+      isRegistrationLoading: false,
+      isLoginLoading: false,
+      isAuthenticated: this.$auth.isAuthenticated(),
+      username: this.$auth.isAuthenticated() ? jwt_decode(this.$auth.getToken()).username : null,
+      loginFormActiveTabName: 'loginTab',
+      loginForm: {
+        username: '',
+        password: '',
+      },
+      loginRules: {
+        username: [
+          {
+            required: true,
+            message: 'Please input a username',
+            trigger: 'blur',
+          },
+        ],
+        password: [
+          {
+            required: true,
+            message: 'Please input a password',
+            trigger: 'blur',
+          },
+        ],
+      },
+      registerForm: {
+        email: '',
+        username: '',
+        password: '',
+        checkPassword: '',
+      },
+      registerRules: {
+        email: [
+          {
+            required: true,
+            message: 'Please input an email address',
+            trigger: 'blur',
+          },
+          {
+            type: 'email',
+            message: 'Please input a valid email',
+            trigger: 'blur',
+          },
+        ],
+        username: [
+          {
+            required: true,
+            message: 'Please input a username',
+            trigger: 'blur',
+          },
+        ],
+        password: [
+          {
+            required: true,
+            message: 'Please input a password',
+            trigger: 'blur',
+          },
+          {
+            validator: validatePassword,
+            trigger: 'blur',
+          },
+        ],
+        checkPassword: [
+          {
+            required: true,
+            message: 'Please confirm your password',
+            trigger: 'blur',
+          },
+          {
+            validator: validateCheckPassword,
+            trigger: 'blur',
+          },
+        ],
+      },
       uploadedFiles: [],
       uploadError: null,
       currentStatus: null,
@@ -219,6 +430,11 @@ export default {
     console.log(`Store.state: ${stringify(Store.state)}`);
     console.log(`storeState: ${stringify(this.storeState)}`);
     this.$persist(['storeState']);
+
+
+    if (this.$auth.getToken() !== null) {
+      this.refreshToken();
+    }
   },
   mounted() {
     this.reset();
@@ -232,13 +448,114 @@ export default {
     //     duration: 2500,
     //   });
     // },
-    logout() {
-      Store.logout();
+    setUserAuthenticated() {
+      this.isAuthenticated = true;
+      this.username = jwt_decode(this.$auth.getToken()).username;
+      refreshTokenTimer = setTimeout(this.refreshToken, REFRESH_TOKEN_MS);
+    },
+    login() {
+      this.$refs.loginForm.validate((valid) => {
+        if (!valid) {
+          return false;
+        }
+        this.isLoginLoading = true;
+        this.$auth.login(this.loginForm).then(() => {
+          this.setUserAuthenticated();
+          this.authDialogOpen = false;
+        }).catch((error) => {
+          const errorMessage = error.response.data.non_field_errors[0];
+
+          this.$message({
+            message: errorMessage !== undefined ? errorMessage : 'Unexpected login failure. Please try again later.',
+            type: 'error',
+          });
+        }).finally(() => {
+          this.isLoginLoading = false;
+        });
+
+        return true;
+      });
+    },
+    register() {
+      this.$refs.registerForm.validate((valid) => {
+        if (!valid) {
+          return false;
+        }
+
+        this.isRegistrationLoading = true;
+        this.$auth.register({
+          username: this.registerForm.username,
+          email: this.registerForm.email,
+          password: this.registerForm.password,
+        }).then((response) => {
+          this.$message({
+            message: 'Sign up successful!',
+            type: 'success',
+          });
+          // TODO: trigger login automatically?
+        }).catch((error) => {
+          this.$message({
+            message: error.response.data.detail,
+            type: 'error',
+          });
+        }).finally(() => {
+          this.isRegistrationLoading = false;
+        });
+        return true;
+      });
+    },
+    refreshToken() {
+      axios.post(process.env.VUE_APP_API_BASE_URL + process.env.VUE_APP_TOKEN_REFRESH_URL,
+        { token: this.$auth.getToken() })
+        .then(() => {
+          this.setUserAuthenticated();
+        })
+        .catch(() => {
+          this.logout();
+        });
     },
     authenticate(provider) {
-      Auth.authenticate(provider);
-      Store.login('jeremy.yew@u.yale-nus.edu.sg');
-      this.authDialogOpen = false;
+      // Auth.authenticate(provider);
+      // Store.login('jeremy.yew@u.yale-nus.edu.sg');
+      this.isLoginLoading = true;
+      this.$auth.authenticate(provider, { provider: provider === 'google' ? 'google-oauth2' : provider })
+        .then(() => {
+          this.setUserAuthenticated();
+          this.authDialogOpen = false;
+          this.isLoginLoading = false;
+
+          axios.post(`${process.env.VUE_APP_API_BASE_URL}api/checkauth/`)
+            .then((responseInner) => {
+              console.log(responseInner.data);
+            })
+            .catch((error) => {
+            });
+        })
+        .catch((error) => {
+          // We want to use finally to set the login loading to false.
+          // However, the promise here is a custom implementation and has no finally.
+          this.isLoginLoading = false;
+          console.log(error);
+        });
+    },
+    logout() {
+      // Store.logout();
+      this.$auth.logout()
+        .then(() => {
+          clearTimeout(refreshTokenTimer);
+          this.isAuthenticated = false;
+          // Because we want to allow calling logout at any point of time, e.g. during create, this (and child)
+          // components might not have been mounted yet
+          this.$nextTick(() => {
+            this.$message({
+              message: 'You have been signed out!',
+              type: 'warning',
+            });
+          });
+        })
+        .catch((error) => {
+          console.log(`Failed to log out: ${error}`);
+        });
     },
     reset() {
       // reset form to initial state
@@ -319,6 +636,8 @@ export default {
 </script>
 
 <style lang="scss">
+  @import "@fortawesome/fontawesome-free/css/all.css";
+  @import "@fortawesome/fontawesome-free/css/fontawesome.css";
   $content-padding: 20px;
   #upload {
   }
@@ -428,5 +747,43 @@ export default {
   }
 
   #main-header {
+  }
+
+  .side-line {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .side-line:before, .side-line:after {
+    content: "";
+    flex: 1 1;
+    border-bottom: 1px solid rgba(0,0,0,.2);
+    margin:auto .5em;
+  }
+
+  .btn-block {
+    width: 100%;
+  }
+
+  .btn-facebook {
+    border: 0;
+    background-color: #4267b2;
+  }
+  .btn-facebook:hover, .btn-facebook:focus {
+    background-color: #3b5291;
+  }
+  .btn-google {
+    border: 0;
+    background-color: #4285f4;
+  }
+  .btn-google:hover, .btn-google:focus {
+    background-color: #426fde;
+  }
+  .btn-github {
+    border: 0;
+    background-color: #333333;
+  }
+  .btn-github:hover, .btn-github:focus {
+    background-color: #555555;
   }
 </style>

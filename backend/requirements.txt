@@ -1,5 +1,17 @@
-Django==1.11.11
+django
+gunicorn
+django-heroku
+dj_database_url
+
+django-cors-headers
+
+# Rest Framework dependencies
 djangorestframework
-gunicorn==19.8.1
-whitenoise==3.3.1
-django-cors-headers==2.2.0
+markdown
+django-filter
+djangorestframework-jwt
+
+# Social Authentication
+rest-social-auth
+# Rest social auth requires the following version
+social-auth-app-django>=2.1.0,<3.0

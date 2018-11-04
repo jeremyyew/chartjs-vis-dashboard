@@ -1,4 +1,4 @@
-import * as axios from 'axios';
+import axios from 'axios';
 import Const from './Const';
 // const BASE_URL = 'http://localhost:8000';
 const { BASE_URL } = Const;

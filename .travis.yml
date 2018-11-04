@@ -1,9 +1,44 @@
-language: python
-before_install: cd backend
-script: echo 'Not running tests'
-#before_deploy: cd backend
-deploy:
-  provider: heroku
-  api_key:
-    secure: MMi/2KcyXHRMQDVdOE4drxA50Gkxw6o52j2R8rNI/T+runoN8NCfbhmryeRLL58YHHQ6udG1iUeEajqEqrf/cHTLs+GzHHbhisCY5o0wwInisxENFC4ESeDQ9bFTkFdbgyGZjtFslVKKI9YhrvhSlCOm5N3UjgTmiitx1Ug6c1P7k6/37Htu/3QeYkqOb1Avh9791DJrutbymxHbReLIWqg/U0iquGK0SeOYWWmaKAKeY4BM6trMkbKfe//LGtLXHK0uyt0BxedPfTK8Kvdk4Usgh0TuCqVMhtTE1Fe1X0sLxrc0SbjoCX28dsh4N1MgQC9KPejb8gYN8he6LBQXe5tA3FuZGoQqQAgwGr3o6I6XQH9E+D7W71qmu1jy18UWiD//HpaHI70NdhmyakUX17lbiOqDkMHVLnnrNmQjDIKklVXM5I3nTxnwYc0wEk6t5+LAI7+PH/xX6geHQN4LKekrDWm2TWM01jBDwxqTQEWftd6hCa8t7CyyUK8XIsWwb7VRhjygVbd5tQ6DsTLBkkTuZujQPuScBxJAHY2ebEbVeSCJm2QpvbcRD5U+azQPX5UN0H4ZFxO4RpsQKrNKNHLjzR5ATxtMHQzNlUksDkfAA0bGG8PcwTCOpwuLcca0o+h5SUVWmGZB8oZyM6Fl4PoxpA7P9mnWij3++CCt9jc=
-  app: warm-plateau-64202
+jobs:
+  include:
+    - stage: build
+      language: python
+      python:
+      - "3.6"
+      cache: pip # the caching does not seem to work. However, it seems fast enough so let's ignore this for now
+      before_install:
+      - cd backend
+      install:
+      - pip install -r requirements.txt
+      script: echo 'Not running backend tests'
+    - language: node_js
+      node_js:
+      - "node"
+      cache:
+        # since frontend is in subdirectory the automatic cache does not seem to work so manual cache is used
+        directories:
+        - frontend/node_modules
+      before_install:
+      - cd frontend
+      install:
+      - npm install
+      script: npm run build
+    - stage: deploy
+      if: branch = master AND type != pull_request
+      language: python
+      python:
+      - "3.6"
+      cache:
+        directories:
+        - frontend/node_modules
+      script:
+        - cd frontend
+        - npm install
+        - npm run build
+      before_deploy:
+      - cd ../backend
+      deploy:
+        skip_cleanup: true
+        provider: heroku
+        api_key:
+          secure: MMi/2KcyXHRMQDVdOE4drxA50Gkxw6o52j2R8rNI/T+runoN8NCfbhmryeRLL58YHHQ6udG1iUeEajqEqrf/cHTLs+GzHHbhisCY5o0wwInisxENFC4ESeDQ9bFTkFdbgyGZjtFslVKKI9YhrvhSlCOm5N3UjgTmiitx1Ug6c1P7k6/37Htu/3QeYkqOb1Avh9791DJrutbymxHbReLIWqg/U0iquGK0SeOYWWmaKAKeY4BM6trMkbKfe//LGtLXHK0uyt0BxedPfTK8Kvdk4Usgh0TuCqVMhtTE1Fe1X0sLxrc0SbjoCX28dsh4N1MgQC9KPejb8gYN8he6LBQXe5tA3FuZGoQqQAgwGr3o6I6XQH9E+D7W71qmu1jy18UWiD//HpaHI70NdhmyakUX17lbiOqDkMHVLnnrNmQjDIKklVXM5I3nTxnwYc0wEk6t5+LAI7+PH/xX6geHQN4LKekrDWm2TWM01jBDwxqTQEWftd6hCa8t7CyyUK8XIsWwb7VRhjygVbd5tQ6DsTLBkkTuZujQPuScBxJAHY2ebEbVeSCJm2QpvbcRD5U+azQPX5UN0H4ZFxO4RpsQKrNKNHLjzR5ATxtMHQzNlUksDkfAA0bGG8PcwTCOpwuLcca0o+h5SUVWmGZB8oZyM6Fl4PoxpA7P9mnWij3++CCt9jc=
+        app: warm-plateau-64202

@@ -251,7 +251,7 @@ import HoriBarChart from '@/components/HoriBarChart';
 import PieChart from '@/components/PieChart';
 
 import EditableText from '@/components/EditableText';
-import Utils from '@/Utils';
+import Utils from '@/utils';
 import Const from './Const';
 
 import VueWordCloud from 'vuewordcloud';

@@ -81,3 +81,6 @@ dmypy.json
 
 /static/
 /dataanalysis/templates/dataanalysis/index.html
+
+Pipfile
+Pipfile.lock

@@ -205,7 +205,42 @@
             <!--<router-link to="/te">-->
             <!--<el-button type="success">WY</el-button>-->
             <!--</router-link>-->
-
+            <el-dialog
+              title="Map author.csv headers"
+              :visible.sync="mappingHeaderDialogs.author"
+              width="85%"
+            >
+              <el-button
+                type="primary"
+                @click="mappingHeaderDialogs.author=false"
+              >
+                Submit
+              </el-button>
+            </el-dialog>
+            <el-dialog
+              title="Map submission.csv headers"
+              :visible.sync="mappingHeaderDialogs.submission"
+              width="85%"
+            >
+              <el-button
+                type="primary"
+                @click="mappingHeaderDialogs.submission=false"
+              >
+                Submit
+              </el-button>
+            </el-dialog>
+            <el-dialog
+              title="Map review.csv headers"
+              :visible.sync="mappingHeaderDialogs.review"
+              width="85%"
+            >
+              <el-button
+                type="primary"
+                @click="mappingHeaderDialogs.review=false"
+              >
+                Submit
+              </el-button>
+            </el-dialog>
             <center id="upload">
               <form
                 v-if="isInitial || isSaving || isSuccess"
@@ -213,26 +248,77 @@
                 novalidate
               >
                 <!--The type multipart/form-data is important, otherwise Django will not accept-->
-                <h2>Upload File</h2>
+                <h2>Upload Files</h2>
+                <h4>Drag files into their respective boxes, or click to browse</h4>
                 <div class="dropbox">
                   <input
                     type="file"
-                    multiple
                     :name="uploadFieldName"
                     :disable="isSaving"
                     accept=".csv"
                     class="input-file"
                     @change="filesChange($event.target.name, $event.target.files);
+                             mappingHeaderDialogs.author = true;
                              fileCount = $event.target.files.length"
                   >
                   <p
                     v-if="isInitial || isSuccess"
-                    style="margin-bottom:0px;padding-top:20px;font-size:15px"
+                    style="margin-bottom:0px;padding-top:32px;font-size:18px"
                   >
-                    Drag your file(s) here to begin<br> or click to browse
+                    <strong>author.csv</strong>
                   </p>
-                  <p v-if="isSaving">
-                    Uploading {{ fileCount }} files...
+                  <p
+                    v-if="isSaving"
+                    style="margin-bottom:0px;padding-top:32px;font-size:18px"
+                  >
+                    Uploading <strong>author.csv</strong> file...
+                  </p>
+                </div>
+                <div class="dropbox">
+                  <input
+                    type="file"
+                    :name="uploadFieldName"
+                    :disable="isSaving"
+                    accept=".csv"
+                    class="input-file"
+                    @change="filesChange($event.target.name, $event.target.files);
+                             mappingHeaderDialogs.submission = true;
+                             fileCount = $event.target.files.length"
+                  >
+                  <p
+                    v-if="isInitial || isSuccess"
+                    style="margin-bottom:0px;padding-top:32px;font-size:18px"
+                  >
+                    <strong>submission.csv</strong>
+                  </p>
+                  <p
+                    v-if="isSaving"
+                    style="margin-bottom:0px;padding-top:32px;font-size:18px"
+                  >
+                    Uploading <strong>submission.csv</strong> file...
+                  </p>
+                </div>
+                <div class="dropbox">
+                  <input
+                    type="file"
+                    :name="uploadFieldName"
+                    :disable="isSaving"
+                    accept=".csv"
+                    class="input-file"
+                    @change="filesChange($event.target.name, $event.target.files);
+                             mappingHeaderDialogs.review = true;"
+                  >
+                  <p
+                    v-if="isInitial || isSuccess"
+                    style="margin-bottom:0px;padding-top:32px;font-size:18px"
+                  >
+                    <strong>review.csv</strong>
+                  </p>
+                  <p
+                    v-if="isSaving"
+                    style="margin-bottom:0px;padding-top:32px;font-size:18px"
+                  >
+                    Uploading <strong>review.csv</strong> file...
                   </p>
                 </div>
               </form>
@@ -394,6 +480,11 @@ export default {
         author: {},
         review: {},
         submission: {},
+      },
+      mappingHeaderDialogs: {
+        author: false,
+        submission: false,
+        review: false,
       },
       lastUpdatedViz: { value: 'author' },
       options: [

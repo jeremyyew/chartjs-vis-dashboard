@@ -210,6 +210,27 @@
               :visible.sync="mappingAuthorData.dialogOpen"
               width="85%"
             >
+              <el-table
+                :data="mappingAuthorData.previewData"
+                border
+              >
+                <el-table-column
+                  v-for="idx in (0, mappingAuthorData.numCols)"
+                  :key="idx"
+                  :prop="String(idx)"
+                  :label="mappingAuthorData.previewData[0][idx]"
+                  :width="150"
+                >
+                </el-table-column>
+              </el-table>
+              <el-select placeholder="Select">
+                <el-option
+                  v-for="option in mappingAuthorData.options"
+                  :key="option.value"
+                  :value="option.value"
+                >
+                </el-option>
+              </el-select>
               <el-button
                 type="primary"
                 @click="getDataInsight('mappingAuthorData')"
@@ -222,6 +243,19 @@
               :visible.sync="mappingSubmissionData.dialogOpen"
               width="85%"
             >
+              <el-table
+                :data="mappingSubmissionData.previewData"
+                border
+              >
+                <el-table-column
+                  v-for="idx in (0, mappingSubmissionData.numCols)"
+                  :key="idx"
+                  :prop="String(idx)"
+                  :label="mappingSubmissionData.previewData[0][idx]"
+                  :width="150"
+                >
+                </el-table-column>
+              </el-table>
               <el-button
                 type="primary"
                 @click="getDataInsight('mappingSubmissionData')"
@@ -234,6 +268,19 @@
               :visible.sync="mappingReviewData.dialogOpen"
               width="85%"
             >
+              <el-table
+                :data="mappingReviewData.previewData"
+                border
+              >
+                <el-table-column
+                  v-for="idx in (0, mappingReviewData.numCols)"
+                  :key="idx"
+                  :prop="String(idx)"
+                  :label="mappingReviewData.previewData[0][idx]"
+                  :width="150"
+                >
+                </el-table-column>
+              </el-table>
               <el-button
                 type="primary"
                 @click="getDataInsight('mappingReviewData')"
@@ -257,7 +304,8 @@
                     :disable="isSaving"
                     accept=".csv"
                     class="input-author-file"
-                    @change="uploadCSV($event.target.name, $event.target.files, 'mappingAuthorData')"
+                    @change="uploadCSV($event.target.name, $event.target.files,
+                                       'mappingAuthorData')"
                   >
                   <p style="margin-bottom:0px;padding-top:32px;font-size:18px">
                     <strong>author.csv</strong>
@@ -270,7 +318,8 @@
                     :disable="isSaving"
                     accept=".csv"
                     class="input-submission-file"
-                    @change="uploadCSV($event.target.name, $event.target.files, 'mappingSubmissionData')"
+                    @change="uploadCSV($event.target.name, $event.target.files,
+                                       'mappingSubmissionData')"
                   >
                   <p style="margin-bottom:0px;padding-top:32px;font-size:18px">
                     <strong>submission.csv</strong>
@@ -283,7 +332,8 @@
                     :disable="isSaving"
                     accept=".csv"
                     class="input-review-file"
-                    @change="uploadCSV($event.target.name, $event.target.files, 'mappingReviewData')"
+                    @change="uploadCSV($event.target.name, $event.target.files,
+                                       'mappingReviewData')"
                   >
                   <p style="margin-bottom:0px;padding-top:32px;font-size:18px">
                     <strong>review.csv</strong>
@@ -450,7 +500,8 @@ export default {
         submission: {},
       },
       mappingAuthorData: {
-        data: [],
+        previewData: [],
+        numCols: 0,
         dialogOpen: false,
         methodName: 'getAuthorInfo',
         fileID: '.input-author-file',
@@ -464,24 +515,21 @@ export default {
         options: [
           {
             value: 'First Name',
-            label: 'First Name',
           },
           {
             value: 'Last Name',
-            label: 'Last Name',
           },
           {
             value: 'Country',
-            label: 'Country',
           },
           {
             value: 'Affiliation',
-            label: 'Affiliation',
           },
         ],
       },
       mappingSubmissionData: {
-        data: [],
+        previewData: [],
+        numCols: 0,
         dialogOpen: false,
         methodName: 'getSubmissionInfo',
         fileID: '.input-submission-file',
@@ -496,7 +544,8 @@ export default {
         },
       },
       mappingReviewData: {
-        data: [],
+        previewData: [],
+        numCols: 0,
         dialogOpen: false,
         methodName: 'getReviewInfo',
         fileID: '.input-review-file',
@@ -655,8 +704,8 @@ export default {
         .then(() => {
           clearTimeout(refreshTokenTimer);
           this.isAuthenticated = false;
-          // Because we want to allow calling logout at any point of time, e.g. during create, this (and child)
-          // components might not have been mounted yet
+          // Because we want to allow calling logout at any point of time, e.g. during create,
+          // this (and child) components might not have been mounted yet
           this.$nextTick(() => {
             this.$message({
               message: 'You have been signed out!',
@@ -674,65 +723,12 @@ export default {
       this.uploadedFiles = [];
       this.uploadError = null;
     },
-    save(formData) {
-      // upload data to the server
-      this.currentStatus = STATUS_SAVING;
-
-      upload(formData, 'upload')
-        .then((x) => {
-          // console.log("inside success function!");
-          // console.log(x);
-          // this.uploadedFiles = [].concat(x);
-          this.currentStatus = STATUS_SUCCESS;
-          this.testChartsDataInput = x;
-
-          let inputFileName = document.querySelector('.input-submission-file')
-            .value
-            .split('\\');
-
-          if (!inputFileName) {
-            inputFileName = document.querySelector('.input-review-file')
-              .value
-              .split('\\');
-          }
-
-          const infoType = x.infoType;
-          const infoData = x.infoData;
-
-          // Update result props passed to ResultTabs
-          this.lastUpdatedViz = { value: infoType };
-          this.result[infoType] = {
-            inputFileName,
-            chartData: infoData,
-          };
-
-          // Note: use router.push to navigate through diff pages programmatically
-          // router.push({
-          //   name: 'Result',
-          //   params: {
-          //     inputFileName,
-          //     chartData: infoData,
-          //     infoType,
-          //   },
-          // });
-
-          // Note: adding the below code to make sure that reuploading the same file will give you sth
-          // Can consider changing this and the same code in catch block to finally();
-          document.querySelector('.input-submission-file').value = '';
-          document.querySelector('.input-review-file').value = '';
-        })
-        .catch((err) => {
-          this.uploadError = err.response;
-          this.currentStatus = STATUS_FAILED;
-          document.querySelector('.input-file').value = '';
-        });
-    },
     uploadCSV(fieldName, fileList, dataField) {
+      if (!fileList.length) return;
+
       this.currentStatus = STATUS_SAVING;
 
       const formData = new FormData();
-      if (!fileList.length) return;
-      // append the files to FormData
       Array
         .from(Array(fileList.length)
           .keys())
@@ -740,10 +736,12 @@ export default {
           formData.append(fieldName, fileList[x], fileList[x].name);
         });
 
-      this[dataField].dialogOpen = true;
       upload(formData, 'parse')
         .then((x) => {
           this[dataField].uploadForm.data = x.data;
+          this[dataField].previewData = x.previewData;
+          this[dataField].numCols = Object.keys(x.previewData[0]).length;
+          this[dataField].dialogOpen = true;
         })
         .catch((err) => {
           this.uploadError = err.response;
@@ -751,7 +749,6 @@ export default {
           document.querySelector(this[dataField].fileID).value = '';
         });
 
-      this[dataField].dialogOpen = true;
     },
     getDataInsight(dataField) {
       this[dataField].dialogOpen = false;

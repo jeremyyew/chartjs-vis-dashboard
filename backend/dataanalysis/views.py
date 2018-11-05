@@ -86,7 +86,16 @@ def parseCSV(request):
     csvFile = request.FILES['file']
     rowCSV = parseCSVFile(csvFile)
 
-    return JsonResponse({'data' : rowCSV})
+    previewData = []
+    for row in rowCSV[:5]:
+        rowData = {}
+        for idx,col in enumerate(row):
+            cell = str(col)
+            rowData[idx] = (cell[:12] + '...') if len(cell) > 12 else cell
+
+        previewData.append(rowData)
+
+    return JsonResponse({'data' : rowCSV, 'previewData': previewData})
 
 
 class UserSerializer(serializers.ModelSerializer):

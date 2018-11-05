@@ -212,7 +212,7 @@
             >
               <el-button
                 type="primary"
-                @click="getAuthorData()"
+                @click="getAuthorData"
               >
                 Submit
               </el-button>
@@ -224,7 +224,7 @@
             >
               <el-button
                 type="primary"
-                @click="mappingSubmissionData.dialogOpen=false"
+                @click="getSubmissionData"
               >
                 Submit
               </el-button>
@@ -236,7 +236,7 @@
             >
               <el-button
                 type="primary"
-                @click="mappingReviewData.dialogOpen=false"
+                @click="getReviewData"
               >
                 Submit
               </el-button>
@@ -257,19 +257,10 @@
                     :disable="isSaving"
                     accept=".csv"
                     class="input-author-file"
-                    @change="uploadAuthorCSV($event.target.name, $event.target.files);"
+                    @change="uploadCSV($event.target.name, $event.target.files, 'mappingAuthorData');"
                   >
-                  <p
-                    v-if="isInitial || isSuccess"
-                    style="margin-bottom:0px;padding-top:32px;font-size:18px"
-                  >
+                  <p style="margin-bottom:0px;padding-top:32px;font-size:18px">
                     <strong>author.csv</strong>
-                  </p>
-                  <p
-                    v-if="isSaving"
-                    style="margin-bottom:0px;padding-top:32px;font-size:18px"
-                  >
-                    Uploading <strong>author.csv</strong> file...
                   </p>
                 </div>
                 <div class="dropbox">
@@ -279,20 +270,10 @@
                     :disable="isSaving"
                     accept=".csv"
                     class="input-submission-file"
-                    @change="filesChange($event.target.name, $event.target.files);
-                             mappingSubmissionData.dialogOpen = true"
+                    @change="uploadCSV($event.target.name, $event.target.files, 'mappingSubmissionData');"
                   >
-                  <p
-                    v-if="isInitial || isSuccess"
-                    style="margin-bottom:0px;padding-top:32px;font-size:18px"
-                  >
+                  <p style="margin-bottom:0px;padding-top:32px;font-size:18px">
                     <strong>submission.csv</strong>
-                  </p>
-                  <p
-                    v-if="isSaving"
-                    style="margin-bottom:0px;padding-top:32px;font-size:18px"
-                  >
-                    Uploading <strong>submission.csv</strong> file...
                   </p>
                 </div>
                 <div class="dropbox">
@@ -302,20 +283,10 @@
                     :disable="isSaving"
                     accept=".csv"
                     class="input-review-file"
-                    @change="filesChange($event.target.name, $event.target.files);
-                             mappingReviewData.dialogOpen = true;"
+                    @change="uploadCSV($event.target.name, $event.target.files, 'mappingReviewData');"
                   >
-                  <p
-                    v-if="isInitial || isSuccess"
-                    style="margin-bottom:0px;padding-top:32px;font-size:18px"
-                  >
+                  <p style="margin-bottom:0px;padding-top:32px;font-size:18px">
                     <strong>review.csv</strong>
-                  </p>
-                  <p
-                    v-if="isSaving"
-                    style="margin-bottom:0px;padding-top:32px;font-size:18px"
-                  >
-                    Uploading <strong>review.csv</strong> file...
                   </p>
                 </div>
               </form>
@@ -481,7 +452,6 @@ export default {
       mappingAuthorData: {
         data: [],
         dialogOpen: false,
-        fileName: null,
         options: [
           {
             value: 'First Name',
@@ -730,8 +700,9 @@ export default {
           document.querySelector('.input-file').value = '';
         });
     },
-    uploadAuthorCSV(fieldName, fileList) {
-      this.mappingAuthorData.fileName = inputFileName;
+    uploadCSV(fieldName, fileList, dataField) {
+      this.currentStatus = STATUS_SAVING;
+
       const formData = new FormData();
       if (!fileList.length) return;
       // append the files to FormData
@@ -742,13 +713,13 @@ export default {
           formData.append(fieldName, fileList[x], fileList[x].name);
         });
 
-      this.mappingAuthorData.dialogOpen = true;
+      this[dataField].dialogOpen = true;
       upload(formData, 'parse')
         .then((x) => {
-          this.mappingAuthorData.data = x.data;
+          this[dataField].data = x.data;
         });
 
-      this.mappingAuthorData.dialogOpen = true;
+      this[dataField].dialogOpen = true;
     },
     getAuthorData() {
       this.mappingAuthorData.dialogOpen = false;
@@ -759,14 +730,16 @@ export default {
 
       const uploadData = {
         authorData: this.mappingAuthorData.data,
-        firstNameCol: 1,
-        lastNameCol: 2,
-        countryCol: 4,
-        affiliationCol: 5,
+        firstNameIndex: 1,
+        lastNameIndex: 2,
+        countryIndex: 4,
+        affiliationIndex: 5,
       };
 
       upload(uploadData, 'getAuthorInfo')
         .then((x) => {
+          this.currentStatus = STATUS_SUCCESS;
+
           this.lastUpdatedViz = { value: x.infoType };
           this.result[x.infoType] = {
             inputFileName,
@@ -775,6 +748,62 @@ export default {
         });
 
       document.querySelector('.input-author-file').value = '';
+    },
+    getSubmissionData() {
+      this.mappingSubmissionData.dialogOpen = false;
+      const nameArray = document.querySelector('.input-submission-file')
+        .value
+        .split('\\');
+      const inputFileName = nameArray[nameArray.length - 1];
+
+      const uploadData = {
+        submissionData: this.mappingSubmissionData.data,
+        acceptanceIndex: 9,
+        submissionTimeIndex: 5,
+        lastEditTimeIndex: 6,
+        trackIndex: 2,
+        keywordIndex: 8,
+        authorIndex: 4,
+      };
+
+      upload(uploadData, 'getSubmissionInfo')
+        .then((x) => {
+          this.currentStatus = STATUS_SUCCESS;
+
+          this.lastUpdatedViz = { value: x.infoType };
+          this.result[x.infoType] = {
+            inputFileName,
+            chartData: x.infoData,
+          };
+        });
+
+      document.querySelector('.input-submission-file').value = '';
+    },
+    getReviewData() {
+      this.mappingReviewData.dialogOpen = false;
+      const nameArray = document.querySelector('.input-review-file')
+        .value
+        .split('\\');
+      const inputFileName = nameArray[nameArray.length - 1];
+
+      const uploadData = {
+        reviewData: this.mappingReviewData.data,
+        submissionIDIndex: 1,
+        evaluationIndex: 6,
+      };
+
+      upload(uploadData, 'getReviewInfo')
+        .then((x) => {
+          this.currentStatus = STATUS_SUCCESS;
+
+          this.lastUpdatedViz = { value: x.infoType };
+          this.result[x.infoType] = {
+            inputFileName,
+            chartData: x.infoData,
+          };
+        });
+
+      document.querySelector('.input-review-file').value = '';
     },
     filesChange(fieldName, fileList) {
       console.log(document.querySelector('.input-submission-file')

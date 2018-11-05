@@ -207,36 +207,36 @@
             <!--</router-link>-->
             <el-dialog
               title="Map author.csv headers"
-              :visible.sync="mappingHeaderDialogs.author"
+              :visible.sync="mappingAuthorData.dialogOpen"
               width="85%"
             >
               <el-button
                 type="primary"
-                @click="mappingHeaderDialogs.author=false"
+                @click="getAuthorData()"
               >
                 Submit
               </el-button>
             </el-dialog>
             <el-dialog
               title="Map submission.csv headers"
-              :visible.sync="mappingHeaderDialogs.submission"
+              :visible.sync="mappingSubmissionData.dialogOpen"
               width="85%"
             >
               <el-button
                 type="primary"
-                @click="mappingHeaderDialogs.submission=false"
+                @click="mappingSubmissionData.dialogOpen=false"
               >
                 Submit
               </el-button>
             </el-dialog>
             <el-dialog
               title="Map review.csv headers"
-              :visible.sync="mappingHeaderDialogs.review"
+              :visible.sync="mappingReviewData.dialogOpen"
               width="85%"
             >
               <el-button
                 type="primary"
-                @click="mappingHeaderDialogs.review=false"
+                @click="mappingReviewData.dialogOpen=false"
               >
                 Submit
               </el-button>
@@ -256,10 +256,8 @@
                     :name="uploadFieldName"
                     :disable="isSaving"
                     accept=".csv"
-                    class="input-file"
-                    @change="filesChange($event.target.name, $event.target.files);
-                             mappingHeaderDialogs.author = true;
-                             fileCount = $event.target.files.length"
+                    class="input-author-file"
+                    @change="uploadAuthorCSV($event.target.name, $event.target.files);"
                   >
                   <p
                     v-if="isInitial || isSuccess"
@@ -280,10 +278,9 @@
                     :name="uploadFieldName"
                     :disable="isSaving"
                     accept=".csv"
-                    class="input-file"
+                    class="input-submission-file"
                     @change="filesChange($event.target.name, $event.target.files);
-                             mappingHeaderDialogs.submission = true;
-                             fileCount = $event.target.files.length"
+                             mappingSubmissionData.dialogOpen = true"
                   >
                   <p
                     v-if="isInitial || isSuccess"
@@ -304,9 +301,9 @@
                     :name="uploadFieldName"
                     :disable="isSaving"
                     accept=".csv"
-                    class="input-file"
+                    class="input-review-file"
                     @change="filesChange($event.target.name, $event.target.files);
-                             mappingHeaderDialogs.review = true;"
+                             mappingReviewData.dialogOpen = true;"
                   >
                   <p
                     v-if="isInitial || isSuccess"
@@ -481,10 +478,36 @@ export default {
         review: {},
         submission: {},
       },
-      mappingHeaderDialogs: {
-        author: false,
-        submission: false,
-        review: false,
+      mappingAuthorData: {
+        data: [],
+        dialogOpen: false,
+        fileName: null,
+        options: [
+          {
+            value: 'First Name',
+            label: 'First Name',
+          },
+          {
+            value: 'Last Name',
+            label: 'Last Name',
+          },
+          {
+            value: 'Country',
+            label: 'Country',
+          },
+          {
+            value: 'Affiliation',
+            label: 'Affiliation',
+          },
+        ],
+      },
+      mappingSubmissionData: {
+        data: [],
+        dialogOpen: false,
+      },
+      mappingReviewData: {
+        data: [],
+        dialogOpen: false,
       },
       lastUpdatedViz: { value: 'author' },
       options: [
@@ -658,7 +681,7 @@ export default {
       // upload data to the server
       this.currentStatus = STATUS_SAVING;
 
-      upload(formData)
+      upload(formData, 'upload')
         .then((x) => {
           // console.log("inside success function!");
           // console.log(x);
@@ -666,13 +689,18 @@ export default {
           this.currentStatus = STATUS_SUCCESS;
           this.testChartsDataInput = x;
 
-          const infoType = x.infoType;
-          const infoData = x.infoData;
-
-          const nameArray = document.querySelector('.input-file')
+          let inputFileName = document.querySelector('.input-submission-file')
             .value
             .split('\\');
-          const inputFileName = nameArray[nameArray.length - 1];
+
+          if (!inputFileName) {
+            inputFileName = document.querySelector('.input-review-file')
+              .value
+              .split('\\');
+          }
+
+          const infoType = x.infoType;
+          const infoData = x.infoData;
 
           // Update result props passed to ResultTabs
           this.lastUpdatedViz = { value: infoType };
@@ -693,7 +721,8 @@ export default {
 
           // Note: adding the below code to make sure that reuploading the same file will give you sth
           // Can consider changing this and the same code in catch block to finally();
-          document.querySelector('.input-file').value = '';
+          document.querySelector('.input-submission-file').value = '';
+          document.querySelector('.input-review-file').value = '';
         })
         .catch((err) => {
           this.uploadError = err.response;
@@ -701,8 +730,54 @@ export default {
           document.querySelector('.input-file').value = '';
         });
     },
+    uploadAuthorCSV(fieldName, fileList) {
+      this.mappingAuthorData.fileName = inputFileName;
+      const formData = new FormData();
+      if (!fileList.length) return;
+      // append the files to FormData
+      Array
+        .from(Array(fileList.length)
+          .keys())
+        .map((x) => {
+          formData.append(fieldName, fileList[x], fileList[x].name);
+        });
+
+      this.mappingAuthorData.dialogOpen = true;
+      upload(formData, 'parse')
+        .then((x) => {
+          this.mappingAuthorData.data = x.data;
+        });
+
+      this.mappingAuthorData.dialogOpen = true;
+    },
+    getAuthorData() {
+      this.mappingAuthorData.dialogOpen = false;
+      const nameArray = document.querySelector('.input-author-file')
+        .value
+        .split('\\');
+      const inputFileName = nameArray[nameArray.length - 1];
+
+      const uploadData = {
+        authorData: this.mappingAuthorData.data,
+        firstNameCol: 1,
+        lastNameCol: 2,
+        countryCol: 4,
+        affiliationCol: 5,
+      };
+
+      upload(uploadData, 'getAuthorInfo')
+        .then((x) => {
+          this.lastUpdatedViz = { value: x.infoType };
+          this.result[x.infoType] = {
+            inputFileName,
+            chartData: x.infoData,
+          };
+        });
+
+      document.querySelector('.input-author-file').value = '';
+    },
     filesChange(fieldName, fileList) {
-      console.log(document.querySelector('.input-file')
+      console.log(document.querySelector('.input-submission-file')
         .value
         .split('\\'));
       // handle file changes
@@ -711,11 +786,13 @@ export default {
       if (!fileList.length) return;
 
       // append the files to FormData
-      Array
+      let inputFileName;
+        Array
         .from(Array(fileList.length)
           .keys())
         .map((x) => {
           formData.append(fieldName, fileList[x], fileList[x].name);
+          inputFileName = fileList[x].name;
         });
 
       // save it
@@ -745,7 +822,25 @@ export default {
     cursor: pointer;
   }
 
-  .input-file {
+  .input-author-file {
+    opacity: 0; /* invisible but it's there! */
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    cursor: pointer;
+    left: 0; /*put this otherwise the input box will shift by half of the parent width */
+  }
+
+  .input-submission-file {
+    opacity: 0; /* invisible but it's there! */
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    cursor: pointer;
+    left: 0; /*put this otherwise the input box will shift by half of the parent width */
+  }
+
+  .input-review-file {
     opacity: 0; /* invisible but it's there! */
     width: 100%;
     height: 100%;

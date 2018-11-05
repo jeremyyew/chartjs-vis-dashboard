@@ -38,7 +38,7 @@ def getAuthorInfo(request):
 	
 	if request.body:
 		data = json.loads(request.body)
-		authorData = data['authorData'][1:]
+		authorData = data['data'][1:]
 		authorData = [ele for ele in authorData if ele]
 		firstNameIndex = data['firstNameIndex']
 		lastNameIndex = data['lastNameIndex']
@@ -118,7 +118,7 @@ def getReviewInfo(request):
 
 	if request.body:
 		data = json.loads(request.body)
-		reviewData = data['reviewData']
+		reviewData = data['data']
 		reviewData = [ele for ele in reviewData if ele]
 		submissionIDIndex = data['submissionIDIndex']
 		evaluationIndex = data['evaluationIndex']
@@ -193,7 +193,7 @@ def getSubmissionInfo(request):
 	"""
 	if request.body:
 		data = json.loads(request.body)
-		submissionData = data['submissionData'][1:]
+		submissionData = data['data'][1:]
 		submissionData = [ele for ele in submissionData if ele]
 		acceptanceIndex = data['acceptanceIndex']
 		submissionTimeIndex = data['submissionTimeIndex']

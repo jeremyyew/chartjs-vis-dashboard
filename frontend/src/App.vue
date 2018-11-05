@@ -212,7 +212,7 @@
             >
               <el-button
                 type="primary"
-                @click="getAuthorData"
+                @click="getDataInsight('mappingAuthorData')"
               >
                 Submit
               </el-button>
@@ -224,7 +224,7 @@
             >
               <el-button
                 type="primary"
-                @click="getSubmissionData"
+                @click="getDataInsight('mappingSubmissionData')"
               >
                 Submit
               </el-button>
@@ -236,7 +236,7 @@
             >
               <el-button
                 type="primary"
-                @click="getReviewData"
+                @click="getDataInsight('mappingReviewData')"
               >
                 Submit
               </el-button>
@@ -257,7 +257,7 @@
                     :disable="isSaving"
                     accept=".csv"
                     class="input-author-file"
-                    @change="uploadCSV($event.target.name, $event.target.files, 'mappingAuthorData');"
+                    @change="uploadCSV($event.target.name, $event.target.files, 'mappingAuthorData')"
                   >
                   <p style="margin-bottom:0px;padding-top:32px;font-size:18px">
                     <strong>author.csv</strong>
@@ -270,7 +270,7 @@
                     :disable="isSaving"
                     accept=".csv"
                     class="input-submission-file"
-                    @change="uploadCSV($event.target.name, $event.target.files, 'mappingSubmissionData');"
+                    @change="uploadCSV($event.target.name, $event.target.files, 'mappingSubmissionData')"
                   >
                   <p style="margin-bottom:0px;padding-top:32px;font-size:18px">
                     <strong>submission.csv</strong>
@@ -283,7 +283,7 @@
                     :disable="isSaving"
                     accept=".csv"
                     class="input-review-file"
-                    @change="uploadCSV($event.target.name, $event.target.files, 'mappingReviewData');"
+                    @change="uploadCSV($event.target.name, $event.target.files, 'mappingReviewData')"
                   >
                   <p style="margin-bottom:0px;padding-top:32px;font-size:18px">
                     <strong>review.csv</strong>
@@ -452,6 +452,15 @@ export default {
       mappingAuthorData: {
         data: [],
         dialogOpen: false,
+        methodName: 'getAuthorInfo',
+        fileID: '.input-author-file',
+        uploadForm: {
+          data: null,
+          firstNameIndex: 1,
+          lastNameIndex: 2,
+          countryIndex: 4,
+          affiliationIndex: 5,
+        },
         options: [
           {
             value: 'First Name',
@@ -474,10 +483,28 @@ export default {
       mappingSubmissionData: {
         data: [],
         dialogOpen: false,
+        methodName: 'getSubmissionInfo',
+        fileID: '.input-submission-file',
+        uploadForm: {
+          data: null,
+          trackIndex: 2,
+          authorIndex: 4,
+          submissionTimeIndex: 5,
+          lastEditTimeIndex: 6,
+          keywordIndex: 8,
+          acceptanceIndex: 9,
+        },
       },
       mappingReviewData: {
         data: [],
         dialogOpen: false,
+        methodName: 'getReviewInfo',
+        fileID: '.input-review-file',
+        uploadForm: {
+          data: null,
+          submissionIDIndex: 1,
+          evaluationIndex: 6,
+        },
       },
       lastUpdatedViz: { value: 'author' },
       options: [
@@ -716,27 +743,22 @@ export default {
       this[dataField].dialogOpen = true;
       upload(formData, 'parse')
         .then((x) => {
-          this[dataField].data = x.data;
+          this[dataField].uploadForm.data = x.data;
+        })
+        .catch((err) => {
+          this.uploadError = err.response;
+          this.currentStatus = STATUS_FAILED;
+          document.querySelector(this[dataField].fileID).value = '';
         });
 
       this[dataField].dialogOpen = true;
     },
-    getAuthorData() {
-      this.mappingAuthorData.dialogOpen = false;
-      const nameArray = document.querySelector('.input-author-file')
-        .value
-        .split('\\');
+    getDataInsight(dataField) {
+      this[dataField].dialogOpen = false;
+      const nameArray = document.querySelector(this[dataField].fileID).value.split('\\');
       const inputFileName = nameArray[nameArray.length - 1];
 
-      const uploadData = {
-        authorData: this.mappingAuthorData.data,
-        firstNameIndex: 1,
-        lastNameIndex: 2,
-        countryIndex: 4,
-        affiliationIndex: 5,
-      };
-
-      upload(uploadData, 'getAuthorInfo')
+      upload(this[dataField].uploadForm, this[dataField].methodName)
         .then((x) => {
           this.currentStatus = STATUS_SUCCESS;
 
@@ -745,87 +767,13 @@ export default {
             inputFileName,
             chartData: x.infoData,
           };
+        })
+        .catch((err) => {
+          this.uploadError = err.response;
+          this.currentStatus = STATUS_FAILED;
         });
 
-      document.querySelector('.input-author-file').value = '';
-    },
-    getSubmissionData() {
-      this.mappingSubmissionData.dialogOpen = false;
-      const nameArray = document.querySelector('.input-submission-file')
-        .value
-        .split('\\');
-      const inputFileName = nameArray[nameArray.length - 1];
-
-      const uploadData = {
-        submissionData: this.mappingSubmissionData.data,
-        acceptanceIndex: 9,
-        submissionTimeIndex: 5,
-        lastEditTimeIndex: 6,
-        trackIndex: 2,
-        keywordIndex: 8,
-        authorIndex: 4,
-      };
-
-      upload(uploadData, 'getSubmissionInfo')
-        .then((x) => {
-          this.currentStatus = STATUS_SUCCESS;
-
-          this.lastUpdatedViz = { value: x.infoType };
-          this.result[x.infoType] = {
-            inputFileName,
-            chartData: x.infoData,
-          };
-        });
-
-      document.querySelector('.input-submission-file').value = '';
-    },
-    getReviewData() {
-      this.mappingReviewData.dialogOpen = false;
-      const nameArray = document.querySelector('.input-review-file')
-        .value
-        .split('\\');
-      const inputFileName = nameArray[nameArray.length - 1];
-
-      const uploadData = {
-        reviewData: this.mappingReviewData.data,
-        submissionIDIndex: 1,
-        evaluationIndex: 6,
-      };
-
-      upload(uploadData, 'getReviewInfo')
-        .then((x) => {
-          this.currentStatus = STATUS_SUCCESS;
-
-          this.lastUpdatedViz = { value: x.infoType };
-          this.result[x.infoType] = {
-            inputFileName,
-            chartData: x.infoData,
-          };
-        });
-
-      document.querySelector('.input-review-file').value = '';
-    },
-    filesChange(fieldName, fileList) {
-      console.log(document.querySelector('.input-submission-file')
-        .value
-        .split('\\'));
-      // handle file changes
-      const formData = new FormData();
-
-      if (!fileList.length) return;
-
-      // append the files to FormData
-      let inputFileName;
-        Array
-        .from(Array(fileList.length)
-          .keys())
-        .map((x) => {
-          formData.append(fieldName, fileList[x], fileList[x].name);
-          inputFileName = fileList[x].name;
-        });
-
-      // save it
-      this.save(formData);
+      document.querySelector(this[dataField].fileID).value = '';
     },
   },
 };

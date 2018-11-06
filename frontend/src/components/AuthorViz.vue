@@ -33,7 +33,7 @@
       />
     </el-select>
     <el-switch
-      v-model="topAcceptedAffiliationChartIncluded"
+      v-model="storeState.charts.topAcceptedAffiliationChart.included"
       active-color="#13ce66"
       active-text="Included in Report"
       inactive-text="Not Included"
@@ -45,13 +45,13 @@
       <hori-bar-chart
         v-if="topAcceptedAffiliationChartType=='bar'"
         :data-input="topAcceptedAffiliationData"
-        :title-text="'Top Affiliations'"
+        :title-text="'Top Accepted Affiliations'"
         class="chart"
       />
       <pie-chart
         v-else-if="topAcceptedAffiliationChartType=='pie'"
         :data-input="topAcceptedAffiliationData"
-        :title-text="'Top Affiliations'"
+        :title-text="'Top Accepted Affiliations'"
         class="chart"
       />
     </div>
@@ -71,14 +71,14 @@
       />
     </el-select>
     <el-switch
-      v-model="authorChartIncluded"
+      v-model="storeState.charts.topAuthorChart.included"
       active-color="#13ce66"
       active-text="Included in Report"
       inactive-text="Not Included"
     />
     <bar-chart
-      id="topauthorchart"
-      ref="topauthorchart"
+      id="topAuthorChart"
+      ref="topAuthorChart"
       :data-input="topAuthorData"
       :title-text="'Top Authors'"
       class="chart"
@@ -112,14 +112,14 @@
       />
     </el-select>
     <el-switch
-      v-model="countryChartIncluded"
+      v-model="storeState.charts.topCountryChart.included"
       active-color="#13ce66"
       active-text="Included in Report"
       inactive-text="Not Included"
     />
     <div
-      id="topcountrychart"
-      ref="topcountrychart"
+      id="topCountryChart"
+      ref="topCountryChart"
     >
       <hori-bar-chart
         v-if="countryChartType=='bar'"
@@ -162,14 +162,14 @@
       />
     </el-select>
     <el-switch
-      v-model="affiliationChartIncluded"
+      v-model="storeState.charts.topAffiliationChart.included"
       active-color="#13ce66"
       active-text="Included in Report"
       inactive-text="Not Included"
     />
     <div
-      id="topaffiliationchart"
-      ref="topaffiliationchart"
+      id="topAffiliationChart"
+      ref="topAffiliationChart"
     >
       <hori-bar-chart
         v-if="affiliationChartType=='bar'"
@@ -205,6 +205,7 @@ import EditableText from '@/components/EditableText';
 import Const from './Const';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import Store from '@/store';
 
 // visualization 4.1
 import {
@@ -226,6 +227,7 @@ export default {
     const countryInitialText = `And from the country information (generated from the author data), we can see that the top 1 country, in this case ${this.chartData.topCountries.labels[0]}, has made ${String(((this.chartData.topCountries.data[0] - this.chartData.topCountries.data[1]) / this.chartData.topCountries.data[1] * 100).toFixed(2))}% more submission than the second-placed ${this.chartData.topCountries.labels[1]}.`;
 
     return {
+      storeState: Store.state,
       msg: 'Author Info Analysis',
       authorText: {
         val: authorInitialText,
@@ -294,7 +296,6 @@ export default {
       authorDataLength: 3,
       countryDataLength: 3,
       affiliationDataLength: 3,
-      authorChartIncluded: true,
       countryChartIncluded: true,
       affiliationChartIncluded: true,
       topAuthorData: this.computeAuthorData(3),
@@ -306,22 +307,6 @@ export default {
       topAcceptedAffiliationDataLength: 3,
       topAcceptedAffiliationData: this.computeTopAcceptedAffiliationData(3),
     };
-  },
-  computed: {
-    sections() {
-      return [
-        {
-          id: 'topauthorchart',
-          caption: this.authorText.val,
-          included: this.authorChartIncluded,
-        },
-        {
-          id: 'topcountrychart',
-          caption: this.countryText.val,
-          included: this.countryChartIncluded,
-        },
-      ];
-    },
   },
   watch: {
     authorDataLength(newValue, oldValue) {
@@ -357,9 +342,16 @@ export default {
       this.topAcceptedAffiliationData = this.computeTopAcceptedAffiliationData(newValue);
     },
   },
+  created() {
+    Store.registerPrintableChart('topAuthorChart');
+    Store.registerPrintableChart('topCountryChart');
+    Store.registerPrintableChart('topAffiliationChart');
+    Store.registerPrintableChart('topAcceptedAffiliationChart');
+  },
   methods: {
     generatePdf() {
-      let pdfGenerator = new Utils.PdfGenerator(this.sections);
+      const pdfGenerator = new Utils.PdfGenerator();
+      pdfGenerator.generate(['topAuthorChart', 'topCountryChart', 'topAffiliationChart', 'topAcceptedAffiliationChart']);
     },
     chooseColorScheme(len) {
       switch (len) {

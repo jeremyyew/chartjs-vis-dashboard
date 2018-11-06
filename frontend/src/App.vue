@@ -275,6 +275,7 @@
 import { upload } from './components/Upload';
 import ResultTabs from '@/components/ResultTabs';
 import Auth from '@/components/Auth';
+import StorePersisted from '@/storePersisted';
 import Store from '@/store';
 import utils from '@/utils'
 import axios from 'axios';
@@ -309,7 +310,7 @@ export default {
       }
     };
     return {
-      storeState: Store.state,
+      storePersistedState: StorePersisted.state,
       authDialogOpen: false,
       isRegistrationLoading: false,
       isLoginLoading: false,
@@ -427,11 +428,9 @@ export default {
   watch: {
   },
   created() {
-    console.log(`Store.state: ${stringify(Store.state)}`);
-    console.log(`storeState: ${stringify(this.storeState)}`);
-    this.$persist(['storeState']);
-
-
+    // console.log(`StorePersisted.state: ${stringify(StorePersisted.state)}`);
+    // console.log(`storePersistedState: ${stringify(this.storePersistedState)}`);
+    this.$persist(['storePersistedState']);
     if (this.$auth.getToken() !== null) {
       this.refreshToken();
     }

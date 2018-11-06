@@ -16,9 +16,11 @@ The main motivation of the new mechanism detailed below is to be able to print a
 ### New approach: global store and `PdfGenerator` class 
 The class `PdfGenerator` in `utils` uses `html2canvas` to  transform the html elements created with `chartjs` to `canvas` elements, and then saves them in a pdf document. It takes care of formatting, margins, styling, etc. 
 
-We use a global store object to keep track of all the charts and whether each is included or not - this helps us avoid having to
+We use a global store object to keep track of all the charts and whether each is included or not - this helps us avoid having to:
  - declare chart-printing-related information at the `App` level and pass them as props to individual components through `ResultTabs` to each tab, and
   - use events to trigger changes in chart info in the parent from child, effectively decoupling each set of charts from the main App. 
+  
+Currently, we avoid storing the caption data, and simply access the caption text in the DOM via `document.getElementById(CHART_ID).nextElementSibling.innerText;`. This is a weak assumption but greatly simplifies the process.
 
 ### Usage at viz component level: 
 1. Register the chart `id`'s in the global store at the `created()` hook: 

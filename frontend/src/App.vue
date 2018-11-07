@@ -847,6 +847,16 @@ export default {
         });
     },
     getDataInsight(dataField) {
+      for (const field in this[dataField].uploadForm) {
+        if (field !== 'data' && this[dataField].uploadForm[field] === -1) {
+          this.$message({
+            message: 'All headers fields must be filled up!',
+            type: 'error',
+          });
+          return;
+        }
+      }
+
       this[dataField].dialogOpen = false;
       const nameArray = document.querySelector(this[dataField].fileID).value.split('\\');
       const inputFileName = nameArray[nameArray.length - 1];

@@ -195,16 +195,16 @@ def getSubmissionInfo(request):
 		data = json.loads(request.body)
 		submissionData = data['data'][1:]
 		submissionData = [ele for ele in submissionData if ele]
-		acceptanceIndex = data['acceptanceIndex']
+		decisionIndex = data['decisionIndex']
 		submissionTimeIndex = data['submissionTimeIndex']
 		lastEditTimeIndex = data['lastEditTimeIndex']
-		trackIndex = data['trackIndex']
+		trackNameIndex = data['trackNameIndex']
 		keywordIndex = data['keywordIndex']
 		authorIndex = data['authorIndex']
 
 		parsedResult = {}
-		acceptedSubmission = [line for line in submissionData if str(line[acceptanceIndex]) == 'accept']
-		rejectedSubmission = [line for line in submissionData if str(line[acceptanceIndex]) == 'reject']
+		acceptedSubmission = [line for line in submissionData if str(line[decisionIndex]) == 'accept']
+		rejectedSubmission = [line for line in submissionData if str(line[decisionIndex]) == 'reject']
 
 		acceptanceRate = float(len(acceptedSubmission)) / len(submissionData)
 
@@ -252,8 +252,8 @@ def getSubmissionInfo(request):
 		allKeywordMap = {k : v for k, v in iter(Counter(allKeywords).items())}
 		allKeywordList = [[ele[0], ele[1]] for ele in Counter(allKeywords).most_common(20)]
 
-		tracks = set([str(ele[trackIndex]) for ele in submissionData])
-		paperGroupsByTrack = {track : [line for line in submissionData if str(line[trackIndex]) == track] for track in tracks}
+		tracks = set([str(ele[trackNameIndex]) for ele in submissionData])
+		paperGroupsByTrack = {track : [line for line in submissionData if str(line[trackNameIndex]) == track] for track in tracks}
 		keywordsGroupByTrack = {}
 		acceptanceRateByTrack = {}
 		comparableAcceptanceRate = {}
@@ -270,10 +270,10 @@ def getSubmissionInfo(request):
 			keywordMap = [[ele[0], ele[1]] for ele in Counter(keywords).most_common(20)]
 			keywordsGroupByTrack[track] = keywordMap
 
-			acceptedPapersPerTrack = [ele for ele in papers if str(ele[acceptanceIndex]) == 'accept']
+			acceptedPapersPerTrack = [ele for ele in papers if str(ele[decisionIndex]) == 'accept']
 			acceptanceRateByTrack[track] = float(len(acceptedPapersPerTrack)) / len(papers)
 
-			acceptedPapersThisTrack = [paper for paper in papers if str(paper[acceptanceIndex]) == 'accept']
+			acceptedPapersThisTrack = [paper for paper in papers if str(paper[decisionIndex]) == 'accept']
 			acceptedAuthorsThisTrack = [str(ele[authorIndex]).replace(" and ", ", ").split(", ") for ele in acceptedPapersThisTrack]
 			acceptedAuthorsThisTrack = [ele for item in acceptedAuthorsThisTrack for ele in item]
 			topAcceptedAuthorsThisTrack = Counter(acceptedAuthorsThisTrack).most_common(10)

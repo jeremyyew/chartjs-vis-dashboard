@@ -219,7 +219,7 @@
                   :key="idx"
                   :render-header="selectAuthorHeaders"
                   :label="null"
-                  :prop="String(idx)"
+                  :prop="String(idx-1)"
                   :width="150"
                 >
                 </el-table-column>
@@ -243,8 +243,9 @@
                 <el-table-column
                   v-for="idx in (0, mappingSubmissionData.numCols)"
                   :key="idx"
-                  :prop="String(idx)"
-                  :label="mappingSubmissionData.previewData[0][idx]"
+                  :render-header="selectSubmissionHeaders"
+                  :label="null"
+                  :prop="String(idx-1)"
                   :width="150"
                 >
                 </el-table-column>
@@ -268,8 +269,9 @@
                 <el-table-column
                   v-for="idx in (0, mappingReviewData.numCols)"
                   :key="idx"
-                  :prop="String(idx)"
-                  :label="mappingReviewData.previewData[0][idx]"
+                  :render-header="selectReviewHeaders"
+                  :label="null"
+                  :prop="String(idx-1)"
                   :width="150"
                 >
                 </el-table-column>
@@ -493,7 +495,6 @@ export default {
         submission: {},
       },
       mappingAuthorData: {
-        placeHolder: [],
         previewData: [],
         numCols: 0,
         dialogOpen: false,
@@ -533,13 +534,39 @@ export default {
         fileID: '.input-submission-file',
         uploadForm: {
           data: null,
-          trackIndex: 2,
-          authorIndex: 4,
-          submissionTimeIndex: 5,
-          lastEditTimeIndex: 6,
-          keywordIndex: 8,
-          acceptanceIndex: 9,
+          trackIndex: -1,
+          authorIndex: -1,
+          submissionTimeIndex: -1,
+          lastEditTimeIndex: -1,
+          keywordIndex: -1,
+          acceptanceIndex: -1,
         },
+        options: [
+          {
+            value: 'trackNameIndex',
+            label: 'Track Name',
+          },
+          {
+            value: 'authorIndex',
+            label: 'Author',
+          },
+          {
+            value: 'submissionTimeIndex',
+            label: 'Submission Time',
+          },
+          {
+            value: 'lastEditTimeIndex',
+            label: 'Last Edit Time',
+          },
+          {
+            value: 'keywordIndex',
+            label: 'Keyword',
+          },
+          {
+            value: 'decisionIndex',
+            label: 'Decision',
+          },
+        ],
       },
       mappingReviewData: {
         previewData: [],
@@ -549,9 +576,19 @@ export default {
         fileID: '.input-review-file',
         uploadForm: {
           data: null,
-          submissionIDIndex: 1,
-          evaluationIndex: 6,
+          submissionIDIndex: -1,
+          evaluationIndex: -1,
         },
+        options: [
+          {
+            value: 'submissionIDIndex',
+            label: 'Submission ID',
+          },
+          {
+            value: 'evaluationIndex',
+            label: 'Evaluation',
+          },
+        ],
       },
       lastUpdatedViz: { value: 'author' },
       options: [
@@ -566,7 +603,6 @@ export default {
           label: 'Review File',
         },
       ],
-      message: null,
     };
   },
   computed: {
@@ -723,7 +759,7 @@ export default {
       this.uploadError = null;
     },
     selectAuthorHeaders(createElement, { column, $index }) {
-      return this.$createElement(
+      return createElement(
         'el-select', {
           props: {
             placeholder: 'Select',
@@ -738,7 +774,59 @@ export default {
         },
         [
           this.mappingAuthorData.options.map((option) => {
-            return this.$createElement('el-option', {
+            return createElement('el-option', {
+              props: {
+                key: option.value,
+                value: option.value,
+                label: option.label,
+              },
+            });
+          })],
+      );
+    },
+    selectSubmissionHeaders(createElement, { column, $index }) {
+      return createElement(
+        'el-select', {
+          props: {
+            placeholder: 'Select',
+            value: column.label,
+          },
+          on: {
+            input: (value) => {
+              column.label = value;
+              this.mappingSubmissionData.uploadForm[value] = $index;
+            },
+          },
+        },
+        [
+          this.mappingSubmissionData.options.map((option) => {
+            return createElement('el-option', {
+              props: {
+                key: option.value,
+                value: option.value,
+                label: option.label,
+              },
+            });
+          })],
+      );
+    },
+    selectReviewHeaders(createElement, { column, $index }) {
+      return createElement(
+        'el-select', {
+          props: {
+            placeholder: 'Select',
+            value: column.label,
+          },
+          on: {
+            input: (value) => {
+              column.label = value;
+              this.mappingReviewData.uploadForm[value] = $index;
+            },
+          },
+        },
+        [
+          this.mappingReviewData.options.map((option) => {
+            return createElement('el-option', {
               props: {
                 key: option.value,
                 value: option.value,
@@ -767,10 +855,6 @@ export default {
           this[dataField].previewData = x.previewData;
           this[dataField].numCols = Object.keys(x.previewData[0]).length;
           this[dataField].dialogOpen = true;
-          for (var i = 0; i < this[dataField].numCols; i++) {
-            let a = String(i);
-            this[dataField].placeHolder[i] = null;
-          }
         })
         .catch((err) => {
           this.uploadError = err.response;

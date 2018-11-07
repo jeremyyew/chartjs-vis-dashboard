@@ -498,6 +498,7 @@ export default {
         placeHolder: [],
         previewData: [],
         numCols: 0,
+        minCols: 4,
         dialogOpen: false,
         methodName: 'getAuthorInfo',
         fileID: '.input-author-file',
@@ -538,6 +539,7 @@ export default {
         placeHolder: [],
         previewData: [],
         numCols: 0,
+        minCols: 6,
         dialogOpen: false,
         methodName: 'getSubmissionInfo',
         fileID: '.input-submission-file',
@@ -590,6 +592,7 @@ export default {
         placeHolder: [],
         previewData: [],
         numCols: 0,
+        minCols: 2,
         dialogOpen: false,
         methodName: 'getReviewInfo',
         fileID: '.input-review-file',
@@ -835,9 +838,18 @@ export default {
 
       upload(formData, 'parse')
         .then((x) => {
+          this[dataField].numCols = Object.keys(x.previewData[0]).length;
+          if (this[dataField].numCols < this[dataField].minCols) {
+            this.$message({
+              message: '.csv file provided does not contain enough columns for processing!',
+              type: 'error',
+            });
+            this.resetFile(dataField);
+            return;
+          }
+
           this[dataField].uploadForm.data = x.data;
           this[dataField].previewData = x.previewData;
-          this[dataField].numCols = Object.keys(x.previewData[0]).length;
           this[dataField].dialogOpen = true;
         })
         .catch((err) => {

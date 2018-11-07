@@ -3,7 +3,7 @@
     title="Map author.csv headers"
     :visible.sync="mappingData.dialogOpen"
     width="85%"
-    @close="document.querySelector(mappingData.fileID).value=''"
+    @close="resetFile"
   >
     <el-table
       :data="mappingData.previewData"
@@ -20,6 +20,7 @@
     </el-table>
     <el-button
       type="primary"
+      :disabled="mappingData.numCols < mappingData.defaultMinCol"
       @click="getDataInsightDefaultHeaders(dataTypeName)"
     >
       Default
@@ -50,6 +51,9 @@ export default {
     },
   },
   methods: {
+    resetFile() {
+      document.querySelector(this.mappingData.fileID).value='';
+    },
     selectHeaders(createElement, { column, $index }) {
       return createElement(
         'el-select', {

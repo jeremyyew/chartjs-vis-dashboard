@@ -217,20 +217,13 @@
                 <el-table-column
                   v-for="idx in (0, mappingAuthorData.numCols)"
                   :key="idx"
+                  :render-header="selectAuthorHeaders"
+                  :label="null"
                   :prop="String(idx)"
-                  :label="mappingAuthorData.previewData[0][idx]"
                   :width="150"
                 >
                 </el-table-column>
               </el-table>
-              <el-select placeholder="Select">
-                <el-option
-                  v-for="option in mappingAuthorData.options"
-                  :key="option.value"
-                  :value="option.value"
-                >
-                </el-option>
-              </el-select>
               <el-button
                 type="primary"
                 @click="getDataInsight('mappingAuthorData')"
@@ -500,6 +493,7 @@ export default {
         submission: {},
       },
       mappingAuthorData: {
+        placeHolder: [],
         previewData: [],
         numCols: 0,
         dialogOpen: false,
@@ -507,23 +501,27 @@ export default {
         fileID: '.input-author-file',
         uploadForm: {
           data: null,
-          firstNameIndex: 1,
-          lastNameIndex: 2,
-          countryIndex: 4,
-          affiliationIndex: 5,
+          firstNameIndex: -1,
+          lastNameIndex: -1,
+          countryIndex: -1,
+          affiliationIndex: -1,
         },
         options: [
           {
-            value: 'First Name',
+            value: 'firstNameIndex',
+            label: 'First Name',
           },
           {
-            value: 'Last Name',
+            value: 'lastNameIndex',
+            label: 'Last Name',
           },
           {
-            value: 'Country',
+            value: 'countryIndex',
+            label: 'Country',
           },
           {
-            value: 'Affiliation',
+            value: 'affiliationIndex',
+            label: 'Affiliation',
           },
         ],
       },
@@ -568,6 +566,7 @@ export default {
           label: 'Review File',
         },
       ],
+      message: null,
     };
   },
   computed: {
@@ -723,6 +722,32 @@ export default {
       this.uploadedFiles = [];
       this.uploadError = null;
     },
+    selectAuthorHeaders(createElement, { column, $index }) {
+      return this.$createElement(
+        'el-select', {
+          props: {
+            placeholder: 'Select',
+            value: column.label,
+          },
+          on: {
+            input: (value) => {
+              column.label = value;
+              this.mappingAuthorData.uploadForm[value] = $index;
+            },
+          },
+        },
+        [
+          this.mappingAuthorData.options.map((option) => {
+            return this.$createElement('el-option', {
+              props: {
+                key: option.value,
+                value: option.value,
+                label: option.label,
+              },
+            });
+          })],
+      );
+    },
     uploadCSV(fieldName, fileList, dataField) {
       if (!fileList.length) return;
 
@@ -742,6 +767,10 @@ export default {
           this[dataField].previewData = x.previewData;
           this[dataField].numCols = Object.keys(x.previewData[0]).length;
           this[dataField].dialogOpen = true;
+          for (var i = 0; i < this[dataField].numCols; i++) {
+            let a = String(i);
+            this[dataField].placeHolder[i] = null;
+          }
         })
         .catch((err) => {
           this.uploadError = err.response;

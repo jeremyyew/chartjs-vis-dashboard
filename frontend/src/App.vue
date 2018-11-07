@@ -222,8 +222,7 @@
                   :label="null"
                   :prop="String(idx-1)"
                   :width="150"
-                >
-                </el-table-column>
+                />
               </el-table>
               <el-button
                 type="primary"
@@ -249,8 +248,7 @@
                   :label="null"
                   :prop="String(idx-1)"
                   :width="150"
-                >
-                </el-table-column>
+                />
               </el-table>
               <el-button
                 type="primary"
@@ -276,8 +274,7 @@
                   :label="null"
                   :prop="String(idx-1)"
                   :width="150"
-                >
-                </el-table-column>
+                />
               </el-table>
               <el-button
                 type="primary"
@@ -374,13 +371,13 @@
 </template>
 
 <script>
-import { upload } from './components/Upload';
 import ResultTabs from '@/components/ResultTabs';
 import Auth from '@/components/Auth';
 import Store from '@/store';
-import utils from '@/utils'
+import utils from '@/utils';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
+import { upload } from './components/Upload';
 
 const STATUS_INITIAL = 0;
 const STATUS_SAVING = 1;
@@ -798,25 +795,29 @@ export default {
           props: {
             placeholder: 'Select',
             value: this[dataField].placeHolder[$index],
+            clearable: true,
           },
           on: {
-            input: (value) => {
+            change: (value) => {
+              for (const field in this[dataField].uploadForm) {
+                if (this[dataField].uploadForm[field] === $index) {
+                  this[dataField].uploadForm[field] = -1;
+                }
+              }
               this[dataField].placeHolder[$index] = value;
               this[dataField].uploadForm[value] = $index;
             },
           },
         },
         [
-          this[dataField].options.map((option) => {
-            return createElement('el-option', {
-              props: {
-                key: option.value,
-                value: option.value,
-                label: option.label,
-                disabled: this[dataField].uploadForm[option.value] !== -1,
-              },
-            });
-          })],
+          this[dataField].options.map(option => createElement('el-option', {
+            props: {
+              key: option.value,
+              value: option.value,
+              label: option.label,
+              disabled: this[dataField].uploadForm[option.value] !== -1,
+            },
+          }))],
       );
     },
     uploadCSV(fieldName, fileList, dataField) {
@@ -842,9 +843,8 @@ export default {
         .catch((err) => {
           this.uploadError = err.response;
           this.currentStatus = STATUS_FAILED;
-          document.querySelector(this[dataField].fileID).value = '';
+          this.resetFile(dataField);
         });
-
     },
     getDataInsight(dataField) {
       this[dataField].dialogOpen = false;
@@ -865,7 +865,6 @@ export default {
           this.uploadError = err.response;
           this.currentStatus = STATUS_FAILED;
         }).finally(() => {
-          document.querySelector(this[dataField].fileID).value = '';
           this[dataField].uploadForm = this[dataField].initialUploadForm;
           this[dataField].placeHolder = [];
         });

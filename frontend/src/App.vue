@@ -209,6 +209,7 @@
               title="Map author.csv headers"
               :visible.sync="mappingAuthorData.dialogOpen"
               width="85%"
+              @close="resetFile('mappingAuthorData')"
             >
               <el-table
                 :data="mappingAuthorData.previewData"
@@ -235,6 +236,7 @@
               title="Map submission.csv headers"
               :visible.sync="mappingSubmissionData.dialogOpen"
               width="85%"
+              @close="resetFile('mappingSubmissionData')"
             >
               <el-table
                 :data="mappingSubmissionData.previewData"
@@ -261,6 +263,7 @@
               title="Map review.csv headers"
               :visible.sync="mappingReviewData.dialogOpen"
               width="85%"
+              @close="resetFile('mappingReviewData')"
             >
               <el-table
                 :data="mappingReviewData.previewData"
@@ -781,6 +784,9 @@ export default {
       this.currentStatus = STATUS_INITIAL;
       this.uploadedFiles = [];
       this.uploadError = null;
+    },
+    resetFile(dataField) {
+      document.querySelector(this[dataField].fileID).value = '';
     },
     selectHeaders(createElement, { column, $index }) {
       let dataField = 'mappingAuthorData';

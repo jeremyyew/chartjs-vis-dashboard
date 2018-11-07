@@ -226,6 +226,12 @@
               </el-table>
               <el-button
                 type="primary"
+                @click="getDataInsightDefaultHeaders('mappingAuthorData')"
+              >
+                Default
+              </el-button>
+              <el-button
+                type="primary"
                 @click="getDataInsight('mappingAuthorData')"
               >
                 Submit
@@ -252,6 +258,12 @@
               </el-table>
               <el-button
                 type="primary"
+                @click="getDataInsightDefaultHeaders('mappingSubmissionData')"
+              >
+                Default
+              </el-button>
+              <el-button
+                type="primary"
                 @click="getDataInsight('mappingSubmissionData')"
               >
                 Submit
@@ -276,6 +288,12 @@
                   :width="150"
                 />
               </el-table>
+              <el-button
+                type="primary"
+                @click="getDataInsightDefaultHeaders('mappingReviewData')"
+              >
+                Default
+              </el-button>
               <el-button
                 type="primary"
                 @click="getDataInsight('mappingReviewData')"
@@ -502,15 +520,19 @@ export default {
         dialogOpen: false,
         methodName: 'getAuthorInfo',
         fileID: '.input-author-file',
+        defaultUploadForm: {
+          firstNameIndex: 1,
+          lastNameIndex: 2,
+          countryIndex: 4,
+          affiliationIndex: 5,
+        },
         initialUploadForm: {
-          data: null,
           firstNameIndex: -1,
           lastNameIndex: -1,
           countryIndex: -1,
           affiliationIndex: -1,
         },
         uploadForm: {
-          data: null,
           firstNameIndex: -1,
           lastNameIndex: -1,
           countryIndex: -1,
@@ -543,8 +565,15 @@ export default {
         dialogOpen: false,
         methodName: 'getSubmissionInfo',
         fileID: '.input-submission-file',
+        defaultUploadForm: {
+          trackNameIndex: 2,
+          authorIndex: 4,
+          submissionTimeIndex: 5,
+          lastEditTimeIndex: 6,
+          keywordIndex: 8,
+          decisionIndex: 9,
+        },
         initialUploadForm: {
-          data: null,
           trackNameIndex: -1,
           authorIndex: -1,
           submissionTimeIndex: -1,
@@ -553,7 +582,6 @@ export default {
           decisionIndex: -1,
         },
         uploadForm: {
-          data: null,
           trackNameIndex: -1,
           authorIndex: -1,
           submissionTimeIndex: -1,
@@ -596,13 +624,15 @@ export default {
         dialogOpen: false,
         methodName: 'getReviewInfo',
         fileID: '.input-review-file',
+        defaultUploadForm: {
+          submissionIDIndex: 1,
+          evaluationIndex: 6,
+        },
         initialUploadForm: {
-          data: null,
           submissionIDIndex: -1,
           evaluationIndex: -1,
         },
         uploadForm: {
-          data: null,
           submissionIDIndex: -1,
           evaluationIndex: -1,
         },
@@ -857,6 +887,11 @@ export default {
           this.currentStatus = STATUS_FAILED;
           this.resetFile(dataField);
         });
+    },
+    getDataInsightDefaultHeaders(dataField) {
+      this[dataField].defaultUploadForm.data = this[dataField].uploadForm.data;
+      this[dataField].uploadForm = this[dataField].defaultUploadForm;
+      this.getDataInsight(dataField);
     },
     getDataInsight(dataField) {
       for (const field in this[dataField].uploadForm) {

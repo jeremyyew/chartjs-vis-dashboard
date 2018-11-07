@@ -5,11 +5,10 @@ from rest_framework import status, serializers
 from rest_framework.decorators import api_view, permission_classes
 from django.http import HttpResponse, JsonResponse
 
-from django.views.decorators.csrf import csrf_exempt
 from rest_framework.exceptions import APIException
 from rest_framework.permissions import AllowAny
 
-from .utils import parseCSVFileFromDjangoFile, isNumber, returnTestChartData
+from .utils import parseCSVFileFromDjangoFile, isNumber, returnTestChartData, parseCSVFile
 from .getInsight import parseAuthorCSVFile, getReviewScoreInfo, getAuthorInfo, getReviewInfo, getSubmissionInfo
 
 
@@ -81,6 +80,22 @@ def uploadCSV(request):
     else:
         print("Not found the file!")
         return JsonResponse({"status": "Page not found for CSV"})
+
+@csrf_exempt
+def parseCSV(request):
+    csvFile = request.FILES['file']
+    rowCSV = parseCSVFile(csvFile)
+
+    previewData = []
+    for row in rowCSV[:5]:
+        rowData = {}
+        for idx,col in enumerate(row):
+            cell = str(col)
+            rowData[idx] = (cell[:12] + '...') if len(cell) > 12 else cell
+
+        previewData.append(rowData)
+
+    return JsonResponse({'data' : rowCSV, 'previewData': previewData})
 
 
 class UserSerializer(serializers.ModelSerializer):

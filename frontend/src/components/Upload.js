@@ -3,9 +3,8 @@ import * as axios from 'axios';
 const BASE_URL = process.env.VUE_APP_API_BASE_URL;
 // const BASE_URL = 'http://chairviz.herokuapp.com';
 
-function upload(formData) {
-  const url = `${BASE_URL}upload/`;
-  // const url = '/upload/'
+function upload(formData, method) {
+  const url = `${BASE_URL}${method}/`;
   return axios({
     method: 'post',
     url,

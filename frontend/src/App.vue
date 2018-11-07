@@ -205,102 +205,24 @@
             <!--<router-link to="/te">-->
             <!--<el-button type="success">WY</el-button>-->
             <!--</router-link>-->
-            <el-dialog
-              title="Map author.csv headers"
-              :visible.sync="mappingAuthorData.dialogOpen"
-              width="85%"
-              @close="resetFile('mappingAuthorData')"
-            >
-              <el-table
-                :data="mappingAuthorData.previewData"
-                border
-              >
-                <el-table-column
-                  v-for="idx in (0, mappingAuthorData.numCols)"
-                  :key="idx"
-                  :render-header="selectHeaders"
-                  :label="null"
-                  :prop="String(idx-1)"
-                  :width="150"
-                />
-              </el-table>
-              <el-button
-                type="primary"
-                @click="getDataInsightDefaultHeaders('mappingAuthorData')"
-              >
-                Default
-              </el-button>
-              <el-button
-                type="primary"
-                @click="getDataInsight('mappingAuthorData')"
-              >
-                Submit
-              </el-button>
-            </el-dialog>
-            <el-dialog
-              title="Map submission.csv headers"
-              :visible.sync="mappingSubmissionData.dialogOpen"
-              width="85%"
-              @close="resetFile('mappingSubmissionData')"
-            >
-              <el-table
-                :data="mappingSubmissionData.previewData"
-                border
-              >
-                <el-table-column
-                  v-for="idx in (0, mappingSubmissionData.numCols)"
-                  :key="idx"
-                  :render-header="selectHeaders"
-                  :label="null"
-                  :prop="String(idx-1)"
-                  :width="150"
-                />
-              </el-table>
-              <el-button
-                type="primary"
-                @click="getDataInsightDefaultHeaders('mappingSubmissionData')"
-              >
-                Default
-              </el-button>
-              <el-button
-                type="primary"
-                @click="getDataInsight('mappingSubmissionData')"
-              >
-                Submit
-              </el-button>
-            </el-dialog>
-            <el-dialog
-              title="Map review.csv headers"
-              :visible.sync="mappingReviewData.dialogOpen"
-              width="85%"
-              @close="resetFile('mappingReviewData')"
-            >
-              <el-table
-                :data="mappingReviewData.previewData"
-                border
-              >
-                <el-table-column
-                  v-for="idx in (0, mappingReviewData.numCols)"
-                  :key="idx"
-                  :render-header="selectHeaders"
-                  :label="null"
-                  :prop="String(idx-1)"
-                  :width="150"
-                />
-              </el-table>
-              <el-button
-                type="primary"
-                @click="getDataInsightDefaultHeaders('mappingReviewData')"
-              >
-                Default
-              </el-button>
-              <el-button
-                type="primary"
-                @click="getDataInsight('mappingReviewData')"
-              >
-                Submit
-              </el-button>
-            </el-dialog>
+            <MappingHeaderDialog
+              :mapping-data="mappingAuthorData"
+              :data-type-name="'mappingAuthorData'"
+              @dataProcessSuccess="updateResultData"
+              @dataProcessFailed="handleError"
+            />
+            <MappingHeaderDialog
+              :mapping-data="mappingSubmissionData"
+              :data-type-name="'mappingSubmissionData'"
+              @dataProcessSuccess="updateResultData"
+              @dataProcessFailed="handleError"
+            />
+            <MappingHeaderDialog
+              :mapping-data="mappingReviewData"
+              :data-type-name="'mappingReviewData'"
+              @dataProcessSuccess="updateResultData"
+              @dataProcessFailed="handleError"
+            />
             <center id="upload">
               <form
                 v-if="isInitial || isSaving || isSuccess"
@@ -396,12 +318,12 @@ import utils from '@/utils';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import { upload } from './components/Upload';
+import MappingHeaderDialog from './components/MappingHeaderDialog';
 
 const STATUS_INITIAL = 0;
 const STATUS_SAVING = 1;
 const STATUS_SUCCESS = 2;
-const
-  STATUS_FAILED = 3;
+const STATUS_FAILED = 3;
 
 const { stringify } = utils;
 
@@ -410,7 +332,7 @@ let refreshTokenTimer;
 
 export default {
   name: 'App',
-  components: { ResultTabs },
+  components: { MappingHeaderDialog, ResultTabs },
   data() {
     const validatePassword = (rule, value, callback) => {
       if (this.registerForm.checkPassword !== '') {
@@ -711,19 +633,22 @@ export default {
           return false;
         }
         this.isLoginLoading = true;
-        this.$auth.login(this.loginForm).then(() => {
-          this.setUserAuthenticated();
-          this.authDialogOpen = false;
-        }).catch((error) => {
-          const errorMessage = error.response.data.non_field_errors[0];
+        this.$auth.login(this.loginForm)
+          .then(() => {
+            this.setUserAuthenticated();
+            this.authDialogOpen = false;
+          })
+          .catch((error) => {
+            const errorMessage = error.response.data.non_field_errors[0];
 
-          this.$message({
-            message: errorMessage !== undefined ? errorMessage : 'Unexpected login failure. Please try again later.',
-            type: 'error',
+            this.$message({
+              message: errorMessage !== undefined ? errorMessage : 'Unexpected login failure. Please try again later.',
+              type: 'error',
+            });
+          })
+          .finally(() => {
+            this.isLoginLoading = false;
           });
-        }).finally(() => {
-          this.isLoginLoading = false;
-        });
 
         return true;
       });
@@ -739,20 +664,23 @@ export default {
           username: this.registerForm.username,
           email: this.registerForm.email,
           password: this.registerForm.password,
-        }).then((response) => {
-          this.$message({
-            message: 'Sign up successful!',
-            type: 'success',
+        })
+          .then((response) => {
+            this.$message({
+              message: 'Sign up successful!',
+              type: 'success',
+            });
+            // TODO: trigger login automatically?
+          })
+          .catch((error) => {
+            this.$message({
+              message: error.response.data.detail,
+              type: 'error',
+            });
+          })
+          .finally(() => {
+            this.isRegistrationLoading = false;
           });
-          // TODO: trigger login automatically?
-        }).catch((error) => {
-          this.$message({
-            message: error.response.data.detail,
-            type: 'error',
-          });
-        }).finally(() => {
-          this.isRegistrationLoading = false;
-        });
         return true;
       });
     },
@@ -815,43 +743,14 @@ export default {
       this.uploadedFiles = [];
       this.uploadError = null;
     },
-    resetFile(dataField) {
-      document.querySelector(this[dataField].fileID).value = '';
+    updateResultData(infoType, result) {
+      this.currentStatus = STATUS_SUCCESS;
+      this.lastUpdatedViz = { value: infoType };
+      this.result[infoType] = result;
     },
-    selectHeaders(createElement, { column, $index }) {
-      let dataField = 'mappingAuthorData';
-      if (this.mappingSubmissionData.dialogOpen) dataField = 'mappingSubmissionData';
-      if (this.mappingReviewData.dialogOpen) dataField = 'mappingReviewData';
-
-      return createElement(
-        'el-select', {
-          props: {
-            placeholder: 'Select',
-            value: this[dataField].placeHolder[$index],
-            clearable: true,
-          },
-          on: {
-            change: (value) => {
-              for (const field in this[dataField].uploadForm) {
-                if (this[dataField].uploadForm[field] === $index) {
-                  this[dataField].uploadForm[field] = -1;
-                }
-              }
-              this[dataField].placeHolder[$index] = value;
-              this[dataField].uploadForm[value] = $index;
-            },
-          },
-        },
-        [
-          this[dataField].options.map(option => createElement('el-option', {
-            props: {
-              key: option.value,
-              value: option.value,
-              label: option.label,
-              disabled: this[dataField].uploadForm[option.value] !== -1,
-            },
-          }))],
-      );
+    handleError(err) {
+      this.uploadError = err.response;
+      this.currentStatus = STATUS_FAILED
     },
     uploadCSV(fieldName, fileList, dataField) {
       if (!fileList.length) return;
@@ -874,10 +773,11 @@ export default {
               message: '.csv file provided does not contain enough columns for processing!',
               type: 'error',
             });
-            this.resetFile(dataField);
+            document.querySelector(this[dataField].fileID).value = '';
             return;
           }
 
+          this[dataField].defaultUploadForm.data = x.data;
           this[dataField].uploadForm.data = x.data;
           this[dataField].previewData = x.previewData;
           this[dataField].dialogOpen = true;
@@ -885,45 +785,7 @@ export default {
         .catch((err) => {
           this.uploadError = err.response;
           this.currentStatus = STATUS_FAILED;
-          this.resetFile(dataField);
-        });
-    },
-    getDataInsightDefaultHeaders(dataField) {
-      this[dataField].defaultUploadForm.data = this[dataField].uploadForm.data;
-      this[dataField].uploadForm = this[dataField].defaultUploadForm;
-      this.getDataInsight(dataField);
-    },
-    getDataInsight(dataField) {
-      for (const field in this[dataField].uploadForm) {
-        if (field !== 'data' && this[dataField].uploadForm[field] === -1) {
-          this.$message({
-            message: 'All headers fields must be filled up!',
-            type: 'error',
-          });
-          return;
-        }
-      }
-
-      this[dataField].dialogOpen = false;
-      const nameArray = document.querySelector(this[dataField].fileID).value.split('\\');
-      const inputFileName = nameArray[nameArray.length - 1];
-
-      upload(this[dataField].uploadForm, this[dataField].methodName)
-        .then((x) => {
-          this.currentStatus = STATUS_SUCCESS;
-
-          this.lastUpdatedViz = { value: x.infoType };
-          this.result[x.infoType] = {
-            inputFileName,
-            chartData: x.infoData,
-          };
-        })
-        .catch((err) => {
-          this.uploadError = err.response;
-          this.currentStatus = STATUS_FAILED;
-        }).finally(() => {
-          this[dataField].uploadForm = this[dataField].initialUploadForm;
-          this[dataField].placeHolder = [];
+          document.querySelector(this[dataField].fileID).value = '';
         });
     },
   },

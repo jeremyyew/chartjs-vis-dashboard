@@ -217,7 +217,7 @@
                 <el-table-column
                   v-for="idx in (0, mappingAuthorData.numCols)"
                   :key="idx"
-                  :render-header="selectAuthorHeaders"
+                  :render-header="selectHeaders"
                   :label="null"
                   :prop="String(idx-1)"
                   :width="150"
@@ -243,7 +243,7 @@
                 <el-table-column
                   v-for="idx in (0, mappingSubmissionData.numCols)"
                   :key="idx"
-                  :render-header="selectSubmissionHeaders"
+                  :render-header="selectHeaders"
                   :label="null"
                   :prop="String(idx-1)"
                   :width="150"
@@ -269,7 +269,7 @@
                 <el-table-column
                   v-for="idx in (0, mappingReviewData.numCols)"
                   :key="idx"
-                  :render-header="selectReviewHeaders"
+                  :render-header="selectHeaders"
                   :label="null"
                   :prop="String(idx-1)"
                   :width="150"
@@ -495,11 +495,19 @@ export default {
         submission: {},
       },
       mappingAuthorData: {
+        placeHolder: [],
         previewData: [],
         numCols: 0,
         dialogOpen: false,
         methodName: 'getAuthorInfo',
         fileID: '.input-author-file',
+        initialUploadForm: {
+          data: null,
+          firstNameIndex: -1,
+          lastNameIndex: -1,
+          countryIndex: -1,
+          affiliationIndex: -1,
+        },
         uploadForm: {
           data: null,
           firstNameIndex: -1,
@@ -527,19 +535,29 @@ export default {
         ],
       },
       mappingSubmissionData: {
+        placeHolder: [],
         previewData: [],
         numCols: 0,
         dialogOpen: false,
         methodName: 'getSubmissionInfo',
         fileID: '.input-submission-file',
-        uploadForm: {
+        initialUploadForm: {
           data: null,
-          trackIndex: -1,
+          trackNameIndex: -1,
           authorIndex: -1,
           submissionTimeIndex: -1,
           lastEditTimeIndex: -1,
           keywordIndex: -1,
-          acceptanceIndex: -1,
+          decisionIndex: -1,
+        },
+        uploadForm: {
+          data: null,
+          trackNameIndex: -1,
+          authorIndex: -1,
+          submissionTimeIndex: -1,
+          lastEditTimeIndex: -1,
+          keywordIndex: -1,
+          decisionIndex: -1,
         },
         options: [
           {
@@ -569,11 +587,17 @@ export default {
         ],
       },
       mappingReviewData: {
+        placeHolder: [],
         previewData: [],
         numCols: 0,
         dialogOpen: false,
         methodName: 'getReviewInfo',
         fileID: '.input-review-file',
+        initialUploadForm: {
+          data: null,
+          submissionIDIndex: -1,
+          evaluationIndex: -1,
+        },
         uploadForm: {
           data: null,
           submissionIDIndex: -1,
@@ -758,79 +782,32 @@ export default {
       this.uploadedFiles = [];
       this.uploadError = null;
     },
-    selectAuthorHeaders(createElement, { column, $index }) {
+    selectHeaders(createElement, { column, $index }) {
+      let dataField = 'mappingAuthorData';
+      if (this.mappingSubmissionData.dialogOpen) dataField = 'mappingSubmissionData';
+      if (this.mappingReviewData.dialogOpen) dataField = 'mappingReviewData';
+
       return createElement(
         'el-select', {
           props: {
             placeholder: 'Select',
-            value: column.label,
+            value: this[dataField].placeHolder[$index],
           },
           on: {
             input: (value) => {
-              column.label = value;
-              this.mappingAuthorData.uploadForm[value] = $index;
+              this[dataField].placeHolder[$index] = value;
+              this[dataField].uploadForm[value] = $index;
             },
           },
         },
         [
-          this.mappingAuthorData.options.map((option) => {
+          this[dataField].options.map((option) => {
             return createElement('el-option', {
               props: {
                 key: option.value,
                 value: option.value,
                 label: option.label,
-              },
-            });
-          })],
-      );
-    },
-    selectSubmissionHeaders(createElement, { column, $index }) {
-      return createElement(
-        'el-select', {
-          props: {
-            placeholder: 'Select',
-            value: column.label,
-          },
-          on: {
-            input: (value) => {
-              column.label = value;
-              this.mappingSubmissionData.uploadForm[value] = $index;
-            },
-          },
-        },
-        [
-          this.mappingSubmissionData.options.map((option) => {
-            return createElement('el-option', {
-              props: {
-                key: option.value,
-                value: option.value,
-                label: option.label,
-              },
-            });
-          })],
-      );
-    },
-    selectReviewHeaders(createElement, { column, $index }) {
-      return createElement(
-        'el-select', {
-          props: {
-            placeholder: 'Select',
-            value: column.label,
-          },
-          on: {
-            input: (value) => {
-              column.label = value;
-              this.mappingReviewData.uploadForm[value] = $index;
-            },
-          },
-        },
-        [
-          this.mappingReviewData.options.map((option) => {
-            return createElement('el-option', {
-              props: {
-                key: option.value,
-                value: option.value,
-                label: option.label,
+                disabled: this[dataField].uploadForm[option.value] !== -1,
               },
             });
           })],
@@ -881,9 +858,11 @@ export default {
         .catch((err) => {
           this.uploadError = err.response;
           this.currentStatus = STATUS_FAILED;
+        }).finally(() => {
+          document.querySelector(this[dataField].fileID).value = '';
+          this[dataField].uploadForm = this[dataField].initialUploadForm;
+          this[dataField].placeHolder = [];
         });
-
-      document.querySelector(this[dataField].fileID).value = '';
     },
   },
 };

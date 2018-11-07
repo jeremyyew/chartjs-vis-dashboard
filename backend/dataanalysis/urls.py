@@ -17,9 +17,9 @@ urlpatterns = [
 
     path('parse/', views.parseCSV, name='parse'),
 
-	path('getAuthorInfo/', getInsight.getAuthorInfo, name='getAuthorInfo'),
-	path('getReviewInfo/', getInsight.getReviewInfo, name='getReviewInfo'),
-	path('getSubmissionInfo/', getInsight.getSubmissionInfo, name='getSubmissionInfo'),
+    path('getAuthorInfo/', getInsight.getAuthorInfo, name='getAuthorInfo'),
+    path('getReviewInfo/', getInsight.getReviewInfo, name='getReviewInfo'),
+    path('getSubmissionInfo/', getInsight.getSubmissionInfo, name='getSubmissionInfo'),
 
     path('', views.index, name='index'),
     re_path(r'^.*/$', views.index),  # Also redirect all other urls to the SPA

@@ -43,7 +43,7 @@ We use a global store object to keep track of all the charts and whether each is
  <el-switch
       v-model="storeState.charts[CHART_ID_TOP_AUTHOR_BAR].included"
       ...
-    />
+  />
 ```
 Toggling the switch will automatically modify that info in the global state under chart `id`, allowing `PdfGenerator` to parse that info when needed. 
 
@@ -51,13 +51,24 @@ Toggling the switch will automatically modify that info in the global state unde
 ```ecmascript 6
 generatePdf() {
   const pdfGenerator = new Utils.PdfGenerator();
-  pdfGenerator.generate(['topAuthorChart', 'topCountryChart', 'topAffiliationChart', 'topAcceptedAffiliationChart']);
+  pdfGenerator.generate([CHART_ID_TOP_AUTHOR_BAR, CHART_ID_TOP_COUNTRY_BAR]);
+}
 ```
 `PdfGenerator` may be invoked in any component that you need to insert a print button, and can print any set of charts. 
 
 Currently `PdfGenerator` is only used at the `App` level, and is given all `id`'s explicitly. This allows explicit ordering of charts. If it is not given any `id`'s it will automatically iterate through all charts registered in the global state (in no guaranteed order). 
 
 ### Notes
+- In order to use constants in template we must pass in as data, e.g.
+```ecmascript 6
+data() {
+    return {
+      CHART_IDS,
+      ...
+    },
+}
+```
+And for setting element `id` using data, we must `v-bind:id` or `:id`. 
 - When we bind the global state with `v-model` we are directly mutating state, which is not good practice - however, the code is way simpler this way: we do not have to define a unique computed property with a getter and setter for every single chart's `included` attribute. I tried to do something generic with either `computed` or `methods` but wasn't able to. We would have to do individual computed properties for other data that involve more complicated mutation (such as addition of properties) in the future.
 - Currently, we avoid storing the caption data, and simply access the caption text in the DOM via `document.getElementById(CHART_ID).nextElementSibling.innerText`. This is a weak assumption but greatly simplifies the process.
 

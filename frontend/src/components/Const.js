@@ -1,4 +1,10 @@
 export default {
+  CHART_IDS: {
+    TOP_AUTHOR_BAR_ID: 'topAuthorBarChart',
+    TOP_COUNTRY_BAR_ID: 'topCountryBarChart',
+    TOP_ACCEPTED_AFFILIATION_BAR_PIE_ID: 'topAcceptedAffiliationBarAndPieChart',
+    TOP_SUBMITTED_AFFILIATION_BAR_PIE_ID: 'topSubmittedAffiliationBarAndPieChart',
+  },
   scaleLabelConfig: {
     display: true,
     fontStyle: 'bold',

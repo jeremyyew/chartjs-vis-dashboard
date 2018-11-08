@@ -33,13 +33,13 @@
       />
     </el-select>
     <el-switch
-      v-model="storeState.charts.topAcceptedAffiliationChart.included"
+      v-model="storeState.charts[CHART_IDS.TOP_ACCEPTED_AFFILIATION_BAR_PIE_ID].included"
       active-color="#13ce66"
       active-text="Included in Report"
       inactive-text="Not Included"
     />
     <div
-      id="topAcceptedAffiliationChart"
+      :id="CHART_IDS.TOP_ACCEPTED_AFFILIATION_BAR_PIE_ID"
       ref="topAcceptedAffiliationChart"
     >
       <hori-bar-chart
@@ -207,6 +207,13 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import Store from '@/store';
 
+const { CHART_IDS } = Const;
+const {
+    TOP_AUTHOR_BAR_ID,
+    TOP_COUNTRY_BAR_ID,
+    TOP_ACCEPTED_AFFILIATION_BAR_PIE_ID,
+    TOP_SUBMITTED_AFFILIATION_BAR_PIE_ID,
+} = CHART_IDS;
 // visualization 4.1
 import {
   dummyTopAcceptedAffiliationData,
@@ -227,6 +234,7 @@ export default {
     const countryInitialText = `And from the country information (generated from the author data), we can see that the top 1 country, in this case ${this.chartData.topCountries.labels[0]}, has made ${String(((this.chartData.topCountries.data[0] - this.chartData.topCountries.data[1]) / this.chartData.topCountries.data[1] * 100).toFixed(2))}% more submission than the second-placed ${this.chartData.topCountries.labels[1]}.`;
 
     return {
+      CHART_IDS,
       storeState: Store.state,
       msg: 'Author Info Analysis',
       authorText: {
@@ -346,12 +354,12 @@ export default {
     Store.registerPrintableChart('topAuthorChart');
     Store.registerPrintableChart('topCountryChart');
     Store.registerPrintableChart('topAffiliationChart');
-    Store.registerPrintableChart('topAcceptedAffiliationChart');
+    Store.registerPrintableChart(TOP_ACCEPTED_AFFILIATION_BAR_PIE_ID);
   },
   methods: {
     generatePdf() {
       const pdfGenerator = new Utils.PdfGenerator();
-      pdfGenerator.generate(['topAuthorChart', 'topCountryChart', 'topAffiliationChart', 'topAcceptedAffiliationChart']);
+      pdfGenerator.generate([TOP_ACCEPTED_AFFILIATION_BAR_PIE_ID, 'topAuthorChart', 'topCountryChart', 'topAffiliationChart']);
     },
     chooseColorScheme(len) {
       switch (len) {

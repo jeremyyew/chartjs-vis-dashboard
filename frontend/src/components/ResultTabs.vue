@@ -118,8 +118,8 @@ export default {
 </script>
 
 <style scoped lang="sass">
-  #main-tabs .el-tab-pane
-    height: 600px
+  #main-tabs
+    height: 90%
     overflow: scroll
 
 </style>

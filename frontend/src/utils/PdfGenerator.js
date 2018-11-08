@@ -11,7 +11,7 @@ export default class PdfGenerator {
     this.doc = new jsPDF('p', 'pt');
     this.setPdfParams();
     this.setPdfMainTitle();
-    this.generateDiagramsThenSave(chartIds);
+    return this.generateDiagramsThenSave(chartIds);
   }
 
   async generateDiagramsThenSave(ids) {
@@ -19,10 +19,13 @@ export default class PdfGenerator {
     // For each chart id, get the chart, caption, and check if it is included in global store
     // Assumes that caption div is directly below chart div
     for (const id of ids) {
+      if (!Store.state.charts[id]){
+        break;
+      }
       await this.elementToCanvas(id,
         Store.state.charts[id].included);
     }
-    this.doc.save(`${this.fileName}.pdf`);
+    return this.doc.save(`${this.fileName}.pdf`);
   }
 
   async elementToCanvas(id, included) {

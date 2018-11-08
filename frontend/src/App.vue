@@ -16,9 +16,9 @@
             align="middle"
             style="height: inherit; line-height: 15px;"
           >
-            <el-col :span="6" />
+            <el-col :span="4" />
             <el-col
-              :span="12"
+              :span="16"
             >
               <span
                 id="app-title"
@@ -27,7 +27,7 @@
             </el-col>
             <el-col
               id="sign-in-col"
-              :span="6"
+              :span="4"
             >
               <el-button
                 v-if="!isAuthenticated"
@@ -243,9 +243,17 @@
               :result="result"
               :last-updated-viz="lastUpdatedViz"
             />
-            <center>
-              <router-view :key="$route.fullPath" />
-            </center>
+            <el-row
+              type="flex"
+            >
+              <el-button
+                type="success"
+                style="margin-top: 10px"
+                :icon="pdfIcon"
+                @click="generatePdf"
+              >Save all as PDF
+              </el-button>
+            </el-row>
           </el-main>
         </el-container>
         <el-footer id="main-footer">
@@ -277,9 +285,10 @@ import ResultTabs from '@/components/ResultTabs';
 import Auth from '@/components/Auth';
 import StorePersisted from '@/storePersisted';
 import Store from '@/store';
-import utils from '@/utils'
+import utils from '@/utils';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
+import Const from '@/components/Const';
 
 const STATUS_INITIAL = 0;
 const STATUS_SAVING = 1;
@@ -288,6 +297,7 @@ const
   STATUS_FAILED = 3;
 
 const { stringify } = utils;
+const { CHART_IDS } = Const;
 
 const REFRESH_TOKEN_MS = 15 * 60 * 1000;
 let refreshTokenTimer;
@@ -310,6 +320,7 @@ export default {
       }
     };
     return {
+      isSavingPdf: false,
       storePersistedState: StorePersisted.state,
       authDialogOpen: false,
       isRegistrationLoading: false,
@@ -412,6 +423,9 @@ export default {
     };
   },
   computed: {
+    pdfIcon() {
+      return this.isSavingPdf ? 'el-icon-loading' : 'el-icon-download';
+    },
     isInitial() {
       return this.currentStatus === STATUS_INITIAL;
     },
@@ -447,6 +461,19 @@ export default {
     //     duration: 2500,
     //   });
     // },
+    async generatePdf() {
+      const pdfGenerator = new utils.PdfGenerator();
+      this.isSavingPdf = true;
+      await pdfGenerator.generate(
+        [
+          CHART_IDS.TOP_SUBMITTED_AFFILIATION_BAR_PIE_ID,
+          CHART_IDS.TOP_AUTHOR_BAR_ID,
+          CHART_IDS.TOP_COUNTRY_BAR_ID,
+          CHART_IDS.TOP_SUBMITTED_AFFILIATION_BAR_PIE_ID,
+        ],
+      );
+      this.isSavingPdf = false;
+    },
     setUserAuthenticated() {
       this.isAuthenticated = true;
       this.username = jwt_decode(this.$auth.getToken()).username;
@@ -638,6 +665,7 @@ export default {
   @import "@fortawesome/fontawesome-free/css/all.css";
   @import "@fortawesome/fontawesome-free/css/fontawesome.css";
   $content-padding: 20px;
+  $element-shadow: 0 2px 4px 0 rgba(0,0,0,.12),0 0 6px 0 rgba(0,0,0,.04);
   #upload {
   }
 
@@ -746,6 +774,16 @@ export default {
   }
 
   #main-header {
+    z-index: 1000;
+    position: sticky;
+    top: 0;
+    box-shadow: $element-shadow;
+  }
+
+  #main-footer {
+    position: sticky;
+    bottom: 0;
+    box-shadow: $element-shadow;
   }
 
   .side-line {

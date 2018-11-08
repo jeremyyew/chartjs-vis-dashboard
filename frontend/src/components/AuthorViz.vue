@@ -1,13 +1,6 @@
 <template>
   <div>
     <!--&lt;!&ndash;Visualization 4.1&ndash;&gt;-->
-    <div><el-button
-      type="success"
-      plain
-      style="margin-top: 10px"
-      @click="generatePdf"
-    >Save all
-    </el-button></div>
     <el-select
       v-model="topAcceptedAffiliationChartType"
       placeholder="Select Chart"
@@ -71,13 +64,13 @@
       />
     </el-select>
     <el-switch
-      v-model="storeState.charts.topAuthorChart.included"
+      v-model="storeState.charts[CHART_IDS.TOP_AUTHOR_BAR_ID].included"
       active-color="#13ce66"
       active-text="Included in Report"
       inactive-text="Not Included"
     />
     <bar-chart
-      id="topAuthorChart"
+      :id="CHART_IDS.TOP_AUTHOR_BAR_ID"
       ref="topAuthorChart"
       :data-input="topAuthorData"
       :title-text="'Top Authors'"
@@ -112,13 +105,13 @@
       />
     </el-select>
     <el-switch
-      v-model="storeState.charts.topCountryChart.included"
+      v-model="storeState.charts[CHART_IDS.TOP_COUNTRY_BAR_ID].included"
       active-color="#13ce66"
       active-text="Included in Report"
       inactive-text="Not Included"
     />
     <div
-      id="topCountryChart"
+      :id="CHART_IDS.TOP_COUNTRY_BAR_ID"
       ref="topCountryChart"
     >
       <hori-bar-chart
@@ -162,13 +155,13 @@
       />
     </el-select>
     <el-switch
-      v-model="storeState.charts.topAffiliationChart.included"
+      v-model="storeState.charts[CHART_IDS.TOP_SUBMITTED_AFFILIATION_BAR_PIE_ID].included"
       active-color="#13ce66"
       active-text="Included in Report"
       inactive-text="Not Included"
     />
     <div
-      id="topAffiliationChart"
+      :id="CHART_IDS.TOP_SUBMITTED_AFFILIATION_BAR_PIE_ID"
       ref="topAffiliationChart"
     >
       <hori-bar-chart
@@ -206,18 +199,12 @@ import Const from './Const';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import Store from '@/store';
-
-const { CHART_IDS } = Const;
-const {
-    TOP_AUTHOR_BAR_ID,
-    TOP_COUNTRY_BAR_ID,
-    TOP_ACCEPTED_AFFILIATION_BAR_PIE_ID,
-    TOP_SUBMITTED_AFFILIATION_BAR_PIE_ID,
-} = CHART_IDS;
 // visualization 4.1
 import {
   dummyTopAcceptedAffiliationData,
 } from '../mocks/TopAcceptedAffiliationMock';
+
+const { CHART_IDS } = Const;
 
 export default {
   name: 'AuthorViz',
@@ -351,16 +338,12 @@ export default {
     },
   },
   created() {
-    Store.registerPrintableChart('topAuthorChart');
-    Store.registerPrintableChart('topCountryChart');
-    Store.registerPrintableChart('topAffiliationChart');
-    Store.registerPrintableChart(TOP_ACCEPTED_AFFILIATION_BAR_PIE_ID);
+    Store.registerPrintableChart(CHART_IDS.TOP_ACCEPTED_AFFILIATION_BAR_PIE_ID);
+    Store.registerPrintableChart(CHART_IDS.TOP_AUTHOR_BAR_ID);
+    Store.registerPrintableChart(CHART_IDS.TOP_COUNTRY_BAR_ID);
+    Store.registerPrintableChart(CHART_IDS.TOP_SUBMITTED_AFFILIATION_BAR_PIE_ID);
   },
   methods: {
-    generatePdf() {
-      const pdfGenerator = new Utils.PdfGenerator();
-      pdfGenerator.generate([TOP_ACCEPTED_AFFILIATION_BAR_PIE_ID, 'topAuthorChart', 'topCountryChart', 'topAffiliationChart']);
-    },
     chooseColorScheme(len) {
       switch (len) {
         case 2:

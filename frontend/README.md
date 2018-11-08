@@ -59,6 +59,10 @@ generatePdf() {
 Currently `PdfGenerator` is only used at the `App` level, and is given all `id`'s explicitly. This allows explicit ordering of charts. If it is not given any `id`'s it will automatically iterate through all charts registered in the global state (in no guaranteed order). 
 
 ### Notes
+
+- When we bind the global state with `v-model` we are directly mutating state, which is not good practice - however, the code is way simpler this way: we do not have to define a unique computed property with a getter and setter for every single chart's `included` attribute. I tried to do something generic with either `computed` or `methods` but wasn't able to. We would have to do individual computed properties for other data that involve more complicated mutation (such as addition of properties) in the future.
+- On a related note, when directly exposing global data in the Vue instance, it is best to declare `Store.state` as opposed to some property such as `Store.state.charts`. This is because that property may rely on Object re-assignment (see `registerPrintableChart`) in order to set new reactive properties. This means upon a new registration, `Store.state.charts` now holds a reference to another object, and will not detect changes made by the any bindings made on the initial `Store.state.charts` data declared. 
+- Currently, we avoid storing the caption data, and simply access the caption text in the DOM via `document.getElementById(CHART_ID).nextElementSibling.innerText`. This is a weak assumption but greatly simplifies the process.
 - In order to use constants in template we must pass in as data, e.g.
 ```ecmascript 6
 data() {
@@ -68,9 +72,9 @@ data() {
     },
 }
 ```
-And for setting element `id` using data, we must `v-bind:id` or `:id`. 
-- When we bind the global state with `v-model` we are directly mutating state, which is not good practice - however, the code is way simpler this way: we do not have to define a unique computed property with a getter and setter for every single chart's `included` attribute. I tried to do something generic with either `computed` or `methods` but wasn't able to. We would have to do individual computed properties for other data that involve more complicated mutation (such as addition of properties) in the future.
-- Currently, we avoid storing the caption data, and simply access the caption text in the DOM via `document.getElementById(CHART_ID).nextElementSibling.innerText`. This is a weak assumption but greatly simplifies the process.
+And for setting element `id` using data, we must `v-bind:id` or `:id`.
+- We use `id` instead of `ref` as we want to be able to call `generate` from any component, not just the component that contains the visualization (since we would access a `ref` element via `this.$refs`). The downside is that if we reuse the component (with same `id`s) only the first one will be retrieved from the DOM. A possible method to use `ref`'s if necessary, might be to pass a reference to the visualization during registration, in `mounted` instead of `created`.  
+
 
 ## Build Setup
 

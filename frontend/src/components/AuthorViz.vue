@@ -183,7 +183,7 @@
       type="success"
       plain
       style="margin-top: 10px"
-      @click="saveAuthorNew"
+      @click=""
     >Save
     </el-button>
   </div>
@@ -437,78 +437,6 @@ export default {
           },
         ],
       };
-    },
-    saveAuthorNew() {
-      const fileName = 'Author Submission Visual Analysis';
-      const leftMargin = Const.leftMargin;
-      const rightMargin = Const.rightMargin;
-      const contentWidth = Const.contentWidth;
-      const initialTopMargin = Const.topMargin;
-      const doc = new jsPDF('p', 'pt');
-      const title = 'Author Submission Visual Analysis';
-      doc.setFont('Times');
-      doc.setFontSize(Const.pdfTitleFontSize);
-      const titleLength = doc.getStringUnitWidth(title) * Const.pdfTitleFontSize;
-      doc.text((contentWidth - titleLength) / 2.0 + leftMargin, initialTopMargin, title);
-      const startingTopMargin = initialTopMargin + Const.pdfTitleFontSize;
-      doc.setFontSize(Const.pdfTextFontSize);
-
-      let numOfAddedSections = 0;
-
-      html2canvas(document.getElementById('topauthorchart')).then((authorCanvas) => {
-        let topMarginAfterAuthor = startingTopMargin;
-        if (this.authorChartIncluded) {
-          numOfAddedSections += 1;
-          const authorImageData = authorCanvas.toDataURL('image/png');
-          const authorImageWidth = Const.imageWidth;
-          const authorImageHeight = authorCanvas.height * authorImageWidth / authorCanvas.width;
-          doc.addImage(authorImageData, 'PNG', leftMargin, startingTopMargin, authorImageWidth, authorImageHeight);
-
-          const authorTextLines = doc.splitTextToSize(this.authorText.val, contentWidth);
-          doc.text(leftMargin, startingTopMargin + authorImageHeight + 20, authorTextLines);
-
-          // Note: here pdfLineHeight is the line height considering the white space between lines
-          const authorTextLinesHeight = Const.pdfLineHeight * Const.pdfTextFontSize * authorTextLines.length;
-          topMarginAfterAuthor = startingTopMargin + authorImageHeight + authorTextLinesHeight + 30;
-        }
-
-        html2canvas(document.getElementById('topcountrychart')).then((countryCanvas) => {
-          let topMarginAfterCountry = topMarginAfterAuthor;
-          if (this.countryChartIncluded) {
-            numOfAddedSections += 1;
-            const countryImageData = countryCanvas.toDataURL('image/png');
-            const countryImageWidth = Const.imageWidth;
-            const countryImageHeight = countryCanvas.height * countryImageWidth / countryCanvas.width;
-            doc.addImage(countryImageData, 'PNG', leftMargin, topMarginAfterAuthor, countryImageWidth, countryImageHeight);
-
-            const countryTextLines = doc.splitTextToSize(this.countryText.val, contentWidth);
-            doc.text(leftMargin, topMarginAfterAuthor + countryImageHeight + 20, countryTextLines);
-
-            if (numOfAddedSections % 2 === 1) {
-              const countryTextLinesHeight = Const.pdfLineHeight * Const.pdfTextFontSize * countryTextLines.length;
-              topMarginAfterCountry = topMarginAfterAuthor + countryImageHeight + countryTextLinesHeight + 20;
-            }
-          }
-
-          html2canvas(document.getElementById('topaffiliationchart')).then((affiliationCanvas) => {
-            if (this.affiliationChartIncluded) {
-              if (numOfAddedSections % 2 == 0 && numOfAddedSections > 0) {
-                doc.addPage();
-                topMarginAfterCountry = Const.topMargin;
-              }
-              const affiliationImageData = affiliationCanvas.toDataURL('image/png');
-              const affiliationImageWidth = Const.imageWidth;
-              const affiliationImageHeight = affiliationCanvas.height * affiliationImageWidth / affiliationCanvas.width;
-              doc.addImage(affiliationImageData, 'PNG', leftMargin, topMarginAfterCountry, affiliationImageWidth, affiliationImageHeight);
-
-              const affiliationTextLines = doc.splitTextToSize(this.affiliationText.val, contentWidth);
-              doc.text(leftMargin, topMarginAfterCountry + affiliationImageHeight + 20, affiliationTextLines);
-            }
-
-            doc.save(`${fileName}.pdf`);
-          });
-        });
-      });
     },
   },
 };

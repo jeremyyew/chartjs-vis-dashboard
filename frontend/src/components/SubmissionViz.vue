@@ -1,13 +1,13 @@
 <template>
   <div>
     <el-switch
-      v-model="timeSeriesChartIncluded"
+      v-model="storeState.charts[CHART_IDS.SUBMISSION_TIME_SERIES_ID].included"
       active-color="#13ce66"
       active-text="Included in Report"
       inactive-text="Not Included"
     />
     <time-line-chart
-      id="timeserieschart"
+      :id="CHART_IDS.SUBMISSION_TIME_SERIES_ID"
       ref="timeserieschart"
       :data-input="timeSeriesData"
       :title-text="'Submission Time Series'"
@@ -20,13 +20,13 @@
     />
 
     <el-switch
-      v-model="historicalAcceptanceChartIncluded"
+      v-model="storeState.charts[CHART_IDS.HISTORICAL_ACCEPTANCE_ID].included"
       active-color="#13ce66"
       active-text="Included in Report"
       inactive-text="Not Included"
     />
     <line-chart
-      id="historicalchart"
+      :id="CHART_IDS.HISTORICAL_ACCEPTANCE_ID"
       ref="historicalchart"
       :data-input="historicalAcceptanceRate"
       :title-text="'Past Years Acceptance Rates'"
@@ -47,13 +47,13 @@
       />
     </el-select>
     <el-switch
-      v-model="acceptanceRateByTrackChartIncluded"
+      v-model="storeState.charts[CHART_IDS.ACCEPTANCE_BY_TRACK_ID].included"
       active-color="#13ce66"
       active-text="Included in Report"
       inactive-text="Not Included"
     />
     <div
-      id="acceptancechart"
+      :id="CHART_IDS.ACCEPTANCE_BY_TRACK_ID"
       ref="acceptancechart"
     >
       <bar-chart-deci
@@ -85,13 +85,13 @@
       />
     </el-select>
     <el-switch
-      v-model="topAcceptedAuthorsChartIncluded"
+      v-model="storeState.charts[CHART_IDS.TOP_ACCEPTED_AUTHORS_ID].included"
       active-color="#13ce66"
       active-text="Included in Report"
       inactive-text="Not Included"
     />
     <hori-bar-chart
-      id="topacceptedauthorchart"
+      :id="CHART_IDS.TOP_ACCEPTED_AUTHORS_ID"
       ref="topacceptedauthorchart"
       :data-input="topAcceptedAuthorsData"
       :title-text="'Top Accepted Authors/Contributors'"
@@ -128,13 +128,13 @@
       />
     </el-select>
     <el-switch
-      v-model="topAcceptedAuthorsByTrackChartIncluded"
+      v-model="storeState.charts[CHART_IDS.TOP_ACCEPTED_AUTHORS_BY_TRACK_ID].included"
       active-color="#13ce66"
       active-text="Included in Report"
       inactive-text="Not Included"
     />
     <hori-bar-chart
-      id="topacceptedauthorbytrackchart"
+      :id="CHART_IDS.TOP_ACCEPTED_AUTHORS_BY_TRACK_ID"
       ref="topacceptedauthorbytrackchart"
       :data-input="topAcceptedAuthorsByTrackData"
       :title-text="'Top Accepted Authors'"
@@ -147,13 +147,13 @@
 
     <!--Note: due to the constraint of the component, the style width and height must be specified-->
     <el-switch
-      v-model="wordCloudAllIncluded"
+      v-model="storeState.charts[CHART_IDS.SUBMISSIONS_WORD_CLOUD_ALL_ID].included"
       active-color="#13ce66"
       active-text="Included in Report"
       inactive-text="Not Included"
     />
     <div
-      id="wordcloudall"
+      :id="CHART_IDS.SUBMISSIONS_WORD_CLOUD_ALL_ID"
       ref="wordcloudall"
     >
       <h4>Word Cloud for All Submissions</h4>
@@ -167,13 +167,13 @@
     </div>
 
     <el-switch
-      v-model="wordCloudAcceptedIncluded"
+      v-model="storeState.charts[CHART_IDS.SUBMISSIONS_WORD_CLOUD_ACCEPTED_ID].included"
       active-color="#13ce66"
       active-text="Included in Report"
       inactive-text="Not Included"
     />
     <div
-      id="wordcloudaccept"
+      :id="CHART_IDS.SUBMISSIONS_WORD_CLOUD_ACCEPTED_ID"
       ref="wordcloudaccept"
     >
       <h4>Word Cloud for Accepted Papers</h4>
@@ -187,13 +187,13 @@
     </div>
 
     <el-switch
-      v-model="wordCloudByTrackIncluded"
+      v-model="storeState.charts[CHART_IDS.SUBMISSIONS_WORD_CLOUD_BY_TRACK_ID].included"
       active-color="#13ce66"
       active-text="Included in Report"
       inactive-text="Not Included"
     />
     <div
-      id="wordcloudtrack"
+      :id="CHART_IDS.SUBMISSIONS_WORD_CLOUD_BY_TRACK_ID"
       ref="wordcloudtrack"
     >
       <h4>Word Cloud for Submissions by Track</h4>
@@ -253,10 +253,12 @@ import PieChart from '@/components/PieChart';
 import EditableText from '@/components/EditableText';
 import Utils from '@/utils';
 import Const from './Const';
-
+import Store from '@/store';
 import VueWordCloud from 'vuewordcloud';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+
+const { CHART_IDS } = Const;
 
 export default {
   name: 'SubmissionViz',
@@ -281,6 +283,8 @@ export default {
     const topValue = acceptanceRate[topIndex] * 100;
 
     return {
+      storeState: Store.state,
+      CHART_IDS,
       msg: 'Submission Info Analysis',
       acceptanceRate: this.chartData.acceptanceRate.toFixed(2),
       acceptanceRateSelectedTrack: 'Full Papers',
@@ -410,6 +414,16 @@ export default {
     wordCloudSelectedFilter(newValue, oldValue) {
       this.wordCloudByTrack = this.computeFilteredWordCloudByTrack(newValue);
     },
+  },
+  created() {
+    Store.registerPrintableChart(CHART_IDS.SUBMISSION_TIME_SERIES_ID);
+    Store.registerPrintableChart(CHART_IDS.HISTORICAL_ACCEPTANCE_ID);
+    Store.registerPrintableChart(CHART_IDS.ACCEPTANCE_BY_TRACK_ID);
+    Store.registerPrintableChart(CHART_IDS.TOP_ACCEPTED_AUTHORS_ID);
+    Store.registerPrintableChart(CHART_IDS.TOP_ACCEPTED_AUTHORS_BY_TRACK_ID);
+    Store.registerPrintableChart(CHART_IDS.SUBMISSIONS_WORD_CLOUD_ALL_ID);
+    Store.registerPrintableChart(CHART_IDS.SUBMISSIONS_WORD_CLOUD_ACCEPTED_ID);
+    Store.registerPrintableChart(CHART_IDS.SUBMISSIONS_WORD_CLOUD_BY_TRACK_ID);
   },
   methods: {
     computeFilteredWordCloudByTrack(filter) {

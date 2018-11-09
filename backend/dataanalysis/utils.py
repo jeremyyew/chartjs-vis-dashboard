@@ -1,5 +1,7 @@
 import csv
 import codecs
+import hashlib
+
 
 def isNumber(inputStr):
     try:
@@ -96,6 +98,13 @@ def parseCSVFileFromDjangoFile(inputFile):
     parsedResult["entry" + str(index + 1)] = ele
 
   return parsedResult
+
+
+def sha256sum(f):
+    h = hashlib.sha256()
+    for b in iter(lambda : f.read(128*1024), b''):
+        h.update(b)
+    return h.hexdigest()
 
 
 if __name__ == "__main__":

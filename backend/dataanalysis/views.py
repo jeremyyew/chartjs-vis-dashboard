@@ -2,6 +2,8 @@ import json
 from collections import Counter
 
 from django.contrib.auth.models import User
+from django.contrib.sessions.backends.db import SessionStore
+from django.contrib.sessions.models import Session
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from rest_framework import status, serializers
@@ -11,8 +13,9 @@ from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
 from rest_framework.exceptions import APIException
 from rest_framework.permissions import AllowAny
 
-from .utils import parseCSVFileFromDjangoFile, isNumber, returnTestChartData, parseCSVFile
+from .utils import parseCSVFileFromDjangoFile, isNumber, returnTestChartData, parseCSVFile, sha256sum
 from .getInsight import parseAuthorCSVFile, getReviewScoreInfo, getAuthorInfo, getReviewInfo, getSubmissionInfo
+
 
 
 # TODO: to be removed
@@ -86,7 +89,11 @@ def uploadCSV(request):
 
 @csrf_exempt
 def parseCSV(request):
+    s = SessionStore()
     csvFile = request.FILES['file']
+    s['file'] = csvFile
+    s.create()
+
     rowCSV = parseCSVFile(csvFile)
 
     previewData = []
@@ -98,7 +105,7 @@ def parseCSV(request):
 
         previewData.append(rowData)
 
-    return JsonResponse({'data' : rowCSV, 'previewData': previewData})
+    return JsonResponse({'data' : rowCSV, 'previewData': previewData, 'sessionId': s.session_key})
 
 
 @api_view(['POST'])
@@ -113,12 +120,24 @@ def getAuthorInfo(request):
     # TODO: use rest framework request.data
     if request.body:
         data = json.loads(request.body)
-        authorData = data['data'][1:]
+        sessionId = data['sessionId']
+        session = SessionStore(session_key=sessionId)
+
+        csvFile = session['file']
+        print(sha256sum(csvFile))
+        csvFile.seek(0)
+
+        # TODO: if authenticated hash csvFile, if database contains this then skip to calculation immediately
+
+        authorData = parseCSVFile(csvFile)[1:]
         authorData = [ele for ele in authorData if ele]
+        # authorData = data['data'][1:]
+        # authorData = [ele for ele in authorData if ele]
         firstNameIndex = data['firstNameIndex']
         lastNameIndex = data['lastNameIndex']
         countryIndex = data['countryIndex']
         affiliationIndex = data['affiliationIndex']
+
 
         authorList = []
         for authorInfo in authorData:

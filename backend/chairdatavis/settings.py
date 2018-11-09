@@ -140,6 +140,11 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Sessions
+# Not a good idea to use PickleSerializer but since we want to store file objects in the session we have to do this
+# It's also not a good idea to store file objects in the session
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/

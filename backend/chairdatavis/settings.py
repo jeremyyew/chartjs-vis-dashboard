@@ -94,6 +94,19 @@ DATABASES = {
     }
 }
 
+# Cache
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_bmemcached.memcached.BMemcached',
+        'LOCATION': os.environ['MEMCACHEDCLOUD_SERVERS'].split(','),
+        'OPTIONS': {
+            'username': os.environ['MEMCACHEDCLOUD_USERNAME'],
+            'password': os.environ['MEMCACHEDCLOUD_PASSWORD']
+        }
+    }
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators

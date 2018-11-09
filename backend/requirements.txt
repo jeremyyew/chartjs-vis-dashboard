@@ -15,3 +15,6 @@ djangorestframework-jwt
 rest-social-auth
 # Rest social auth requires the following version
 social-auth-app-django>=2.1.0,<3.0
+
+python-binary-memcached
+django-bmemcached

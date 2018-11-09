@@ -28,7 +28,7 @@ SECRET_KEY = 'r%i-k_ch54-wt@6x+u$38g$^8=jccze7*m%^4q9@&u847c+m$9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ['ENV'] == 'development'
 
-ALLOWED_HOSTS = ['warm-plateau-64202.herokuapp.com']
+ALLOWED_HOSTS = ['chairdatavis.herokuapp.com']
 
 
 # Application definition

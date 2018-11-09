@@ -17,7 +17,7 @@ urlpatterns = [
 
     path('parse/', views.parseCSV, name='parse'),
 
-    path('getAuthorInfo/', getInsight.getAuthorInfo, name='getAuthorInfo'),
+    path('getAuthorInfo/', views.getAuthorInfo, name='getAuthorInfo'),
     path('getReviewInfo/', getInsight.getReviewInfo, name='getReviewInfo'),
     path('getSubmissionInfo/', getInsight.getSubmissionInfo, name='getSubmissionInfo'),
 

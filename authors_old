@@ -1,0 +1,83 @@
+{
+  "infoData": {
+    "topAffiliations": {
+      "data": {
+        "0": 31,
+        "1": 29,
+        "2": 22,
+        "3": 16,
+        "4": 14,
+        "5": 12,
+        "6": 11,
+        "7": 11,
+        "8": 10,
+        "9": 10
+      },
+      "labels": {
+        "0": "Old Dominion University",
+        "1": "University of North Texas",
+        "2": "Wuhan University",
+        "3": "University of Illinois at Urbana-Champaign",
+        "4": "Trinity College Dublin",
+        "5": "University of Konstanz",
+        "6": "School of Information Management, Wuhan University",
+        "7": "Indian Institute of Technology Patna",
+        "8": "Zhejiang University",
+        "9": "Nanjing Agricultural University"
+      }
+    },
+    "topAuthors": {
+      "data": {
+        "0": 7,
+        "1": 7,
+        "2": 6,
+        "3": 5,
+        "4": 5,
+        "5": 4,
+        "6": 4,
+        "7": 4,
+        "8": 4,
+        "9": 4
+      },
+      "labels": {
+        "0": "Micxxxx Wexxxx",
+        "1": "Micxxxx Nexxxx",
+        "2": "J. xxxxxxx Doxxxx",
+        "3": "Daxxx Baixxxxxxx",
+        "4": "Anixxxx Mukxxxxxx",
+        "5": "Bexx Gixx",
+        "6": "Corxxxx Brexxxxxxx",
+        "7": "Jxx Haxx",
+        "8": "Shexxxx Dexx",
+        "9": "Wxx Lx"
+      }
+    },
+    "topCountries": {
+      "data": {
+        "0": 200,
+        "1": 106,
+        "2": 97,
+        "3": 45,
+        "4": 20,
+        "5": 17,
+        "6": 14,
+        "7": 13,
+        "8": 13,
+        "9": 11
+      },
+      "labels": {
+        "0": "United States",
+        "1": "China",
+        "2": "Germany",
+        "3": "India",
+        "4": "United Kingdom",
+        "5": "Japan",
+        "6": "Ireland",
+        "7": "Canada",
+        "8": "Netherlands",
+        "9": "New Zealand"
+      }
+    }
+  },
+  "infoType": "author"
+}

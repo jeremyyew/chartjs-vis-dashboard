@@ -1,0 +1,2845 @@
+{
+  "infoData": {
+    "acceptanceRate": 0.44339622641509435,
+    "acceptanceRateByTrack": {
+      "Doctoral Consortium": 0,
+      "Full Papers": 0.36619718309859156,
+      "JCDL 2018 - Workshops": 0.7142857142857143,
+      "Panels": 0.5,
+      "Poster/Demo 2": 0.84,
+      "Posters and Demos": 0.627906976744186,
+      "Short Papers": 0.34210526315789475,
+      "Tutorials": 0
+    },
+    "acceptedKeywordList": {
+      "0": {
+        "0": "digital libraries",
+        "1": 9
+      },
+      "1": {
+        "0": "web archiving",
+        "1": 6
+      },
+      "2": {
+        "0": "digital library",
+        "1": 5
+      },
+      "3": {
+        "0": "machine learning",
+        "1": 4
+      },
+      "4": {
+        "0": "deep learning",
+        "1": 3
+      },
+      "5": {
+        "0": "linked data",
+        "1": 3
+      },
+      "6": {
+        "0": "classification",
+        "1": 3
+      },
+      "7": {
+        "0": "memento",
+        "1": 3
+      },
+      "8": {
+        "0": "citation context",
+        "1": 3
+      },
+      "9": {
+        "0": "information retrieval",
+        "1": 3
+      },
+      "10": {
+        "0": "annotation",
+        "1": 2
+      },
+      "11": {
+        "0": "social media",
+        "1": 2
+      },
+      "12": {
+        "0": "open access",
+        "1": 2
+      },
+      "13": {
+        "0": "word embeddings",
+        "1": 2
+      },
+      "14": {
+        "0": "entity linking",
+        "1": 2
+      },
+      "15": {
+        "0": "exploratory search",
+        "1": 2
+      },
+      "16": {
+        "0": "scholarly communication",
+        "1": 2
+      },
+      "17": {
+        "0": "twitter",
+        "1": 2
+      },
+      "18": {
+        "0": "clustering",
+        "1": 2
+      },
+      "19": {
+        "0": "semantic web",
+        "1": 2
+      }
+    },
+    "acceptedKeywordMap": {
+      "5w qa": 1,
+      "5w1h extraction": 1,
+      "5w1h question answering": 1,
+      "academic bibliographic system": 1,
+      "academic publishing": 1,
+      "academic search engine": 1,
+      "academic social network": 1,
+      "active viewing": 1,
+      "agglomerative clustering": 1,
+      "altmetrics": 1,
+      "analytic hierarchy process": 1,
+      "annotation": 2,
+      "archival banner": 1,
+      "archival replay": 1,
+      "archive": 1,
+      "archiving": 1,
+      "artificial intelligence": 1,
+      "author contributions": 1,
+      "author name disambiguation": 2,
+      "authorities": 1,
+      "authorship contribution": 1,
+      "automatic domain term extraction": 1,
+      "automatic image classification": 1,
+      "automatic reference extraction": 1,
+      "bespoke proxying": 1,
+      "bibliographic reference parsing": 1,
+      "bibliography": 1,
+      "bibliography analysis": 1,
+      "big data": 1,
+      "biography": 1,
+      "biomedical literature mining": 1,
+      "blockchain": 1,
+      "browsing": 1,
+      "canada": 1,
+      "capisco": 1,
+      "categorization": 1,
+      "cbir": 1,
+      "census": 1,
+      "challenges": 1,
+      "chinese herbal medicine": 1,
+      "citation context": 3,
+      "citation data": 1,
+      "citation graph": 1,
+      "citation network": 1,
+      "citation parsing": 1,
+      "citation recommendation": 1,
+      "classification": 3,
+      "cloud services": 1,
+      "clustering": 2,
+      "clustering algorithms": 1,
+      "co-authorship networks": 1,
+      "co-citation": 1,
+      "co-classification analysis": 1,
+      "collaborative transcription": 1,
+      "collection analysis": 1,
+      "collection building": 1,
+      "collection development": 1,
+      "collection navigation": 1,
+      "collections": 1,
+      "collective memory": 1,
+      "community archives": 1,
+      "community building": 1,
+      "community-driven methodologies": 1,
+      "comparison extraction": 1,
+      "complex adaptive system": 1,
+      "comprehension": 1,
+      "computer algebra systems": 1,
+      "computer vision": 1,
+      "conceptual history": 1,
+      "conformance checking": 1,
+      "content drift": 1,
+      "contextualisation": 1,
+      "converging technology": 1,
+      "crawling": 1,
+      "cross-document linking": 1,
+      "cross-language": 1,
+      "cultural heritage institution": 1,
+      "curation": 1,
+      "cyberinfrastructure": 1,
+      "data": 1,
+      "data curation": 1,
+      "data infrastructure": 1,
+      "data lifecycle": 1,
+      "data mining": 1,
+      "data quality": 1,
+      "data visualization": 1,
+      "data-literature interlinking": 1,
+      "database operators": 1,
+      "dataset": 1,
+      "dblp": 1,
+      "decision-making": 1,
+      "deep learning": 3,
+      "desk-rejection": 1,
+      "diagrams": 1,
+      "digital history": 1,
+      "digital humanities": 1,
+      "digital libraries": 9,
+      "digital library": 5,
+      "digital library search": 1,
+      "digital mathematical library": 1,
+      "digital preservation": 1,
+      "digital scholarship": 1,
+      "digital scholarship services": 1,
+      "discoverability": 1,
+      "distant supervision": 1,
+      "diversification": 1,
+      "diversity": 1,
+      "document analysis": 1,
+      "document representations": 1,
+      "e-book system": 1,
+      "e-resources": 1,
+      "editorial system": 1,
+      "embryonic topic": 1,
+      "entity comparison": 1,
+      "entity linking": 2,
+      "entity mixture": 1,
+      "entity-aspects": 1,
+      "entropy": 1,
+      "ephemera": 1,
+      "evaluation": 1,
+      "event evolution": 1,
+      "event ranking": 1,
+      "experiment library": 1,
+      "explanation harvesting": 1,
+      "explicit experiment model": 1,
+      "exploratory search": 2,
+      "extract feature text analysis": 1,
+      "eye movements": 1,
+      "faceted search": 1,
+      "figure extraction": 1,
+      "folksonomy": 1,
+      "footstep detection": 1,
+      "formula citation graph": 1,
+      "formula importance": 1,
+      "formula ranking": 1,
+      "future libraries": 1,
+      "genealogy": 1,
+      "geographical locations": 1,
+      "gold standard": 1,
+      "graph embeddings": 1,
+      "graph representation": 1,
+      "hateos": 1,
+      "hathitrust": 1,
+      "health data": 1,
+      "heterogeneous network": 1,
+      "hierarchical clustering": 1,
+      "highlighting": 1,
+      "historical texts": 1,
+      "history": 1,
+      "human-centered communities": 1,
+      "image analysis": 1,
+      "image and video retrieval": 1,
+      "image annotation": 1,
+      "image collections": 1,
+      "image organization": 1,
+      "image retrieval": 1,
+      "image seeking and use": 1,
+      "in-memory cache": 1,
+      "indexing languages": 1,
+      "information extraction": 2,
+      "information linking": 1,
+      "information retrieval": 3,
+      "information retrieval system": 1,
+      "information systems → data mining": 1,
+      "information systems → digital libraries and archives": 1,
+      "infrastructure data": 1,
+      "instance": 1,
+      "institutional repository": 2,
+      "intelligence analysis": 1,
+      "intelligent infrastructure": 1,
+      "interaction process analysis (ipa)": 1,
+      "interface": 1,
+      "internet of things": 1,
+      "inuit communities": 1,
+      "journalist's questions": 1,
+      "keyphrase extraction": 1,
+      "knowledge base": 1,
+      "knowledge bases": 1,
+      "knowledge discovery": 1,
+      "knowledge recommendation": 1,
+      "knowledge service": 1,
+      "knowledge society": 1,
+      "learning assistance": 1,
+      "libraries": 1,
+      "library": 1,
+      "library and information science (lis)": 1,
+      "library automation": 1,
+      "library services": 1,
+      "library workflows": 1,
+      "lifecycle management": 1,
+      "link prediction": 1,
+      "link rot": 1,
+      "linked data": 3,
+      "linked open data": 1,
+      "linking mechanisms": 1,
+      "living lab": 1,
+      "long-term preservation": 1,
+      "machine learning": 4,
+      "machine-friendly repositories": 1,
+      "mathml": 1,
+      "memcached": 1,
+      "memento": 3,
+      "metadata": 1,
+      "metadata harvesting": 1,
+      "metafilter": 1,
+      "mobile library": 1,
+      "mobile reading behavior": 1,
+      "museum": 1,
+      "mutual reinforcement": 1,
+      "named entities": 1,
+      "named entity disambiguation": 1,
+      "named entity recognition": 1,
+      "neural networks": 1,
+      "news archives": 1,
+      "news event detection": 1,
+      "ocr": 2,
+      "oculomotor plant": 1,
+      "online communities": 1,
+      "online curation communities": 1,
+      "ontologies": 1,
+      "open access": 2,
+      "open data": 1,
+      "patent data mining": 1,
+      "peer review": 1,
+      "persistence": 1,
+      "persistent identifiers": 1,
+      "personal collections": 1,
+      "personalization": 2,
+      "plagiarism detection": 1,
+      "preservation": 1,
+      "preserving web pages": 1,
+      "prior knowledge": 1,
+      "privacy": 1,
+      "probabilistic model": 1,
+      "probabilistic similarity": 1,
+      "pseudo-relevance": 1,
+      "public understanding of science": 1,
+      "publication representation learning": 1,
+      "quality of research article": 1,
+      "query language": 1,
+      "query suggestion": 1,
+      "questionnaire": 1,
+      "ranking": 1,
+      "ranking archived documents": 1,
+      "rdf": 1,
+      "reading": 1,
+      "reading environment": 1,
+      "recommender system": 1,
+      "recommender systems": 1,
+      "records": 1,
+      "reporter's questions": 1,
+      "repository": 1,
+      "representation learning": 1,
+      "research data management (rdm)": 1,
+      "research data services (rds)": 1,
+      "research librarian": 1,
+      "research paper": 1,
+      "researcher’s information behavior": 1,
+      "researchgate": 1,
+      "rest": 1,
+      "retrievability bias": 1,
+      "reusability": 1,
+      "reuse": 1,
+      "rfid": 1,
+      "russian trolls": 1,
+      "scheduling": 1,
+      "scholarly communication": 2,
+      "scholarly data": 1,
+      "scientific article": 1,
+      "scientific data management": 1,
+      "scope of research article": 1,
+      "self-learning library": 1,
+      "semantic annotations": 1,
+      "semantic aspects": 1,
+      "semantic disambiguation": 1,
+      "semantic layers": 1,
+      "semantic publishing": 1,
+      "semantic search": 1,
+      "semantic similarity": 1,
+      "semantic technologies": 1,
+      "semantic web": 2,
+      "sequence tagging": 1,
+      "service quality": 1,
+      "smart digital library": 1,
+      "smart library": 1,
+      "social data": 1,
+      "social media": 2,
+      "social media analysis": 1,
+      "social pseudo relevance feedback": 1,
+      "social query expansion": 1,
+      "social reading": 1,
+      "social tagging": 1,
+      "software as a service": 1,
+      "song lyrics": 1,
+      "statistical classifier": 1,
+      "stochastic model": 1,
+      "street name analysis": 1,
+      "subject": 1,
+      "subject-predicate-object (spo) triple": 1,
+      "superimposed information": 1,
+      "supervised learning algorithm": 1,
+      "surrogate": 1,
+      "survey": 1,
+      "technical activity": 1,
+      "temporal expressions": 1,
+      "temporal impact": 1,
+      "temporal tagging": 1,
+      "text classification": 1,
+      "text comprehension": 1,
+      "text mining": 1,
+      "textrank": 1,
+      "tf-idf": 2,
+      "theoretical framework": 1,
+      "time": 1,
+      "topic": 1,
+      "topic detection": 1,
+      "topic modeling": 1,
+      "topic modelling": 1,
+      "topic models": 2,
+      "topic trends": 1,
+      "transaction-log study": 1,
+      "trivial baseline": 1,
+      "trustworthiness": 1,
+      "twitter": 2,
+      "typed links": 1,
+      "university libraries": 1,
+      "usability issues": 1,
+      "usage": 1,
+      "user experience": 1,
+      "user interest modeling": 1,
+      "user interface": 1,
+      "user linking behaviour": 1,
+      "users' satisfaction": 1,
+      "very large digital libraries": 1,
+      "vibration": 1,
+      "video-based learning": 1,
+      "visual image metrics": 1,
+      "visualization scheme": 1,
+      "warc": 1,
+      "web archives": 1,
+      "web archiving": 6,
+      "wikidata": 1,
+      "wikification": 1,
+      "wikipedia": 1,
+      "word embedding": 1,
+      "word embeddings": 2,
+      "workset creation": 1,
+      "worksets": 1,
+      "workshop proposal": 1
+    },
+    "comparableAcceptanceRate": {
+      "Full Papers": {
+        "0": 0.29,
+        "1": 0.28,
+        "2": 0.27,
+        "3": 0.29,
+        "4": 0.29,
+        "5": 0.3,
+        "6": 0.29,
+        "7": 0.3,
+        "8": 0.36619718309859156
+      },
+      "Short Papers": {
+        "0": 0.29,
+        "1": 0.37,
+        "2": 0.31,
+        "3": 0.31,
+        "4": 0.32,
+        "5": 0.5,
+        "6": 0.35,
+        "7": 0.32,
+        "8": 0.34210526315789475
+      },
+      "year": {
+        "0": 2010,
+        "1": 2011,
+        "2": 2012,
+        "3": 2013,
+        "4": 2014,
+        "5": 2015,
+        "6": 2016,
+        "7": 2017,
+        "8": 2018
+      }
+    },
+    "keywordsByTrack": {
+      "Doctoral Consortium": {
+        "0": {
+          "0": "mathematical information retrieval",
+          "1": 2
+        },
+        "1": {
+          "0": "wikidata",
+          "1": 2
+        },
+        "2": {
+          "0": "web archiving",
+          "1": 2
+        },
+        "3": {
+          "0": "recommender systems",
+          "1": 2
+        },
+        "4": {
+          "0": "digital libraries",
+          "1": 1
+        },
+        "5": {
+          "0": "social media",
+          "1": 1
+        },
+        "6": {
+          "0": "electronic documents",
+          "1": 1
+        },
+        "7": {
+          "0": "academic staff",
+          "1": 1
+        },
+        "8": {
+          "0": "hiring",
+          "1": 1
+        },
+        "9": {
+          "0": "learning disabilities (ld)",
+          "1": 1
+        },
+        "10": {
+          "0": "phenomenology",
+          "1": 1
+        },
+        "11": {
+          "0": "attention deficit hyperactivity disorder (adhd)",
+          "1": 1
+        },
+        "12": {
+          "0": "micro-collections",
+          "1": 1
+        },
+        "13": {
+          "0": "experiment model",
+          "1": 1
+        },
+        "14": {
+          "0": "data lifecycle",
+          "1": 1
+        },
+        "15": {
+          "0": "visualization",
+          "1": 1
+        },
+        "16": {
+          "0": "semiotics",
+          "1": 1
+        },
+        "17": {
+          "0": "university teaching hospital",
+          "1": 1
+        },
+        "18": {
+          "0": "named entity recognition",
+          "1": 1
+        },
+        "19": {
+          "0": "communicology",
+          "1": 1
+        }
+      },
+      "Full Papers": {
+        "0": {
+          "0": "information retrieval",
+          "1": 5
+        },
+        "1": {
+          "0": "digital libraries",
+          "1": 4
+        },
+        "2": {
+          "0": "deep learning",
+          "1": 4
+        },
+        "3": {
+          "0": "web archiving",
+          "1": 4
+        },
+        "4": {
+          "0": "twitter",
+          "1": 3
+        },
+        "5": {
+          "0": "machine learning",
+          "1": 3
+        },
+        "6": {
+          "0": "probabilistic model",
+          "1": 2
+        },
+        "7": {
+          "0": "entity linking",
+          "1": 2
+        },
+        "8": {
+          "0": "entropy",
+          "1": 2
+        },
+        "9": {
+          "0": "citation context",
+          "1": 2
+        },
+        "10": {
+          "0": "classification",
+          "1": 2
+        },
+        "11": {
+          "0": "topic models",
+          "1": 2
+        },
+        "12": {
+          "0": "performance",
+          "1": 2
+        },
+        "13": {
+          "0": "information extraction",
+          "1": 2
+        },
+        "14": {
+          "0": "knowledge bases",
+          "1": 2
+        },
+        "15": {
+          "0": "web archives",
+          "1": 2
+        },
+        "16": {
+          "0": "crawling",
+          "1": 2
+        },
+        "17": {
+          "0": "software defined network (sdn)",
+          "1": 2
+        },
+        "18": {
+          "0": "controller",
+          "1": 2
+        },
+        "19": {
+          "0": "evaluation",
+          "1": 2
+        }
+      },
+      "JCDL 2018 - Workshops": {
+        "0": {
+          "0": "mhealth",
+          "1": 1
+        },
+        "1": {
+          "0": "digital libraries",
+          "1": 1
+        },
+        "2": {
+          "0": "digital library",
+          "1": 1
+        },
+        "3": {
+          "0": "health data",
+          "1": 1
+        },
+        "4": {
+          "0": "national library of medicine",
+          "1": 1
+        },
+        "5": {
+          "0": "digital preservation",
+          "1": 1
+        },
+        "6": {
+          "0": "workshop proposal",
+          "1": 1
+        },
+        "7": {
+          "0": "biomedical literature mining",
+          "1": 1
+        },
+        "8": {
+          "0": "community building",
+          "1": 1
+        },
+        "9": {
+          "0": "image and video retrieval",
+          "1": 1
+        },
+        "10": {
+          "0": "linked data",
+          "1": 1
+        },
+        "11": {
+          "0": "image collections",
+          "1": 1
+        },
+        "12": {
+          "0": "web archiving",
+          "1": 1
+        },
+        "13": {
+          "0": "knowledge discovery",
+          "1": 1
+        },
+        "14": {
+          "0": "publishing",
+          "1": 1
+        },
+        "15": {
+          "0": "methodology",
+          "1": 1
+        },
+        "16": {
+          "0": "reproducibility",
+          "1": 1
+        },
+        "17": {
+          "0": "image organization",
+          "1": 1
+        },
+        "18": {
+          "0": "visual image metrics",
+          "1": 1
+        },
+        "19": {
+          "0": "cyberinfrastructure",
+          "1": 1
+        }
+      },
+      "Panels": {
+        "0": {
+          "0": "machine learning",
+          "1": 2
+        },
+        "1": {
+          "0": "information systems → data mining",
+          "1": 1
+        },
+        "2": {
+          "0": "humanities",
+          "1": 1
+        },
+        "3": {
+          "0": "negotiated texts",
+          "1": 1
+        },
+        "4": {
+          "0": "research librarian",
+          "1": 1
+        },
+        "5": {
+          "0": "collections",
+          "1": 1
+        },
+        "6": {
+          "0": "algorithms",
+          "1": 1
+        },
+        "7": {
+          "0": "information systems → digital libraries and archives",
+          "1": 1
+        },
+        "8": {
+          "0": "intelligence analysis",
+          "1": 1
+        },
+        "9": {
+          "0": "natural language processing",
+          "1": 1
+        },
+        "10": {
+          "0": "user interfaces",
+          "1": 1
+        },
+        "11": {
+          "0": "data",
+          "1": 1
+        },
+        "12": {
+          "0": "data exploration",
+          "1": 1
+        },
+        "13": {
+          "0": "decision-making",
+          "1": 1
+        },
+        "14": {
+          "0": "public engagements",
+          "1": 1
+        }
+      },
+      "Poster/Demo 2": {
+        "0": {
+          "0": "digital libraries",
+          "1": 2
+        },
+        "1": {
+          "0": "linked data",
+          "1": 2
+        },
+        "2": {
+          "0": "citation context",
+          "1": 2
+        },
+        "3": {
+          "0": "information extraction",
+          "1": 2
+        },
+        "4": {
+          "0": "machine learning",
+          "1": 2
+        },
+        "5": {
+          "0": "innovation",
+          "1": 1
+        },
+        "6": {
+          "0": "technical activity",
+          "1": 1
+        },
+        "7": {
+          "0": "browsing",
+          "1": 1
+        },
+        "8": {
+          "0": "knowledge society",
+          "1": 1
+        },
+        "9": {
+          "0": "document analysis",
+          "1": 1
+        },
+        "10": {
+          "0": "inuit communities",
+          "1": 1
+        },
+        "11": {
+          "0": "complex adaptive system",
+          "1": 1
+        },
+        "12": {
+          "0": "data visualization",
+          "1": 1
+        },
+        "13": {
+          "0": "digital library",
+          "1": 1
+        },
+        "14": {
+          "0": "time",
+          "1": 1
+        },
+        "15": {
+          "0": "entity comparison",
+          "1": 1
+        },
+        "16": {
+          "0": "bibliography analysis",
+          "1": 1
+        },
+        "17": {
+          "0": "cross-language",
+          "1": 1
+        },
+        "18": {
+          "0": "statistical classifier",
+          "1": 1
+        },
+        "19": {
+          "0": "reporter's questions",
+          "1": 1
+        }
+      },
+      "Posters and Demos": {
+        "0": {
+          "0": "digital libraries",
+          "1": 4
+        },
+        "1": {
+          "0": "web archiving",
+          "1": 3
+        },
+        "2": {
+          "0": "clustering",
+          "1": 2
+        },
+        "3": {
+          "0": "memento",
+          "1": 2
+        },
+        "4": {
+          "0": "mobile library",
+          "1": 2
+        },
+        "5": {
+          "0": "digital library",
+          "1": 2
+        },
+        "6": {
+          "0": "tf-idf",
+          "1": 2
+        },
+        "7": {
+          "0": "open access",
+          "1": 2
+        },
+        "8": {
+          "0": "scholarly communication",
+          "1": 2
+        },
+        "9": {
+          "0": "metadata",
+          "1": 2
+        },
+        "10": {
+          "0": "china",
+          "1": 2
+        },
+        "11": {
+          "0": "link rot",
+          "1": 1
+        },
+        "12": {
+          "0": "cluster analysis",
+          "1": 1
+        },
+        "13": {
+          "0": "capisco",
+          "1": 1
+        },
+        "14": {
+          "0": "library special collections",
+          "1": 1
+        },
+        "15": {
+          "0": "knowledge society",
+          "1": 1
+        },
+        "16": {
+          "0": "lifecycle management",
+          "1": 1
+        },
+        "17": {
+          "0": "complex adaptive system",
+          "1": 1
+        },
+        "18": {
+          "0": "apps",
+          "1": 1
+        },
+        "19": {
+          "0": "research data services (rds)",
+          "1": 1
+        }
+      },
+      "Short Papers": {
+        "0": {
+          "0": "digital libraries",
+          "1": 5
+        },
+        "1": {
+          "0": "digital library",
+          "1": 2
+        },
+        "2": {
+          "0": "linked data",
+          "1": 2
+        },
+        "3": {
+          "0": "deep learning",
+          "1": 2
+        },
+        "4": {
+          "0": "classification",
+          "1": 2
+        },
+        "5": {
+          "0": "semantic similarity",
+          "1": 2
+        },
+        "6": {
+          "0": "information retrieval",
+          "1": 2
+        },
+        "7": {
+          "0": "cryptocurrency market",
+          "1": 1
+        },
+        "8": {
+          "0": "library opac",
+          "1": 1
+        },
+        "9": {
+          "0": "author confidence",
+          "1": 1
+        },
+        "10": {
+          "0": "browsing",
+          "1": 1
+        },
+        "11": {
+          "0": "inuit communities",
+          "1": 1
+        },
+        "12": {
+          "0": "epileptic seizures",
+          "1": 1
+        },
+        "13": {
+          "0": "researchgate",
+          "1": 1
+        },
+        "14": {
+          "0": "drop caps",
+          "1": 1
+        },
+        "15": {
+          "0": "time",
+          "1": 1
+        },
+        "16": {
+          "0": "coauthorship networks",
+          "1": 1
+        },
+        "17": {
+          "0": "formula importance",
+          "1": 1
+        },
+        "18": {
+          "0": "personal management tools",
+          "1": 1
+        },
+        "19": {
+          "0": "evernote",
+          "1": 1
+        }
+      },
+      "Tutorials": {
+        "0": {
+          "0": "digital libraries",
+          "1": 3
+        },
+        "1": {
+          "0": "tutorial",
+          "1": 2
+        },
+        "2": {
+          "0": "deep neural networks",
+          "1": 1
+        },
+        "3": {
+          "0": "societies",
+          "1": 1
+        },
+        "4": {
+          "0": "machine learning",
+          "1": 1
+        },
+        "5": {
+          "0": "keyphrase extraction",
+          "1": 1
+        },
+        "6": {
+          "0": "digital humanities",
+          "1": 1
+        },
+        "7": {
+          "0": "streams",
+          "1": 1
+        },
+        "8": {
+          "0": "spaces",
+          "1": 1
+        },
+        "9": {
+          "0": "graph representation",
+          "1": 1
+        },
+        "10": {
+          "0": "scenarios",
+          "1": 1
+        },
+        "11": {
+          "0": "structures",
+          "1": 1
+        },
+        "12": {
+          "0": "5s",
+          "1": 1
+        },
+        "13": {
+          "0": "big data",
+          "1": 1
+        }
+      }
+    },
+    "lastEditSeries": {
+      "0": {
+        "x": "2017-12-12",
+        "y": 1
+      },
+      "1": {
+        "x": "2017-12-20",
+        "y": 2
+      },
+      "2": {
+        "x": "2017-12-28",
+        "y": 3
+      },
+      "3": {
+        "x": "2018-01-02",
+        "y": 4
+      },
+      "4": {
+        "x": "2018-01-04",
+        "y": 5
+      },
+      "5": {
+        "x": "2018-01-05",
+        "y": 6
+      },
+      "6": {
+        "x": "2018-01-10",
+        "y": 9
+      },
+      "7": {
+        "x": "2018-01-11",
+        "y": 12
+      },
+      "8": {
+        "x": "2018-01-12",
+        "y": 15
+      },
+      "9": {
+        "x": "2018-01-13",
+        "y": 17
+      },
+      "10": {
+        "x": "2018-01-14",
+        "y": 21
+      },
+      "11": {
+        "x": "2018-01-15",
+        "y": 34
+      },
+      "12": {
+        "x": "2018-01-16",
+        "y": 42
+      },
+      "13": {
+        "x": "2018-01-17",
+        "y": 50
+      },
+      "14": {
+        "x": "2018-01-18",
+        "y": 89
+      },
+      "15": {
+        "x": "2018-01-19",
+        "y": 121
+      },
+      "16": {
+        "x": "2018-01-23",
+        "y": 122
+      },
+      "17": {
+        "x": "2018-01-26",
+        "y": 123
+      },
+      "18": {
+        "x": "2018-01-29",
+        "y": 128
+      },
+      "19": {
+        "x": "2018-01-30",
+        "y": 131
+      },
+      "20": {
+        "x": "2018-01-31",
+        "y": 132
+      },
+      "21": {
+        "x": "2018-02-01",
+        "y": 136
+      },
+      "22": {
+        "x": "2018-02-02",
+        "y": 145
+      },
+      "23": {
+        "x": "2018-02-03",
+        "y": 162
+      },
+      "24": {
+        "x": "2018-02-15",
+        "y": 163
+      },
+      "25": {
+        "x": "2018-03-01",
+        "y": 165
+      },
+      "26": {
+        "x": "2018-03-05",
+        "y": 166
+      },
+      "27": {
+        "x": "2018-03-06",
+        "y": 167
+      },
+      "28": {
+        "x": "2018-03-11",
+        "y": 168
+      },
+      "29": {
+        "x": "2018-03-14",
+        "y": 171
+      },
+      "30": {
+        "x": "2018-03-15",
+        "y": 172
+      },
+      "31": {
+        "x": "2018-03-17",
+        "y": 173
+      },
+      "32": {
+        "x": "2018-03-18",
+        "y": 174
+      },
+      "33": {
+        "x": "2018-03-19",
+        "y": 180
+      },
+      "34": {
+        "x": "2018-03-20",
+        "y": 187
+      },
+      "35": {
+        "x": "2018-03-21",
+        "y": 189
+      },
+      "36": {
+        "x": "2018-03-22",
+        "y": 192
+      },
+      "37": {
+        "x": "2018-03-23",
+        "y": 195
+      },
+      "38": {
+        "x": "2018-03-24",
+        "y": 200
+      },
+      "39": {
+        "x": "2018-03-25",
+        "y": 202
+      },
+      "40": {
+        "x": "2018-03-26",
+        "y": 206
+      },
+      "41": {
+        "x": "2018-03-28",
+        "y": 207
+      },
+      "42": {
+        "x": "2018-03-29",
+        "y": 211
+      },
+      "43": {
+        "x": "2018-04-04",
+        "y": 212
+      }
+    },
+    "overallKeywordList": {
+      "0": {
+        "0": "digital libraries",
+        "1": 20
+      },
+      "1": {
+        "0": "web archiving",
+        "1": 11
+      },
+      "2": {
+        "0": "machine learning",
+        "1": 10
+      },
+      "3": {
+        "0": "digital library",
+        "1": 7
+      },
+      "4": {
+        "0": "linked data",
+        "1": 7
+      },
+      "5": {
+        "0": "information retrieval",
+        "1": 7
+      },
+      "6": {
+        "0": "classification",
+        "1": 6
+      },
+      "7": {
+        "0": "recommender systems",
+        "1": 6
+      },
+      "8": {
+        "0": "deep learning",
+        "1": 6
+      },
+      "9": {
+        "0": "citation context",
+        "1": 5
+      },
+      "10": {
+        "0": "social media",
+        "1": 4
+      },
+      "11": {
+        "0": "information extraction",
+        "1": 4
+      },
+      "12": {
+        "0": "twitter",
+        "1": 4
+      },
+      "13": {
+        "0": "clustering",
+        "1": 4
+      },
+      "14": {
+        "0": "digital humanities",
+        "1": 4
+      },
+      "15": {
+        "0": "knowledge discovery",
+        "1": 3
+      },
+      "16": {
+        "0": "word embeddings",
+        "1": 3
+      },
+      "17": {
+        "0": "data mining",
+        "1": 3
+      },
+      "18": {
+        "0": "metadata",
+        "1": 3
+      },
+      "19": {
+        "0": "crawling",
+        "1": 3
+      }
+    },
+    "overallKeywordMap": {
+      "5s": 1,
+      "5w qa": 2,
+      "5w1h extraction": 2,
+      "5w1h question answering": 2,
+      "academic bibliographic system": 1,
+      "academic libraries": 1,
+      "academic library": 1,
+      "academic literature": 1,
+      "academic peer review": 1,
+      "academic publishing": 1,
+      "academic search engine": 1,
+      "academic social network": 1,
+      "academic staff": 1,
+      "academic/university libraries": 1,
+      "active viewing": 1,
+      "adolescents": 1,
+      "agglomerative clustering": 1,
+      "algorithms": 1,
+      "altmetrics": 2,
+      "analytic hierarchy process": 1,
+      "annotation": 2,
+      "anomaly detection": 1,
+      "answers": 1,
+      "apps": 1,
+      "arabic search": 1,
+      "arabic texts": 1,
+      "archaeological data": 1,
+      "archival banner": 1,
+      "archival replay": 1,
+      "archive": 1,
+      "archives": 1,
+      "archiving": 2,
+      "artificial intelligence": 1,
+      "aspect extraction": 1,
+      "assessment": 1,
+      "attention deficit hyperactivity disorder (adhd)": 1,
+      "author confidence": 1,
+      "author contributions": 2,
+      "author name disambiguation": 3,
+      "authorities": 2,
+      "authority data": 2,
+      "authorship contribution": 1,
+      "authorship identification": 1,
+      "automatic domain term extraction": 1,
+      "automatic image classification": 1,
+      "automatic prediction": 1,
+      "automatic reference extraction": 1,
+      "backbone provenance": 1,
+      "beacon": 1,
+      "bespoke proxying": 1,
+      "biased information seeking process": 1,
+      "bibliographic analysis": 1,
+      "bibliographic reference parsing": 1,
+      "bibliography": 1,
+      "bibliography analysis": 1,
+      "bibliometric information retrieval": 1,
+      "bibliometrics": 1,
+      "big data": 2,
+      "biography": 1,
+      "biomedical literature mining": 2,
+      "blockchain": 1,
+      "book recommendations": 1,
+      "book reviews": 1,
+      "browsing": 2,
+      "canada": 2,
+      "capisco": 1,
+      "categorization": 1,
+      "category detection": 1,
+      "cbir": 1,
+      "census": 1,
+      "challenges": 1,
+      "china": 3,
+      "chinese herbal medicine": 2,
+      "citation": 1,
+      "citation analysis": 1,
+      "citation context": 5,
+      "citation context analysis": 1,
+      "citation data": 1,
+      "citation graph": 1,
+      "citation network": 1,
+      "citation networks": 1,
+      "citation parsing": 1,
+      "citation recommendation": 1,
+      "citation sentiment analysis": 1,
+      "classification": 6,
+      "cloud services": 2,
+      "cluster analysis": 1,
+      "clustering": 4,
+      "clustering algorithms": 1,
+      "co-authorship networks": 2,
+      "co-citation": 2,
+      "co-classification analysis": 2,
+      "coauthorship networks": 1,
+      "coffee trading": 1,
+      "cognitive dissonance reduction": 1,
+      "collaboration": 2,
+      "collaborative transcription": 1,
+      "collection analysis": 1,
+      "collection building": 2,
+      "collection development": 1,
+      "collection navigation": 2,
+      "collections": 1,
+      "collective memory": 1,
+      "commodity futures": 1,
+      "communicology": 1,
+      "community archives": 2,
+      "community building": 1,
+      "community health": 1,
+      "community-driven methodologies": 2,
+      "comparison extraction": 1,
+      "complex adaptive system": 2,
+      "complex network measures": 1,
+      "comprehension": 1,
+      "computational support": 1,
+      "computer algebra systems": 2,
+      "computer vision": 1,
+      "conceptual history": 1,
+      "conference publications": 1,
+      "conformance checking": 1,
+      "content drift": 1,
+      "contextual browsing": 1,
+      "contextualisation": 1,
+      "controller": 2,
+      "converging technology": 1,
+      "copyright": 1,
+      "crawling": 3,
+      "cross-device search": 1,
+      "cross-device transition": 1,
+      "cross-document linking": 1,
+      "cross-language": 1,
+      "cross-technology identification": 1,
+      "cryptocurrency market": 1,
+      "cryptography": 1,
+      "cultural heritage foundry": 1,
+      "cultural heritage institution": 1,
+      "curation": 2,
+      "current research information system (cris)": 1,
+      "cyberinfrastructure": 1,
+      "data": 1,
+      "data conversion": 1,
+      "data curation": 1,
+      "data deduplication": 1,
+      "data exploration": 2,
+      "data extraction": 1,
+      "data infrastructure": 2,
+      "data lifecycle": 2,
+      "data management": 1,
+      "data mining": 3,
+      "data model": 1,
+      "data quality": 1,
+      "data repository": 1,
+      "data representation": 1,
+      "data type registry": 1,
+      "data visualization": 2,
+      "data-literature interlinking": 1,
+      "database operators": 1,
+      "dataset": 1,
+      "dblp": 1,
+      "decision-making": 1,
+      "deep learning": 6,
+      "deep neural networks": 1,
+      "descriptive programs": 1,
+      "desk rejection": 1,
+      "desk-rejection": 1,
+      "diagrams": 1,
+      "digital history": 1,
+      "digital humanities": 4,
+      "digital information management": 1,
+      "digital libraries": 20,
+      "digital library": 7,
+      "digital library search": 1,
+      "digital management tools": 1,
+      "digital mathematical library": 1,
+      "digital preservation": 3,
+      "digital reading": 1,
+      "digital responsibility": 1,
+      "digital scholarship": 1,
+      "digital scholarship services": 1,
+      "digital services": 1,
+      "digitization": 2,
+      "direct representation": 1,
+      "discoverability": 1,
+      "distant supervision": 1,
+      "distributed databases": 1,
+      "distributional thesaurus network": 1,
+      "diversification": 2,
+      "diversity": 2,
+      "document analysis": 2,
+      "document indexing": 1,
+      "document representation": 1,
+      "document representations": 1,
+      "document retrieval": 1,
+      "documentation methods": 1,
+      "drop caps": 1,
+      "e-book system": 1,
+      "e-resources": 1,
+      "econometrics": 1,
+      "editorial system": 1,
+      "efficacy": 1,
+      "electronic documents": 1,
+      "electronic information resources": 1,
+      "electronic library databases": 1,
+      "elm": 1,
+      "embryonic topic": 1,
+      "energy consumption": 1,
+      "entity comparison": 1,
+      "entity linking": 2,
+      "entity mixture": 2,
+      "entity resolution": 2,
+      "entity transitions": 1,
+      "entity-aspects": 1,
+      "entropy": 2,
+      "ephemera": 1,
+      "epileptic seizures": 1,
+      "european research information service": 1,
+      "evaluation": 2,
+      "event evolution": 1,
+      "event ranking": 1,
+      "evernote": 1,
+      "experiment library": 2,
+      "experiment model": 1,
+      "experimental analysis": 1,
+      "explanation harvesting": 1,
+      "explicit experiment model": 1,
+      "exploratory search": 2,
+      "extract feature text analysis": 1,
+      "eye movements": 1,
+      "eye trackers": 1,
+      "eye tracking": 1,
+      "faceted search": 2,
+      "factoid questions": 1,
+      "figure extraction": 1,
+      "fixity": 1,
+      "folksonomy": 1,
+      "footstep detection": 1,
+      "formula citation graph": 1,
+      "formula importance": 1,
+      "formula ranking": 1,
+      "fortune 500 companies": 2,
+      "fundraising": 1,
+      "future libraries": 2,
+      "gated recurrent unit": 1,
+      "gazepoint": 1,
+      "genealogy": 1,
+      "genetic algorithm": 1,
+      "geographical locations": 1,
+      "gold standard": 1,
+      "graph analysis": 1,
+      "graph embeddings": 2,
+      "graph representation": 2,
+      "hateos": 1,
+      "hathitrust": 1,
+      "health data": 1,
+      "health information need": 1,
+      "health rumor": 1,
+      "healthcare": 1,
+      "heat calculate": 1,
+      "heat evaluation": 1,
+      "hemileia vastatrix": 1,
+      "heterogeneous data": 1,
+      "heterogeneous graph analysis": 1,
+      "heterogeneous network": 1,
+      "heterogeneous ontology": 1,
+      "hierarchical clustering": 2,
+      "highlighting": 1,
+      "hiring": 1,
+      "historical texts": 1,
+      "history": 2,
+      "hiv/aids management": 1,
+      "hotspot detection": 1,
+      "hotspot tracking": 1,
+      "human-centered": 1,
+      "human-centered communities": 2,
+      "humanities": 2,
+      "identity disambiguation": 1,
+      "image analysis": 1,
+      "image and video retrieval": 1,
+      "image annotation": 1,
+      "image annotation model": 1,
+      "image annotation tool": 1,
+      "image collections": 1,
+      "image organization": 1,
+      "image retrieval": 1,
+      "image seeking and use": 1,
+      "in-memory cache": 1,
+      "incomplete subgraphs": 1,
+      "indexing": 2,
+      "indexing languages": 1,
+      "individual differences": 1,
+      "industry mapping": 1,
+      "influential citations": 1,
+      "information and communication technology": 1,
+      "information behavior": 1,
+      "information extraction": 4,
+      "information linking": 1,
+      "information retrieval": 7,
+      "information retrieval system": 1,
+      "information system": 1,
+      "information systems → data mining": 1,
+      "information systems → digital libraries and archives": 1,
+      "information theory": 1,
+      "information-seeking": 1,
+      "information-seeking behaviour": 1,
+      "infrastructure data": 2,
+      "innovation": 2,
+      "inquiry learning": 1,
+      "instance": 2,
+      "institutional archiving": 1,
+      "institutional repository": 2,
+      "integrated library systems": 1,
+      "intelligence analysis": 1,
+      "intelligent infrastructure": 2,
+      "inter communication": 1,
+      "interaction design": 1,
+      "interaction process analysis (ipa)": 1,
+      "interactive information retrieval": 1,
+      "interdisciplinarity": 1,
+      "interdisciplinary collaborations": 1,
+      "interface": 1,
+      "internet of things": 1,
+      "internet of things (iot)": 2,
+      "inuit communities": 2,
+      "joint modeling": 1,
+      "journalist's questions": 2,
+      "keyphrase extraction": 2,
+      "keyword extraction": 1,
+      "keyword scoring": 1,
+      "knowledge base": 2,
+      "knowledge bases": 2,
+      "knowledge discovery": 3,
+      "knowledge management": 1,
+      "knowledge management effectiveness": 1,
+      "knowledge management resources": 1,
+      "knowledge organization": 1,
+      "knowledge recommendation": 2,
+      "knowledge service": 2,
+      "knowledge society": 2,
+      "latex": 1,
+      "learning assistance": 1,
+      "learning disabilities (ld)": 1,
+      "libraries": 2,
+      "library": 1,
+      "library and information science (lis)": 1,
+      "library automation": 1,
+      "library opac": 1,
+      "library services": 1,
+      "library special collections": 1,
+      "library workflows": 1,
+      "lifecycle management": 1,
+      "link prediction": 2,
+      "link rot": 1,
+      "linked data": 7,
+      "linked open data": 1,
+      "linking mechanisms": 1,
+      "living lab": 1,
+      "log analysis": 1,
+      "long-term preservation": 1,
+      "machine learning": 10,
+      "machine-friendly repositories": 1,
+      "marc": 2,
+      "marketing": 1,
+      "mathematical information retrieval": 2,
+      "mathml": 1,
+      "memcached": 1,
+      "memento": 3,
+      "message queues": 1,
+      "meta-learning": 1,
+      "metadata": 3,
+      "metadata analysis": 3,
+      "metadata harvesting": 1,
+      "metafilter": 1,
+      "metapath": 1,
+      "methodology": 1,
+      "mhealth": 1,
+      "micro-collections": 1,
+      "mobile library": 2,
+      "mobile reading": 1,
+      "mobile reading behavior": 1,
+      "mobile technology": 1,
+      "model": 1,
+      "multi-label classification": 1,
+      "museum": 1,
+      "mutual reinforcement": 1,
+      "n-grams": 1,
+      "named entities": 1,
+      "named entity disambiguation": 1,
+      "named entity recognition": 2,
+      "narrative image": 1,
+      "national library of medicine": 1,
+      "natural language processing": 2,
+      "negotiated texts": 2,
+      "neural collaborative filtering": 1,
+      "neural embeddings": 1,
+      "neural networks": 2,
+      "news archives": 1,
+      "news event detection": 2,
+      "nigeria": 1,
+      "novel sense detection": 1,
+      "novelty detection": 1,
+      "nox": 1,
+      "nursing care": 1,
+      "ocr": 2,
+      "oculomotor plant": 1,
+      "on-the-spot performance": 1,
+      "online communities": 1,
+      "online curation communities": 2,
+      "online forums": 1,
+      "ontologies": 1,
+      "ontologies and the semantic web": 1,
+      "ontology": 1,
+      "ontology fusion": 1,
+      "ontology merging": 1,
+      "opac interaction": 1,
+      "open access": 2,
+      "open data": 1,
+      "open domain": 1,
+      "opinion": 1,
+      "packet scheduler": 1,
+      "pagerank": 1,
+      "pareto semantics": 1,
+      "patent articles": 1,
+      "patent citations": 1,
+      "patent data mining": 1,
+      "patent map": 1,
+      "patent mining": 1,
+      "patient information": 1,
+      "pdimt": 1,
+      "peer review": 1,
+      "peer review system": 1,
+      "peer-review": 1,
+      "performance": 2,
+      "performance quality": 1,
+      "persistence": 1,
+      "persistent identifier": 1,
+      "persistent identifiers": 1,
+      "personal archiving": 1,
+      "personal collections": 1,
+      "personal management tools": 1,
+      "personalization": 2,
+      "phenomenology": 1,
+      "pid kernel information": 1,
+      "plagiarism detection": 1,
+      "plot ontology": 1,
+      "pox": 1,
+      "precision medicine": 1,
+      "precision ratio": 1,
+      "predicting scientific growth": 1,
+      "prediction performance": 1,
+      "preservation": 2,
+      "preserving web pages": 1,
+      "prestige": 1,
+      "prior knowledge": 1,
+      "privacy": 1,
+      "probabilistic model": 2,
+      "probabilistic similarity": 1,
+      "project management": 1,
+      "pseudo-relevance": 1,
+      "pu-learning": 1,
+      "public engagements": 2,
+      "public understanding of science": 1,
+      "publication representation learning": 1,
+      "publishing": 1,
+      "publishing paradigms": 1,
+      "quality of research article": 1,
+      "quality prediction": 1,
+      "query intent": 1,
+      "query language": 1,
+      "query suggestion": 2,
+      "question answering": 1,
+      "questionnaire": 1,
+      "questions": 1,
+      "ranking": 2,
+      "ranking archived documents": 1,
+      "rda": 2,
+      "rdf": 1,
+      "reading": 1,
+      "reading environment": 1,
+      "recall ratio": 1,
+      "recommendation": 1,
+      "recommendation visualization": 1,
+      "recommender system": 1,
+      "recommender systems": 6,
+      "record linkage": 1,
+      "records": 1,
+      "recurrent neural networks": 1,
+      "relevance feedback": 1,
+      "reporter's questions": 1,
+      "reporter’s questions": 1,
+      "repository": 2,
+      "representation learning": 1,
+      "reproducibility": 1,
+      "research and statistics": 1,
+      "research articles": 1,
+      "research data management (rdm)": 1,
+      "research data services (rds)": 1,
+      "research gate": 1,
+      "research librarian": 1,
+      "research paper": 1,
+      "researcher’s information behavior": 1,
+      "researchgate": 1,
+      "resource-based view": 1,
+      "rest": 1,
+      "retrievability bias": 1,
+      "retrieval query": 1,
+      "reusability": 1,
+      "reuse": 1,
+      "revenue": 2,
+      "reviewer": 1,
+      "rfid": 1,
+      "routing": 1,
+      "russian trolls": 1,
+      "saas": 1,
+      "saudi digital library": 1,
+      "scenarios": 1,
+      "scheduling": 1,
+      "scholarly communication": 3,
+      "scholarly data": 1,
+      "scholarly recommendation": 1,
+      "scientific article": 1,
+      "scientific communication": 1,
+      "scientific communities": 1,
+      "scientific data management": 1,
+      "scientific data mining": 1,
+      "scientific events": 1,
+      "scientific growth": 1,
+      "scientific impact": 1,
+      "scientific workflow": 1,
+      "scientometrics": 2,
+      "scope detection": 1,
+      "scope of research article": 1,
+      "search performance": 1,
+      "security": 2,
+      "seeds": 1,
+      "selective exposure to information": 1,
+      "self-learning library": 1,
+      "semantic analysis": 1,
+      "semantic annotations": 1,
+      "semantic aspects": 1,
+      "semantic computing": 1,
+      "semantic disambiguation": 1,
+      "semantic layers": 1,
+      "semantic publishing": 2,
+      "semantic search": 2,
+      "semantic similarity": 3,
+      "semantic similarity and relatedness": 1,
+      "semantic technologies": 1,
+      "semantic web": 2,
+      "semantically annotated archives": 1,
+      "semantics": 1,
+      "semantification": 1,
+      "semiotics": 1,
+      "sentence uncertainty classification": 1,
+      "sequence tagging": 1,
+      "serendipitous discovery": 1,
+      "service quality": 1,
+      "short text": 1,
+      "similarity": 1,
+      "simulation": 1,
+      "single-set": 1,
+      "skyline operator": 1,
+      "smart digital library": 2,
+      "smart library": 2,
+      "smartphone": 1,
+      "social data": 1,
+      "social media": 4,
+      "social media analysis": 1,
+      "social networks": 1,
+      "social pseudo relevance feedback": 1,
+      "social query expansion": 1,
+      "social reading": 1,
+      "social sciences and humanities": 1,
+      "social tagging": 1,
+      "societies": 1,
+      "socio-technical interaction network modeling": 1,
+      "software as a service": 1,
+      "software defined network (sdn)": 2,
+      "song lyrics": 1,
+      "spaces": 1,
+      "special collections": 1,
+      "sqausers": 1,
+      "ssmmf": 1,
+      "stack overflow": 1,
+      "statistical analysis": 1,
+      "statistical classifier": 2,
+      "stochastic model": 1,
+      "strategic initiative": 1,
+      "streams": 1,
+      "street name analysis": 1,
+      "strong witnesses": 1,
+      "structures": 1,
+      "subject": 1,
+      "subject librarians.": 1,
+      "subject-based retrieval": 1,
+      "subject-predicate-object (spo) triple": 2,
+      "success": 1,
+      "summarization": 1,
+      "superimposed information": 1,
+      "supervised learning algorithm": 1,
+      "surrogate": 1,
+      "survey": 1,
+      "sustainability": 1,
+      "tableau": 1,
+      "tag recommendation": 1,
+      "technical activity": 1,
+      "temporal expressions": 1,
+      "temporal impact": 1,
+      "temporal tagging": 1,
+      "text classification": 1,
+      "text comprehension": 1,
+      "text mining": 2,
+      "textrank": 1,
+      "textual entailment": 1,
+      "tf-idf": 3,
+      "theoretical framework": 1,
+      "time": 2,
+      "timestamping": 1,
+      "tnormtion seeking behavior": 1,
+      "tobii": 1,
+      "tool comparison": 1,
+      "topic": 1,
+      "topic detection": 1,
+      "topic modeling": 1,
+      "topic modelling": 1,
+      "topic models": 3,
+      "topic trends": 1,
+      "traffic management": 1,
+      "transaction-log study": 1,
+      "transition prediction": 1,
+      "trivial baseline": 1,
+      "trust": 1,
+      "trustworthiness": 2,
+      "tutorial": 2,
+      "twitter": 4,
+      "typed links": 1,
+      "university libraries": 2,
+      "university library": 1,
+      "university ranking": 1,
+      "university teaching hospital": 1,
+      "usability": 1,
+      "usability issues": 1,
+      "usage": 1,
+      "user": 2,
+      "user behavior": 1,
+      "user engagement": 1,
+      "user experience": 1,
+      "user experience research": 1,
+      "user experience studies": 2,
+      "user interest modeling": 1,
+      "user interface": 1,
+      "user interfaces": 2,
+      "user linking behaviour": 1,
+      "user study": 1,
+      "users' satisfaction": 1,
+      "vector space model": 1,
+      "very large digital libraries": 1,
+      "vibration": 1,
+      "video platforms": 1,
+      "video retrieval": 1,
+      "video-based learning": 1,
+      "visual image metrics": 1,
+      "visual information retrieval": 1,
+      "visualization": 1,
+      "visualization scheme": 2,
+      "warc": 1,
+      "web archives": 3,
+      "web archiving": 11,
+      "web data extraction": 1,
+      "wechat": 1,
+      "wikidata": 3,
+      "wikification": 1,
+      "wikipedia": 1,
+      "word embedding": 2,
+      "word embedding models": 1,
+      "word embeddings": 3,
+      "workflow methodologies": 1,
+      "workset creation": 1,
+      "worksets": 1,
+      "workshop proposal": 1,
+      "writing style": 1,
+      "xfo": 1
+    },
+    "rejectedKeywordList": {
+      "0": {
+        "0": "digital libraries",
+        "1": 7
+      },
+      "1": {
+        "0": "machine learning",
+        "1": 5
+      },
+      "2": {
+        "0": "linked data",
+        "1": 4
+      },
+      "3": {
+        "0": "information retrieval",
+        "1": 4
+      },
+      "4": {
+        "0": "classification",
+        "1": 3
+      },
+      "5": {
+        "0": "web archiving",
+        "1": 3
+      },
+      "6": {
+        "0": "recommender systems",
+        "1": 3
+      },
+      "7": {
+        "0": "china",
+        "1": 3
+      },
+      "8": {
+        "0": "deep learning",
+        "1": 3
+      },
+      "9": {
+        "0": "metadata analysis",
+        "1": 3
+      },
+      "10": {
+        "0": "innovation",
+        "1": 2
+      },
+      "11": {
+        "0": "digital library",
+        "1": 2
+      },
+      "12": {
+        "0": "indexing",
+        "1": 2
+      },
+      "13": {
+        "0": "performance",
+        "1": 2
+      },
+      "14": {
+        "0": "user experience studies",
+        "1": 2
+      },
+      "15": {
+        "0": "information extraction",
+        "1": 2
+      },
+      "16": {
+        "0": "software defined network (sdn)",
+        "1": 2
+      },
+      "17": {
+        "0": "controller",
+        "1": 2
+      },
+      "18": {
+        "0": "data mining",
+        "1": 2
+      },
+      "19": {
+        "0": "metadata",
+        "1": 2
+      }
+    },
+    "rejectedKeywordMap": {
+      "5w qa": 1,
+      "5w1h extraction": 1,
+      "5w1h question answering": 1,
+      "academic libraries": 1,
+      "academic library": 1,
+      "academic literature": 1,
+      "algorithms": 1,
+      "altmetrics": 1,
+      "anomaly detection": 1,
+      "answers": 1,
+      "apps": 1,
+      "arabic texts": 1,
+      "archaeological data": 1,
+      "archives": 1,
+      "aspect extraction": 1,
+      "assessment": 1,
+      "author confidence": 1,
+      "author contributions": 1,
+      "author name disambiguation": 1,
+      "authorities": 1,
+      "authority data": 2,
+      "authorship identification": 1,
+      "automatic prediction": 1,
+      "backbone provenance": 1,
+      "beacon": 1,
+      "biased information seeking process": 1,
+      "bibliographic analysis": 1,
+      "bibliometric information retrieval": 1,
+      "bibliometrics": 1,
+      "biomedical literature mining": 1,
+      "book recommendations": 1,
+      "book reviews": 1,
+      "browsing": 1,
+      "canada": 1,
+      "category detection": 1,
+      "china": 3,
+      "chinese herbal medicine": 1,
+      "citation": 1,
+      "citation context": 2,
+      "citation context analysis": 1,
+      "citation networks": 1,
+      "citation sentiment analysis": 1,
+      "classification": 3,
+      "cloud services": 1,
+      "cluster analysis": 1,
+      "clustering": 2,
+      "co-authorship networks": 1,
+      "co-citation": 1,
+      "co-classification analysis": 1,
+      "coauthorship networks": 1,
+      "coffee trading": 1,
+      "cognitive dissonance reduction": 1,
+      "collaboration": 1,
+      "collection navigation": 1,
+      "commodity futures": 1,
+      "community archives": 1,
+      "community health": 1,
+      "community-driven methodologies": 1,
+      "complex adaptive system": 1,
+      "complex network measures": 1,
+      "conference publications": 1,
+      "contextual browsing": 1,
+      "controller": 2,
+      "copyright": 1,
+      "crawling": 1,
+      "cross-device search": 1,
+      "cross-device transition": 1,
+      "cross-technology identification": 1,
+      "cryptocurrency market": 1,
+      "cryptography": 1,
+      "cultural heritage foundry": 1,
+      "current research information system (cris)": 1,
+      "data conversion": 1,
+      "data deduplication": 1,
+      "data exploration": 1,
+      "data extraction": 1,
+      "data infrastructure": 1,
+      "data management": 1,
+      "data mining": 2,
+      "data model": 1,
+      "data repository": 1,
+      "data representation": 1,
+      "data type registry": 1,
+      "data visualization": 1,
+      "deep learning": 3,
+      "descriptive programs": 1,
+      "desk rejection": 1,
+      "digital humanities": 2,
+      "digital information management": 1,
+      "digital libraries": 7,
+      "digital library": 2,
+      "digital management tools": 1,
+      "digital preservation": 1,
+      "digital reading": 1,
+      "digital services": 1,
+      "digitization": 2,
+      "direct representation": 1,
+      "distributed databases": 1,
+      "distributional thesaurus network": 1,
+      "diversification": 1,
+      "diversity": 1,
+      "document analysis": 1,
+      "document indexing": 1,
+      "document representation": 1,
+      "document retrieval": 1,
+      "drop caps": 1,
+      "econometrics": 1,
+      "energy consumption": 1,
+      "entity mixture": 1,
+      "entity resolution": 1,
+      "entity transitions": 1,
+      "entropy": 1,
+      "epileptic seizures": 1,
+      "european research information service": 1,
+      "evaluation": 1,
+      "evernote": 1,
+      "experimental analysis": 1,
+      "eye trackers": 1,
+      "eye tracking": 1,
+      "faceted search": 1,
+      "factoid questions": 1,
+      "fortune 500 companies": 2,
+      "fundraising": 1,
+      "future libraries": 1,
+      "gated recurrent unit": 1,
+      "gazepoint": 1,
+      "genetic algorithm": 1,
+      "graph analysis": 1,
+      "graph embeddings": 1,
+      "health information need": 1,
+      "health rumor": 1,
+      "heat calculate": 1,
+      "heat evaluation": 1,
+      "hemileia vastatrix": 1,
+      "heterogeneous data": 1,
+      "heterogeneous graph analysis": 1,
+      "heterogeneous ontology": 1,
+      "hierarchical clustering": 1,
+      "history": 1,
+      "hotspot detection": 1,
+      "hotspot tracking": 1,
+      "human-centered": 1,
+      "human-centered communities": 1,
+      "humanities": 1,
+      "image annotation model": 1,
+      "image annotation tool": 1,
+      "incomplete subgraphs": 1,
+      "indexing": 2,
+      "individual differences": 1,
+      "industry mapping": 1,
+      "influential citations": 1,
+      "information extraction": 2,
+      "information retrieval": 4,
+      "information system": 1,
+      "information theory": 1,
+      "information-seeking behaviour": 1,
+      "infrastructure data": 1,
+      "innovation": 2,
+      "instance": 1,
+      "institutional archiving": 1,
+      "integrated library systems": 1,
+      "intelligent infrastructure": 1,
+      "inter communication": 1,
+      "interaction design": 1,
+      "interactive information retrieval": 1,
+      "interdisciplinary collaborations": 1,
+      "internet of things (iot)": 2,
+      "inuit communities": 1,
+      "joint modeling": 1,
+      "journalist's questions": 1,
+      "keyword extraction": 1,
+      "keyword scoring": 1,
+      "knowledge base": 1,
+      "knowledge bases": 1,
+      "knowledge discovery": 1,
+      "knowledge organization": 1,
+      "knowledge recommendation": 1,
+      "knowledge service": 1,
+      "knowledge society": 1,
+      "libraries": 1,
+      "library opac": 1,
+      "library special collections": 1,
+      "link prediction": 1,
+      "linked data": 4,
+      "log analysis": 1,
+      "machine learning": 5,
+      "marc": 2,
+      "message queues": 1,
+      "meta-learning": 1,
+      "metadata": 2,
+      "metadata analysis": 3,
+      "metapath": 1,
+      "methodology": 1,
+      "mhealth": 1,
+      "mobile library": 1,
+      "mobile reading": 1,
+      "model": 1,
+      "multi-label classification": 1,
+      "n-grams": 1,
+      "narrative image": 1,
+      "national library of medicine": 1,
+      "natural language processing": 2,
+      "negotiated texts": 1,
+      "neural collaborative filtering": 1,
+      "neural embeddings": 1,
+      "neural networks": 1,
+      "news event detection": 1,
+      "novel sense detection": 1,
+      "nox": 1,
+      "on-the-spot performance": 1,
+      "online forums": 1,
+      "ontology": 1,
+      "ontology fusion": 1,
+      "ontology merging": 1,
+      "opac interaction": 1,
+      "open domain": 1,
+      "opinion": 1,
+      "packet scheduler": 1,
+      "pagerank": 1,
+      "pareto semantics": 1,
+      "patent articles": 1,
+      "patent citations": 1,
+      "patent map": 1,
+      "patent mining": 1,
+      "patient information": 1,
+      "pdimt": 1,
+      "peer review system": 1,
+      "peer-review": 1,
+      "performance": 2,
+      "performance quality": 1,
+      "persistent identifier": 1,
+      "personal archiving": 1,
+      "personal management tools": 1,
+      "pid kernel information": 1,
+      "plot ontology": 1,
+      "pox": 1,
+      "precision medicine": 1,
+      "precision ratio": 1,
+      "predicting scientific growth": 1,
+      "prediction performance": 1,
+      "preservation": 1,
+      "probabilistic model": 1,
+      "project management": 1,
+      "pu-learning": 1,
+      "public engagements": 1,
+      "publishing": 1,
+      "publishing paradigms": 1,
+      "query intent": 1,
+      "query suggestion": 1,
+      "question answering": 1,
+      "questions": 1,
+      "ranking": 1,
+      "rda": 2,
+      "recall ratio": 1,
+      "recommendation": 1,
+      "recommender systems": 3,
+      "record linkage": 1,
+      "recurrent neural networks": 1,
+      "relevance feedback": 1,
+      "reporter’s questions": 1,
+      "repository": 1,
+      "reproducibility": 1,
+      "research and statistics": 1,
+      "research gate": 1,
+      "retrieval query": 1,
+      "revenue": 2,
+      "reviewer": 1,
+      "routing": 1,
+      "saas": 1,
+      "scholarly communication": 1,
+      "scholarly recommendation": 1,
+      "scientific communication": 1,
+      "scientific communities": 1,
+      "scientific data mining": 1,
+      "scientific events": 1,
+      "scientific growth": 1,
+      "scientific workflow": 1,
+      "scientometrics": 2,
+      "search performance": 1,
+      "security": 1,
+      "selective exposure to information": 1,
+      "semantic computing": 1,
+      "semantic publishing": 1,
+      "semantic search": 1,
+      "semantic similarity": 2,
+      "semantically annotated archives": 1,
+      "semantics": 1,
+      "sentence uncertainty classification": 1,
+      "serendipitous discovery": 1,
+      "short text": 1,
+      "similarity": 1,
+      "simulation": 1,
+      "skyline operator": 1,
+      "smart digital library": 1,
+      "smart library": 1,
+      "social media": 1,
+      "social sciences and humanities": 1,
+      "socio-technical interaction network modeling": 1,
+      "software defined network (sdn)": 2,
+      "special collections": 1,
+      "sqausers": 1,
+      "stack overflow": 1,
+      "statistical analysis": 1,
+      "statistical classifier": 1,
+      "strong witnesses": 1,
+      "subject-based retrieval": 1,
+      "subject-predicate-object (spo) triple": 1,
+      "tableau": 1,
+      "tag recommendation": 1,
+      "text mining": 1,
+      "textual entailment": 1,
+      "tf-idf": 1,
+      "time": 1,
+      "timestamping": 1,
+      "tnormtion seeking behavior": 1,
+      "tobii": 1,
+      "tool comparison": 1,
+      "topic models": 1,
+      "traffic management": 1,
+      "transition prediction": 1,
+      "trust": 1,
+      "twitter": 2,
+      "university ranking": 1,
+      "usability": 1,
+      "user": 2,
+      "user behavior": 1,
+      "user experience research": 1,
+      "user experience studies": 2,
+      "user interfaces": 1,
+      "user study": 1,
+      "vector space model": 1,
+      "video platforms": 1,
+      "video retrieval": 1,
+      "visual information retrieval": 1,
+      "visualization scheme": 1,
+      "web archives": 1,
+      "web archiving": 3,
+      "web data extraction": 1,
+      "wechat": 1,
+      "word embedding": 1,
+      "word embedding models": 1,
+      "word embeddings": 1,
+      "workflow methodologies": 1,
+      "writing style": 1,
+      "xfo": 1
+    },
+    "timeSeries": {
+      "0": {
+        "x": "2017-12-12",
+        "y": 1
+      },
+      "1": {
+        "x": "2017-12-20",
+        "y": 2
+      },
+      "2": {
+        "x": "2017-12-25",
+        "y": 3
+      },
+      "3": {
+        "x": "2017-12-28",
+        "y": 4
+      },
+      "4": {
+        "x": "2017-12-30",
+        "y": 5
+      },
+      "5": {
+        "x": "2018-01-02",
+        "y": 6
+      },
+      "6": {
+        "x": "2018-01-04",
+        "y": 7
+      },
+      "7": {
+        "x": "2018-01-05",
+        "y": 8
+      },
+      "8": {
+        "x": "2018-01-09",
+        "y": 9
+      },
+      "9": {
+        "x": "2018-01-10",
+        "y": 12
+      },
+      "10": {
+        "x": "2018-01-11",
+        "y": 15
+      },
+      "11": {
+        "x": "2018-01-12",
+        "y": 16
+      },
+      "12": {
+        "x": "2018-01-13",
+        "y": 18
+      },
+      "13": {
+        "x": "2018-01-14",
+        "y": 26
+      },
+      "14": {
+        "x": "2018-01-15",
+        "y": 40
+      },
+      "15": {
+        "x": "2018-01-16",
+        "y": 50
+      },
+      "16": {
+        "x": "2018-01-17",
+        "y": 58
+      },
+      "17": {
+        "x": "2018-01-18",
+        "y": 99
+      },
+      "18": {
+        "x": "2018-01-19",
+        "y": 121
+      },
+      "19": {
+        "x": "2018-01-23",
+        "y": 122
+      },
+      "20": {
+        "x": "2018-01-26",
+        "y": 123
+      },
+      "21": {
+        "x": "2018-01-29",
+        "y": 128
+      },
+      "22": {
+        "x": "2018-01-30",
+        "y": 132
+      },
+      "23": {
+        "x": "2018-01-31",
+        "y": 133
+      },
+      "24": {
+        "x": "2018-02-01",
+        "y": 136
+      },
+      "25": {
+        "x": "2018-02-02",
+        "y": 146
+      },
+      "26": {
+        "x": "2018-02-03",
+        "y": 162
+      },
+      "27": {
+        "x": "2018-02-15",
+        "y": 163
+      },
+      "28": {
+        "x": "2018-02-26",
+        "y": 164
+      },
+      "29": {
+        "x": "2018-03-01",
+        "y": 165
+      },
+      "30": {
+        "x": "2018-03-02",
+        "y": 166
+      },
+      "31": {
+        "x": "2018-03-06",
+        "y": 167
+      },
+      "32": {
+        "x": "2018-03-11",
+        "y": 168
+      },
+      "33": {
+        "x": "2018-03-14",
+        "y": 171
+      },
+      "34": {
+        "x": "2018-03-15",
+        "y": 172
+      },
+      "35": {
+        "x": "2018-03-17",
+        "y": 173
+      },
+      "36": {
+        "x": "2018-03-18",
+        "y": 175
+      },
+      "37": {
+        "x": "2018-03-19",
+        "y": 182
+      },
+      "38": {
+        "x": "2018-03-20",
+        "y": 187
+      },
+      "39": {
+        "x": "2018-03-21",
+        "y": 189
+      },
+      "40": {
+        "x": "2018-03-22",
+        "y": 192
+      },
+      "41": {
+        "x": "2018-03-23",
+        "y": 195
+      },
+      "42": {
+        "x": "2018-03-24",
+        "y": 200
+      },
+      "43": {
+        "x": "2018-03-25",
+        "y": 202
+      },
+      "44": {
+        "x": "2018-03-26",
+        "y": 206
+      },
+      "45": {
+        "x": "2018-03-28",
+        "y": 207
+      },
+      "46": {
+        "x": "2018-03-29",
+        "y": 211
+      },
+      "47": {
+        "x": "2018-04-04",
+        "y": 212
+      }
+    },
+    "topAcceptedAuthors": {
+      "counts": {
+        "0": 4,
+        "1": 3,
+        "2": 2,
+        "3": 2,
+        "4": 2,
+        "5": 2,
+        "6": 2,
+        "7": 2,
+        "8": 2,
+        "9": 1
+      },
+      "names": {
+        "0": "Jx Stexxxx",
+        "1": "Bexx Gxx",
+        "2": "Herxxxx Vxx",
+        "3": "Joxxxx Bxx",
+        "4": "Micxxxx Nexxx",
+        "5": "Zxx Txx",
+        "6": "Raxx Krexxxx",
+        "7": "Zhxxx Xxx",
+        "8": "Maxxxx Klxxx,Harxxxx Shaxxxx",
+        "9": "Yasxxxxx Sumxxxxx,Adxx Jaxxxx"
+      }
+    },
+    "topAuthorsByTrack": {
+      "Doctoral Consortium": {
+        "counts": {},
+        "names": {}
+      },
+      "Full Papers": {
+        "counts": {
+          "0": 2,
+          "1": 2,
+          "2": 1,
+          "3": 1,
+          "4": 1,
+          "5": 1,
+          "6": 1,
+          "7": 1,
+          "8": 1,
+          "9": 1
+        },
+        "names": {
+          "0": "Raxx Krexxxx",
+          "1": "Bexx Gxx",
+          "2": "Waxxxx Amxx",
+          "3": "Yasxxxxx Sumxxxxx,Adxx Jaxxxx",
+          "4": "Wolxxxxx Nexx",
+          "5": "Joxxxx Bxx",
+          "6": "Norxxxx Fxx",
+          "7": "Anxx Lauxxxxx,Kxx Ecxxxx,Luxxx Gaxxx,Anxxxx Scxxxx,Syxx Tahxxxx,Shxxxx Ahxxx,Andxxxx Dexxxx,Phixxxx Zumxxxxx",
+          "8": "Laxxx Dixx",
+          "9": "Yuxx Matxxxxx"
+        }
+      },
+      "JCDL 2018 - Workshops": {
+        "counts": {
+          "0": 1,
+          "1": 1,
+          "2": 1,
+          "3": 1,
+          "4": 1,
+          "5": 1,
+          "6": 1,
+          "7": 1,
+          "8": 1,
+          "9": 1
+        },
+        "names": {
+          "0": "Jixxxx Xx",
+          "1": " xx",
+          "2": "Jesxxxx Trexxxx",
+          "3": "Wexxxx Xx,Maxxx Esxxxx",
+          "4": "Hxx Sxx,Wx Hx",
+          "5": "Jiaxxxxxx Cxx",
+          "6": "Wxx Lx,Jexxx Wexx,Brxxx Oâ€xxxxxxx,Kryxxxxx Matxxxxx,Qinxxxx Zxx,Jaxxx Lx",
+          "7": "Edxxxx Fx",
+          "8": "Maxxxx Klxxx,Zhxxx Xxx",
+          "9": "Danxxxx Gixx,Dixxx Traxxxxxx,Kexxx Coxxx"
+        }
+      },
+      "Panels": {
+        "counts": {
+          "0": 1,
+          "1": 1,
+          "2": 1,
+          "3": 1,
+          "4": 1
+        },
+        "names": {
+          "0": "Maxx Phixxxx",
+          "1": "Wxx Chxx,Jiaxxxxxx Chxx,Chrixxxxxxx Erdxxxx,Trxxxx Owxxx,Txx Jxx",
+          "2": "rx McIxxxxx",
+          "3": "Jx Stexxxx,Elixxxxxx Loxxxx,Liaxxxxx Sxx,Daxxx Baixxxxxxx",
+          "4": "x"
+        }
+      },
+      "Poster/Demo 2": {
+        "counts": {
+          "0": 1,
+          "1": 1,
+          "2": 1,
+          "3": 1,
+          "4": 1,
+          "5": 1,
+          "6": 1,
+          "7": 1,
+          "8": 1,
+          "9": 1
+        },
+        "names": {
+          "0": "Xiaxxxxxx Lx",
+          "1": "Joxxxx Bxx",
+          "2": "Xiaxxxxx Zhxxx",
+          "3": "Lxx Pexx",
+          "4": "Taxx Zimxxxxxx",
+          "5": "Joxxx Maxxxx",
+          "6": "Haxxxx Xxx,Xiaxxxxx Lx",
+          "7": "Dwxxxx Huxxx",
+          "8": "Lexxxx Ex",
+          "9": "Ilxx Makxxxx,Olxx Gerxxxxxxx,Paxxx Sulxxxx"
+        }
+      },
+      "Posters and Demos": {
+        "counts": {
+          "0": 4,
+          "1": 2,
+          "2": 2,
+          "3": 2,
+          "4": 1,
+          "5": 1,
+          "6": 1,
+          "7": 1,
+          "8": 1,
+          "9": 1
+        },
+        "names": {
+          "0": "Jx Stexxxx",
+          "1": "Zhxxx Xxx",
+          "2": "Herxxxx Vxx",
+          "3": "Maxxxx Klxxx,Harxxxx Shaxxxx",
+          "4": "Sixxxx Fxx",
+          "5": "Xixxxx Waxx",
+          "6": "Guxxxx Hx,Juxxxx Faxx,Haxxxx Cxx,Chxxx Wx",
+          "7": "Roxxx Hxx",
+          "8": "Kaxx Zhxx",
+          "9": "Minxxxxx Chxx"
+        }
+      },
+      "Short Papers": {
+        "counts": {
+          "0": 1,
+          "1": 1,
+          "2": 1,
+          "3": 1,
+          "4": 1,
+          "5": 1,
+          "6": 1,
+          "7": 1,
+          "8": 1,
+          "9": 1
+        },
+        "names": {
+          "0": "Maxxx Neuxxxx,Chrixxxxxxx Micxxxx,Phixxxx Scxxxx",
+          "1": "Txx Zijxxxx",
+          "2": "Faxx Zhxxx",
+          "3": "Shexxxx Dexx,Jinxxxxx Toxx",
+          "4": "Douxxxx Jx",
+          "5": "Jeanxxxxxxxxx Moxxxx",
+          "6": "Raxx Schxxxx",
+          "7": "Saxxxx Doxxxx,Luxxxx Frxxxx",
+          "8": "Hixxxx Benxxxxx",
+          "9": "Daxxx Maxxx"
+        }
+      },
+      "Tutorials": {
+        "counts": {},
+        "names": {}
+      }
+    }
+  },
+  "infoType": "submission"
+}

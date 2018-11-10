@@ -107,5 +107,12 @@ def sha256sum(f):
     return h.hexdigest()
 
 
+def try_int(s):
+    try:
+        return int(s)
+    except ValueError:
+        return None
+
+
 if __name__ == "__main__":
     parseCSVFile("review.csv")

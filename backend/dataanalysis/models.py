@@ -2,7 +2,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 
-class UserFile(models.Model):
+class CsvFile(models.Model):
     AUTHOR_FILE_TYPE = 1
     SUBMISSION_FILE_TYPE = 2
     REVIEW_FILE_TYPE = 3
@@ -12,7 +12,7 @@ class UserFile(models.Model):
         (REVIEW_FILE_TYPE, 'Review'),
     )
 
-    user_id = models.IntegerField()
+    # user_id = models.IntegerField() not required
     # For more flexibility normalization can be used
     file_type = models.IntegerField(choices=FILE_TYPE_CHOICES)
     file_hash = models.CharField(max_length=64, unique=True)
@@ -26,9 +26,9 @@ class Author(models.Model):
     country = models.CharField(max_length=255)
     organization = models.CharField(max_length=255)
     web_page = models.CharField(max_length=255)  # null = True?, better not I suppose, URLField?
-    person_id = models.IntegerField('author unique id')  # consider isolated (allow duplicate) or central
+    person_id = models.IntegerField('author unique id', null=True)  # consider isolated (allow duplicate) or central
 
-    user_file = models.ForeignKey(UserFile, on_delete=models.CASCADE)
+    user_file = models.ForeignKey(CsvFile, on_delete=models.CASCADE)
 
 
 class Submission(models.Model):
@@ -70,7 +70,7 @@ class Submission(models.Model):
     reviews_sent = models.BooleanField()
     abstract = models.TextField()
 
-    user_file = models.ForeignKey(UserFile, on_delete=models.CASCADE)
+    user_file = models.ForeignKey(CsvFile, on_delete=models.CASCADE)
 
 
 class Review(models.Model):
@@ -93,5 +93,5 @@ class Review(models.Model):
     submission_time = models.TimeField()
     recommendation_for_best_paper = models.BooleanField()
 
-    user_file = models.ForeignKey(UserFile, on_delete=models.CASCADE)
+    user_file = models.ForeignKey(CsvFile, on_delete=models.CASCADE)
 

@@ -10,16 +10,15 @@ urlpatterns = [
     path('api/login/', include('rest_social_auth.urls_jwt')),
     path('api/token-refresh/', refresh_jwt_token),
 
-    # TODO: to be removed
-    path('api/checkauth/', views.check_auth),
-
     path('upload/', views.uploadCSV, name='upload'),
 
     path('parse/', views.parseCSV, name='parse'),
 
-    path('getAuthorInfo/', getInsight.getAuthorInfo, name='getAuthorInfo'),
+    path('getAuthorInfo/', views.get_author_info, name='getAuthorInfo'),
     path('getReviewInfo/', getInsight.getReviewInfo, name='getReviewInfo'),
     path('getSubmissionInfo/', getInsight.getSubmissionInfo, name='getSubmissionInfo'),
+
+    path('api/get_analyzed_data/', views.get_analyzed_data),
 
     path('', views.index, name='index'),
     re_path(r'^.*/$', views.index),  # Also redirect all other urls to the SPA

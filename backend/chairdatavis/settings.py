@@ -147,6 +147,10 @@ locals()['DATABASES']['default'] = dj_database_url.config(
     conn_max_age=django_heroku.MAX_CONN_AGE, ssl_require=ssl_require)
 
 # Social Auth
+
+# Use JSONB field to store extracted extra_data
+SOCIAL_AUTH_POSTGRES_JSONFIELD = True
+
 SOCIAL_AUTH_RAISE_EXCEPTIONS = True
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
 

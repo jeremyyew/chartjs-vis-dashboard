@@ -28,48 +28,37 @@ def parseAuthorCSVFile(inputFile):
 
 	return parsedResult
 
-@csrf_exempt
-def getAuthorInfo(request):
+def getAuthorInfo(inputFile):
 	"""
 	author.csv: header row, author names with affiliations, countries, emails
 	data format:
 	submission ID | f name | s name | email | country | affiliation | page | person ID | corresponding?
 	"""
+	parsedResult = {}
+
+	lines = parseCSVFile(inputFile)[1:]
+	lines = [ele for ele in lines if ele]
+
+	authorList = []
+	for authorInfo in lines:
+		# authorInfo = line.replace("\"", "").split(",")
+		# print authorInfo
+		authorList.append({'name': authorInfo[1] + " " + authorInfo[2], 'country': authorInfo[4], 'affiliation': authorInfo[5]})
 	
-	if request.body:
-		data = json.loads(request.body)
-		authorData = data['data'][1:]
-		authorData = [ele for ele in authorData if ele]
-		firstNameIndex = data['firstNameIndex']
-		lastNameIndex = data['lastNameIndex']
-		countryIndex = data['countryIndex']
-		affiliationIndex = data['affiliationIndex']
 
-		authorList = []
-		for authorInfo in authorData:
-			authorList.append({'name': authorInfo[firstNameIndex] + " " + authorInfo[lastNameIndex],
-				'country': authorInfo[countryIndex],
-				'affiliation': authorInfo[affiliationIndex]})
+	authors = [ele['name'] for ele in authorList if ele] # adding in the if ele in case of empty strings; same applies below
+	topAuthors = Counter(authors).most_common(10)
+	parsedResult['topAuthors'] = {'labels': [ele[0] for ele in topAuthors], 'data': [ele[1] for ele in topAuthors]}
 
-		parsedResult = {};
+	countries = [ele['country'] for ele in authorList if ele]
+	topCountries = Counter(countries).most_common(10)
+	parsedResult['topCountries'] = {'labels': [ele[0] for ele in topCountries], 'data': [ele[1] for ele in topCountries]}
 
-		authors = [ele['name'] for ele in authorList if ele] # adding in the if ele in case of empty strings; same applies below
-		topAuthors = Counter(authors).most_common(10)
-		parsedResult['topAuthors'] = {'labels': [ele[0] for ele in topAuthors], 'data': [ele[1] for ele in topAuthors]}
+	affiliations = [ele['affiliation'] for ele in authorList if ele]
+	topAffiliations = Counter(affiliations).most_common(10)
+	parsedResult['topAffiliations'] = {'labels': [ele[0] for ele in topAffiliations], 'data': [ele[1] for ele in topAffiliations]}
 
-		countries = [ele['country'] for ele in authorList if ele]
-		topCountries = Counter(countries).most_common(10)
-		parsedResult['topCountries'] = {'labels': [ele[0] for ele in topCountries], 'data': [ele[1] for ele in topCountries]}
-
-		affiliations = [ele['affiliation'] for ele in authorList if ele]
-		topAffiliations = Counter(affiliations).most_common(10)
-		parsedResult['topAffiliations'] = {'labels': [ele[0] for ele in topAffiliations], 'data': [ele[1] for ele in topAffiliations]}
-
-		return JsonResponse({'infoType': 'author', 'infoData': parsedResult})
-
-	else:
-		print('Unable to find author data!')
-		return HttpResponseNotFound('Page not found for CSV')
+	return {'infoType': 'author', 'infoData': parsedResult}
 
 def getReviewScoreInfo(inputFile):
 	"""

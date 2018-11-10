@@ -20,15 +20,45 @@ from .utils import parseCSVFileFromDjangoFile, isNumber, returnTestChartData, pa
 from .getInsight import parseAuthorCSVFile, getReviewScoreInfo, getAuthorInfo, getReviewInfo, getSubmissionInfo
 
 
-
-# TODO: to be removed
 @api_view(['POST'])
-def check_auth(request):
-    print(request.user)
-    if request.user.is_authenticated:
-        return JsonResponse({"status": "true"})
-    else:
-        return JsonResponse({"status": "false"})
+def get_analyzed_data(request):
+    user_file_ids = (userCsvFile.csv_file_id for userCsvFile in UserCsvFile.objects.filter(user_id=request.user.id))
+
+    author_csv_file_id = None
+    submission_csv_file_id = None
+    review_csv_file_id = None
+    # Each user can have more than one of the same type of the file (which allows us to support further extensions).
+    # Right now we just iterate through all the files and take the newest file with the same type.
+    for csvFile in CsvFile.objects.filter(id__in=user_file_ids):
+        if csvFile.file_type == CsvFile.AUTHOR_FILE_TYPE:
+            author_csv_file_id = csvFile.id
+        elif csvFile.file_type == CsvFile.SUBMISSION_FILE_TYPE:
+            submission_csv_file_id = csvFile.id
+        elif csvFile.file_type == CsvFile.REVIEW_FILE_TYPE:
+            review_csv_file_id = csvFile.id
+
+    result = []
+    if author_csv_file_id:
+        top_authors, top_countries, top_affiliations = analyze_author_data(author_csv_file_id)
+
+        parsed_result = {
+            'topAuthors': {'labels': [ele[0] for ele in top_authors],
+                           'data': [ele[1] for ele in top_authors]},
+            'topCountries': {'labels': [ele[0] for ele in top_countries],
+                             'data': [ele[1] for ele in top_countries]},
+            'topAffiliations': {'labels': [ele[0] for ele in top_affiliations],
+                                'data': [ele[1] for ele in top_affiliations]}
+        }
+        result.append({'infoType': 'author', 'infoData': parsed_result})
+    if submission_csv_file_id:
+        # TODO: add submission
+        print('Submission csv to be added')
+
+    if review_csv_file_id:
+        # TODO: add review
+        print('review csv to be added')
+
+    return JsonResponse({'data': result})
 
 
 @api_view(['POST'])

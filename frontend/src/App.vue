@@ -629,6 +629,23 @@ export default {
       this.isAuthenticated = true;
       this.username = jwt_decode(this.$auth.getToken()).username;
       refreshTokenTimer = setTimeout(this.refreshToken, REFRESH_TOKEN_MS);
+
+      axios.post(process.env.VUE_APP_API_BASE_URL + process.env.VUE_APP_ANALYZE_DATA_URL)
+        .then((response) => {
+          response.data.data.forEach((data) => {
+            const result = {
+              inputFileName: `${data.infoType}.csv`,
+              chartData: data.infoData,
+            };
+            this.updateResultData(data.infoType, result);
+          });
+        })
+        .catch(() => {
+          this.$message({
+            message: 'Unable to retrieve data. Please try again later.',
+            type: 'error',
+          });
+        });
     },
     login() {
       this.$refs.loginForm.validate((valid) => {
@@ -706,13 +723,6 @@ export default {
           this.setUserAuthenticated();
           this.authDialogOpen = false;
           this.isLoginLoading = false;
-
-          axios.post(`${process.env.VUE_APP_API_BASE_URL}api/checkauth/`)
-            .then((responseInner) => {
-              console.log(responseInner.data);
-            })
-            .catch((error) => {
-            });
         })
         .catch((error) => {
           // We want to use finally to set the login loading to false.

@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
@@ -18,8 +19,16 @@ class CsvFile(models.Model):
     file_hash = models.CharField(max_length=64, unique=True)
 
 
+class UserCsvFile(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    csv_file = models.ForeignKey(CsvFile, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('user', 'csv_file',)
+
+
 class Author(models.Model):
-    submission_no = models.IntegerField()
+    submission_id = models.IntegerField()
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     email = models.EmailField()
@@ -27,6 +36,7 @@ class Author(models.Model):
     organization = models.CharField(max_length=255)
     web_page = models.CharField(max_length=255)  # null = True?, better not I suppose, URLField?
     person_id = models.IntegerField('author unique id', null=True)  # consider isolated (allow duplicate) or central
+    is_corresponding = models.BooleanField()
 
     user_file = models.ForeignKey(CsvFile, on_delete=models.CASCADE)
 

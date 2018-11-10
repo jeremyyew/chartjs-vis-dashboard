@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.sessions.backends.db import SessionStore
 from django.contrib.sessions.models import Session
 from django.db import transaction, connection
+from django.db.models import Count
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from rest_framework import status, serializers
@@ -14,7 +15,7 @@ from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
 from rest_framework.exceptions import APIException
 from rest_framework.permissions import AllowAny
 
-from .models import CsvFile, Author
+from .models import CsvFile, Author, UserCsvFile
 from .utils import parseCSVFileFromDjangoFile, isNumber, returnTestChartData, parseCSVFile, sha256sum, try_int
 from .getInsight import parseAuthorCSVFile, getReviewScoreInfo, getAuthorInfo, getReviewInfo, getSubmissionInfo
 
@@ -112,7 +113,7 @@ def parseCSV(request):
 
 @api_view(['POST'])
 @permission_classes((AllowAny, ))
-def getAuthorInfo(request):
+def get_author_info(request):
     """
     author.csv: header row, author names with affiliations, countries, emails
     data format:
@@ -124,101 +125,101 @@ def getAuthorInfo(request):
         return HttpResponseNotFound('Page not found for CSV')
 
     data = json.loads(request.body)
-    sessionId = data['sessionId']
-    session = SessionStore(session_key=sessionId)
 
-    csvFile = session['file']
+    session_id = data['sessionId']
+    session = SessionStore(session_key=session_id)
 
-    if request.user.is_authenticated:
-        fileHash = sha256sum(csvFile)
-        print(fileHash)
-        csvFile.seek(0)
+    csv_file = session['file']
 
-        csvFileQuerySet = CsvFile.objects.filter(file_hash=fileHash)
-        numCsvFileWithHash = csvFileQuerySet.count()
-        if numCsvFileWithHash == 0:
-            with transaction.atomic():
-                authorData = parseCSVFile(csvFile)[1:]
-                authorData = [ele for ele in authorData if ele]
-                firstNameIndex = data['firstNameIndex']
-                lastNameIndex = data['lastNameIndex']
-                countryIndex = data['countryIndex']
-                affiliationIndex = data['affiliationIndex']
+    file_hash = sha256sum(csv_file)
+    csv_file.seek(0)
 
-                csvFileModel = CsvFile(file_type=CsvFile.AUTHOR_FILE_TYPE, file_hash=fileHash)
-                csvFileModel.save()
+    csv_file_query_set = CsvFile.objects.filter(file_hash=file_hash)
+    num_csv_file_with_hash = csv_file_query_set.count()
 
-                # Author.objects.bulk_create([])
-                authors = (Author(
-                    submission_no=int(authorInfo[0]),
-                    first_name=authorInfo[firstNameIndex],
-                    last_name=authorInfo[lastNameIndex],
-                    email=authorInfo[3],
-                    country=authorInfo[countryIndex],
-                    organization=authorInfo[affiliationIndex], # affiliation?
-                    web_page=authorInfo[6],
-                    person_id=try_int(authorInfo[7]),
-                    user_file_id=csvFileModel.id
-                ) for authorInfo in authorData)
-                # TODO: divide into slices
-                csvFileModel.author_set.bulk_create(authors)
+    user = request.user if request.user.is_authenticated else None
+    if num_csv_file_with_hash == 0:
+        author_data = [ele for ele in parseCSVFile(csv_file)[1:] if ele]
 
-                # do counting
-        elif numCsvFileWithHash == 1:
-            print(csvFileQuerySet[0].id)
-            # TODO: use author_set
-            # TODO: where user_file_id=fileHash
-            with connection.cursor() as cursor:
-                cursor.execute('''SELECT CONCAT(first_name, ' ', last_name) AS full_name,
-                                             COUNT(concat(first_name, ' ', last_name)) AS value_occurrence
-                                             FROM     dataanalysis_author
-                                             WHERE user_file_id = %s
-                                             GROUP BY full_name
-                                             ORDER BY value_occurrence DESC
-                                             LIMIT 10''', [csvFileQuerySet[0].id])
-                authorsTest = cursor.fetchall()
-            for authors in authorsTest:
-                print(authors)
-            # do counting
-        else:
-            raise APIException('Duplicate files found in database when impossible')
+        csv_file_id = save_authors(author_data, data, file_hash, user)
+    elif num_csv_file_with_hash == 1:
+        csv_file_id = csv_file_query_set[0].id
+        if user:
+            UserCsvFile.objects.get_or_create(user_id=user.id, csv_file_id=csv_file_id)
+    else:
+        raise APIException('Duplicate files found in database when impossible')
 
-    # TODO: if authenticated hash csvFile, if database contains this then skip to calculation immediately
+    top_authors, top_countries, top_affiliations = analyze_author_data(csv_file_id)
 
-    authorData = parseCSVFile(csvFile)[1:]
-    authorData = [ele for ele in authorData if ele]
-    # authorData = data['data'][1:]
-    # authorData = [ele for ele in authorData if ele]
-    firstNameIndex = data['firstNameIndex']
-    lastNameIndex = data['lastNameIndex']
-    countryIndex = data['countryIndex']
-    affiliationIndex = data['affiliationIndex']
+    parsed_result = {
+        'topAuthors': {'labels': [ele[0] for ele in top_authors],
+                       'data': [ele[1] for ele in top_authors]},
+        'topCountries': {'labels': [ele[0] for ele in top_countries],
+                         'data': [ele[1] for ele in top_countries]},
+        'topAffiliations': {'labels': [ele[0] for ele in top_affiliations],
+                            'data': [ele[1] for ele in top_affiliations]}
+    }
+
+    return JsonResponse({'infoType': 'author', 'infoData': parsed_result})
 
 
-    authorList = []
-    for authorInfo in authorData:
-        authorList.append({'name': authorInfo[firstNameIndex] + " " + authorInfo[lastNameIndex],
-                           'country': authorInfo[countryIndex],
-                           'affiliation': authorInfo[affiliationIndex]})
+def save_authors(author_data, data, file_hash, user):
+    with transaction.atomic():
+        first_name_index = data['firstNameIndex']
+        last_name_index = data['lastNameIndex']
+        country_index = data['countryIndex']
+        affiliation_index = data['affiliationIndex']
 
-    parsedResult = {};
+        csv_file_model = CsvFile(file_type=CsvFile.AUTHOR_FILE_TYPE, file_hash=file_hash)
+        csv_file_model.save()
+        csv_file_id = csv_file_model.id
 
-    authors = [ele['name'] for ele in authorList if
-               ele]  # adding in the if ele in case of empty strings; same applies below
-    topAuthors = Counter(authors).most_common(10)
-    parsedResult['topAuthors'] = {'labels': [ele[0] for ele in topAuthors], 'data': [ele[1] for ele in topAuthors]}
+        authors = (Author(
+            submission_id=int(authorInfo[0]),
+            first_name=authorInfo[first_name_index],
+            last_name=authorInfo[last_name_index],
+            email=authorInfo[3],
+            country=authorInfo[country_index],
+            organization=authorInfo[affiliation_index],
+            web_page=authorInfo[6],
+            person_id=try_int(authorInfo[7]),
+            is_corresponding=True if authorInfo[8] == 'yes' else False,
+            user_file_id=csv_file_id
+        ) for authorInfo in author_data)
+        # TODO: divide into slices
+        csv_file_model.author_set.bulk_create(authors)
 
-    countries = [ele['country'] for ele in authorList if ele]
-    topCountries = Counter(countries).most_common(10)
-    parsedResult['topCountries'] = {'labels': [ele[0] for ele in topCountries],
-                                    'data': [ele[1] for ele in topCountries]}
+        if user:
+            user_csv_file_model = UserCsvFile(user_id=user.id, csv_file_id=csv_file_id)
+            user_csv_file_model.save()
+    return csv_file_id
 
-    affiliations = [ele['affiliation'] for ele in authorList if ele]
-    topAffiliations = Counter(affiliations).most_common(10)
-    parsedResult['topAffiliations'] = {'labels': [ele[0] for ele in topAffiliations],
-                                       'data': [ele[1] for ele in topAffiliations]}
 
-    return JsonResponse({'infoType': 'author', 'infoData': parsedResult})
+def analyze_author_data(csv_file_id):
+    with connection.cursor() as cursor:
+        cursor.execute('''SELECT CONCAT(first_name, ' ', last_name) AS full_name,
+                                 COUNT(concat(first_name, ' ', last_name)) AS full_name_count 
+                                 FROM dataanalysis_author
+                                 WHERE user_file_id = %s
+                                 GROUP BY full_name
+                                 ORDER BY full_name_count DESC
+                                 LIMIT 10''', [csv_file_id])
+        top_authors = cursor.fetchall()
+
+    top_countries = [(author['country'], author['country_count'])
+                     for author in
+                     Author.objects.filter(user_file_id=csv_file_id)
+                     .values('country')
+                     .annotate(country_count=Count('country'))
+                     .order_by('-country_count')[:10]]
+
+    top_affiliations = [(author['organization'], author['organization_count'])
+                        for author in
+                        Author.objects.filter(user_file_id=csv_file_id)
+                        .values('organization')
+                        .annotate(organization_count=Count('organization'))
+                        .order_by('-organization_count')[:10]]
+    return top_authors, top_countries, top_affiliations
 
 
 class UserSerializer(serializers.ModelSerializer):

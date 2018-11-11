@@ -21,6 +21,10 @@
         No author data
       </div>
     </el-tab-pane>
+
+
+
+
     <el-tab-pane
       label="Submissions"
       name="submission"
@@ -36,6 +40,10 @@
         No submission data
       </div>
     </el-tab-pane>
+
+
+
+
     <el-tab-pane
       label="Reviews"
       name="review"
@@ -51,11 +59,41 @@
         No review data
       </div>
     </el-tab-pane>
+
+
+    <el-tab-pane
+      label="Authors x Submissions"
+      name="AuthorsxSubmissions"
+      lazy
+    >
+      <div v-if="author.chartData && submission.chartData && submission.inputFileName && author.inputFileName">
+        <ReviewSubmissionViz
+          :chart-data="submission.chartData"
+          :input-file-name="submission.inputFileName"
+        />
+      </div>
+      <div v-else>
+        No review or submission data
+      </div>
+    </el-tab-pane>
+
+
     <el-tab-pane
       label="Reviews x Submissions"
       name="reviewXSubmission"
       lazy
-    >Reviews x Submissions</el-tab-pane>
+    >
+      <div v-if="review.chartData && submission.chartData && submission.inputFileName && review.inputFileName">
+        <ReviewSubmissionViz
+          :chart-data="submission.chartData"
+          :input-file-name="submission.inputFileName"
+        />
+      </div>
+      <div v-else>
+        No review or submission data
+      </div>
+    </el-tab-pane>
+
   </el-tabs>
 </template>
 
@@ -63,10 +101,11 @@
 import AuthorViz from '@/components/AuthorViz';
 import ReviewViz from '@/components/ReviewViz';
 import SubmissionViz from './SubmissionViz';
+import ReviewSubmissionViz from './ReviewSubmissionViz';
 
 export default {
   name: 'ResultTabs',
-  components: { SubmissionViz, ReviewViz, AuthorViz },
+  components: { SubmissionViz, ReviewViz, AuthorViz, ReviewSubmissionViz },
   props: {
     result: {
       type: Object,
@@ -93,6 +132,8 @@ export default {
   },
   computed: {
     author() {
+      console.log('################');
+      console.log(JSON.stringify(this.result.author, undefined, 2));
       return this.result.author;
     },
     review() {
@@ -100,6 +141,9 @@ export default {
     },
     submission() {
       return this.result.submission;
+    },
+    reviewsubmission() {
+
     },
   },
   watch: {

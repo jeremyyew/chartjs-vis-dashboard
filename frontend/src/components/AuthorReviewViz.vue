@@ -16,7 +16,7 @@
       id="topreviewedauthorchart"
       ref="topreviewedauthorchart"
       :data-input="topReviewedAuthorData"
-      :title-text="'Top Authors'"
+      :title-text="'Top Reviewed Authors'"
       class="chart"
     />
     <!--using text.sync for two-way data binding to editable text child component-->

@@ -61,38 +61,43 @@
     </el-tab-pane>
 
 
+    <!--Authors x Submissions -->
+    <el-tab-pane
+      label="Authors x Reviews"
+      name="AuthorsxReviews"
+      lazy
+    >
+      <div v-if="author.chartData && review.chartData && review.inputFileName && author.inputFileName">
+        <AuthorReviewViz
+          :chart-data="submission.chartData"
+          :input-file-name="submission.inputFileName"
+        />
+      </div>
+      <div v-else>
+        No author or review data
+      </div>
+    </el-tab-pane>
+    <!--Authors x Reviews ends-->
+
+
+    <!--Author x Submissions-->
     <el-tab-pane
       label="Authors x Submissions"
       name="AuthorsxSubmissions"
       lazy
     >
       <div v-if="author.chartData && submission.chartData && submission.inputFileName && author.inputFileName">
-        <ReviewSubmissionViz
+        <AuthorSubmissionViz
           :chart-data="submission.chartData"
           :input-file-name="submission.inputFileName"
         />
       </div>
       <div v-else>
-        No review or submission data
+        No author or submission data
       </div>
     </el-tab-pane>
+    <!--Authors x Submissions ends-->
 
-
-    <el-tab-pane
-      label="Reviews x Submissions"
-      name="reviewXSubmission"
-      lazy
-    >
-      <div v-if="review.chartData && submission.chartData && submission.inputFileName && review.inputFileName">
-        <ReviewSubmissionViz
-          :chart-data="submission.chartData"
-          :input-file-name="submission.inputFileName"
-        />
-      </div>
-      <div v-else>
-        No review or submission data
-      </div>
-    </el-tab-pane>
 
   </el-tabs>
 </template>
@@ -100,12 +105,13 @@
 <script>
 import AuthorViz from '@/components/AuthorViz';
 import ReviewViz from '@/components/ReviewViz';
-import SubmissionViz from './SubmissionViz';
-import ReviewSubmissionViz from './ReviewSubmissionViz';
+import SubmissionViz from './SubmissionViz'
+import AuthorReviewViz from './AuthorReviewViz';
+import AuthorSubmissionViz from './AuthorSubmissionViz';
 
 export default {
   name: 'ResultTabs',
-  components: { SubmissionViz, ReviewViz, AuthorViz, ReviewSubmissionViz },
+  components: { SubmissionViz, ReviewViz, AuthorViz, AuthorReviewViz, AuthorSubmissionViz },
   props: {
     result: {
       type: Object,

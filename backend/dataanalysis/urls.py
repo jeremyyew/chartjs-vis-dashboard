@@ -8,7 +8,7 @@ urlpatterns = [
     path('api/register/', views.register),
     path('api/login/default/jwt/', obtain_jwt_token),
     path('api/login/', include('rest_social_auth.urls_jwt')),
-    path('api/token-refresh/', refresh_jwt_token),
+    path('api/token_refresh/', refresh_jwt_token),
 
     path('upload/', views.uploadCSV, name='upload'),
 

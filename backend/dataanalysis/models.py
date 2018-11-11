@@ -52,16 +52,16 @@ class Submission(models.Model):
         ('Tutorials', 'Tutorials'),
         ('JCDL 2018 - Workshops', 'JCDL 2018 - Workshops'),
     )
-    ACCEPT_DECISION = 1
-    REJECT_DECISION = 2
-    NO_DECISION = 3
-    # should we just map the original?
+    ACCEPT_DECISION = 'accept'
+    REJECT_DECISION = 'reject'
+    NO_DECISION = 'no decision'
     DECISION_CHOICES = (
-        (ACCEPT_DECISION, 'yes'),
-        (REJECT_DECISION, 'no'),
-        (NO_DECISION, 'no decision'),
+        (ACCEPT_DECISION, 'Accept'),
+        (REJECT_DECISION, 'Reject'),
+        (NO_DECISION, 'No decision'),
     )
 
+    # TODO: rename to submission_friendly_id, to prevent conflict with the actual submission_id
     submission_no = models.IntegerField()
     # TODO: verify if it works with all data
     track_no = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(8)])
@@ -70,12 +70,12 @@ class Submission(models.Model):
     # for more flexibility. However, for simplicity we just map the data like how it is in CSV
     track_name = models.CharField(max_length=255, choices=TRACK_NAME_CHOICES)
     title = models.CharField(max_length=255)
-    authors = models.CharField(max_length=255)
+    authors = models.TextField()
     submitted = models.DateTimeField()  # to ensure timezone correct
     last_updated = models.DateTimeField()
     form_fields = models.CharField(max_length=255)
     keywords = models.TextField()
-    decision = models.IntegerField(choices=DECISION_CHOICES)
+    decision = models.CharField(max_length=255, choices=DECISION_CHOICES)
     notified = models.BooleanField()
     reviews_sent = models.BooleanField()
     abstract = models.TextField()

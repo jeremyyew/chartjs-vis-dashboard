@@ -1,12 +1,16 @@
 import json
 from collections import Counter
+from itertools import accumulate
 
 from django.contrib.auth.models import User
 from django.contrib.sessions.backends.db import SessionStore
 from django.contrib.sessions.models import Session
 from django.db import transaction, connection
-from django.db.models import Count
+from django.db.models import Count, Q
+from django.db.models.functions import TruncDate
 from django.shortcuts import render, redirect
+from django.utils.dateparse import parse_datetime
+from django.utils.timezone import make_aware
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from rest_framework import status, serializers
 from rest_framework.decorators import api_view, permission_classes
@@ -15,8 +19,9 @@ from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
 from rest_framework.exceptions import APIException
 from rest_framework.permissions import AllowAny
 
-from .models import CsvFile, Author, UserCsvFile
-from .utils import parseCSVFileFromDjangoFile, isNumber, returnTestChartData, parseCSVFile, sha256sum, try_int
+from .models import CsvFile, Author, UserCsvFile, Submission
+from .utils import parseCSVFileFromDjangoFile, isNumber, returnTestChartData, parseCSVFile, sha256sum, try_int, \
+    parseSubmissionTime
 from .getInsight import parseAuthorCSVFile, getReviewScoreInfo, getAuthorInfo, getReviewInfo, getSubmissionInfo
 
 
@@ -51,8 +56,25 @@ def get_analyzed_data(request):
         }
         result.append({'infoType': 'author', 'infoData': parsed_result})
     if submission_csv_file_id:
-        # TODO: add submission
-        print('Submission csv to be added')
+        analyzed_data = analyze_submission_data(submission_csv_file_id)
+
+        parsed_result = {
+            'acceptanceRate': analyzed_data['acceptance_rate'],
+            'timeSeries': analyzed_data['time_series'],
+            'lastEditSeries': analyzed_data['last_edit_series'],
+            'overallKeywordMap': analyzed_data['overall_keywords_map'],
+            'overallKeywordList': analyzed_data['overall_keywords_list'],
+            'acceptedKeywordMap': analyzed_data['accepted_keywords_map'],
+            'acceptedKeywordList': analyzed_data['accepted_keywords_list'],
+            'rejectedKeywordMap': analyzed_data['rejected_keywords_map'],
+            'rejectedKeywordList': analyzed_data['rejected_keywords_list'],
+            'keywordsByTrack': analyzed_data['keywords_group_by_track'],
+            'acceptanceRateByTrack': analyzed_data['acceptance_rate_by_track'],
+            'topAcceptedAuthors': analyzed_data['top_accepted_authors_map'],
+            'topAuthorsByTrack': analyzed_data['top_authors_by_track'],
+            'comparableAcceptanceRate': analyzed_data['comparable_acceptance_rate'],
+        }
+        result.append({'infoType': 'submission', 'infoData': parsed_result})
 
     if review_csv_file_id:
         # TODO: add review
@@ -252,6 +274,206 @@ def analyze_author_data(csv_file_id):
                         .annotate(organization_count=Count('organization'))
                         .order_by('-organization_count')[:10]]
     return top_authors, top_countries, top_affiliations
+
+
+@api_view(['POST'])
+@permission_classes((AllowAny, ))
+def get_submission_info(request):
+    """
+    submission.csv
+    data format:
+    submission ID | track ID | track name | title | authors | submit time | last update time | form fields | keywords | decision | notified | reviews sent | abstract
+    File has header
+    """
+    if not request.body:
+        print('Unable to find submission data!')
+        return HttpResponseNotFound('Page not found for CSV')
+
+    data = json.loads(request.body)
+
+    session_id = data['sessionId']
+    session = SessionStore(session_key=session_id)
+
+    csv_file = session['file']
+
+    file_hash = sha256sum(csv_file)
+    csv_file.seek(0)
+
+    csv_file_query_set = CsvFile.objects.filter(file_hash=file_hash)
+    num_csv_file_with_hash = csv_file_query_set.count()
+
+    user = request.user if request.user.is_authenticated else None
+    if num_csv_file_with_hash == 0:
+        submission_data = [ele for ele in parseCSVFile(csv_file)[1:] if ele]
+
+        csv_file_id = save_submissions(submission_data, data, file_hash, user)
+    elif num_csv_file_with_hash == 1:
+        csv_file_id = csv_file_query_set[0].id
+        if user:
+            UserCsvFile.objects.get_or_create(user_id=user.id, csv_file_id=csv_file_id)
+    else:
+        raise APIException('Duplicate files found in database when impossible')
+
+    analyzed_data = analyze_submission_data(csv_file_id)
+
+    parsed_result = {
+        'acceptanceRate': analyzed_data['acceptance_rate'],
+        'timeSeries': analyzed_data['time_series'],
+        'lastEditSeries': analyzed_data['last_edit_series'],
+        'overallKeywordMap': analyzed_data['overall_keywords_map'],
+        'overallKeywordList': analyzed_data['overall_keywords_list'],
+        'acceptedKeywordMap': analyzed_data['accepted_keywords_map'],
+        'acceptedKeywordList': analyzed_data['accepted_keywords_list'],
+        'rejectedKeywordMap': analyzed_data['rejected_keywords_map'],
+        'rejectedKeywordList': analyzed_data['rejected_keywords_list'],
+        'keywordsByTrack': analyzed_data['keywords_group_by_track'],
+        'acceptanceRateByTrack': analyzed_data['acceptance_rate_by_track'],
+        'topAcceptedAuthors': analyzed_data['top_accepted_authors_map'],
+        'topAuthorsByTrack': analyzed_data['top_authors_by_track'],
+        'comparableAcceptanceRate': analyzed_data['comparable_acceptance_rate'],
+    }
+
+    return JsonResponse({'infoType': 'submission', 'infoData': parsed_result})
+
+
+def save_submissions(submission_data, data, file_hash, user):
+    with transaction.atomic():
+        decision_index = data['decisionIndex']
+        submission_time_index = data['submissionTimeIndex']
+        last_edit_time_index = data['lastEditTimeIndex']
+        track_name_index = data['trackNameIndex']
+        keyword_index = data['keywordIndex']
+        author_index = data['authorIndex']
+
+        csv_file_model = CsvFile(file_type=CsvFile.SUBMISSION_FILE_TYPE, file_hash=file_hash)
+        csv_file_model.save()
+        csv_file_id = csv_file_model.id
+
+        submissions = (Submission(
+            submission_no=int(submission[0]),
+            track_no=int(submission[1]),
+            track_name=submission[track_name_index],
+            title=submission[3],
+            authors=submission[author_index],
+            submitted=make_aware(parse_datetime(submission[submission_time_index])),
+            last_updated=make_aware(parse_datetime(submission[last_edit_time_index])),
+            form_fields=submission[7],
+            keywords=submission[keyword_index],
+            decision=submission[decision_index],
+            notified=True if submission[10] == 'yes' else False,
+            reviews_sent=True if submission[11] == 'yes' else False,
+            abstract=submission[12],
+            user_file_id=csv_file_id
+        ) for submission in submission_data)
+        # TODO: divide into slices
+        csv_file_model.submission_set.bulk_create(submissions)
+
+        if user:
+            user_csv_file_model = UserCsvFile(user_id=user.id, csv_file_id=csv_file_id)
+            user_csv_file_model.save()
+    return csv_file_id
+
+
+def analyze_submission_data(csv_file_id):
+    submissions = Submission.objects.filter(user_file_id=csv_file_id)
+    accepted_submissions = submissions.filter(decision=Submission.ACCEPT_DECISION)
+    rejected_submissions = submissions.filter(decision=Submission.REJECT_DECISION)
+
+    acceptance_rate = accepted_submissions.count() / submissions.count()
+
+    submitted_times = ({'x': submission['date'].strftime('%Y-%m-%d'), 'y': submission['count']}
+                       for submission in submissions
+                       .annotate(date=TruncDate('submitted'))
+                       .values('date')
+                       .annotate(count=Count('id'))
+                       .values('date', 'count')
+                       .order_by('date')
+                       )
+    submitted_time_series = accumulate(submitted_times,
+                                       lambda prev, current: {'x': current['x'], 'y': current['y'] + prev['y']})
+
+    last_edit_times = ({'x': submission['date'].strftime('%Y-%m-%d'), 'y': submission['count']}
+                       for submission in submissions
+                       .annotate(date=TruncDate('last_updated'))
+                       .values('date')
+                       .annotate(count=Count('id'))
+                       .values('date', 'count')
+                       .order_by('date')
+                       )
+    last_edit_time_series = accumulate(last_edit_times,
+                                       lambda prev, current: {'x': current['x'], 'y': current['y'] + prev['y']})
+
+    accepted_keywords_per_submission = (submission.keywords.lower().splitlines() for submission in accepted_submissions)
+    accepted_keywords = [keyword for keywords in accepted_keywords_per_submission for keyword in keywords]
+    accepted_keywords_map = {key: value for key, value in Counter(accepted_keywords).items()}
+    accepted_keywords_list = [[key, value] for key, value in Counter(accepted_keywords).most_common(20)]
+
+    rejected_keywords_per_submission = (submission.keywords.lower().splitlines() for submission in rejected_submissions)
+    rejected_keywords = [keyword for keywords in rejected_keywords_per_submission for keyword in keywords]
+    rejected_keywords_map = {key: value for key, value in Counter(rejected_keywords).items()}
+    rejected_keywords_list = [[key, value] for key, value in Counter(rejected_keywords).most_common(20)]
+
+    all_keywords_per_submission = (submission.keywords.lower().splitlines() for submission in submissions)
+    all_keywords = [keyword for keywords in all_keywords_per_submission for keyword in keywords]
+    all_keywords_map = {key: value for key, value in Counter(all_keywords).items()}
+    all_keywords_list = [[key, value] for key, value in Counter(all_keywords).most_common(20)]
+
+    tracks = [submission.track_name for submission in submissions.distinct('track_name')]
+    submissions_grouped_by_track = {track: submissions.filter(track_name=track) for track in tracks}
+
+    keywords_group_by_track = {}
+    acceptance_rate_by_track = {}
+    comparable_acceptance_rate = {}
+    top_authors_by_track = {}
+
+    # Obtained from the JCDL.org website: past conferences
+    comparable_acceptance_rate['year'] = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018]
+    comparable_acceptance_rate['Full Papers'] = [0.29, 0.28, 0.27, 0.29, 0.29, 0.30, 0.29, 0.30]
+    comparable_acceptance_rate['Short Papers'] = [0.29, 0.37, 0.31, 0.31, 0.32, 0.50, 0.35, 0.32]
+
+    for track, track_submissions in submissions_grouped_by_track.items():
+        track_keywords_per_submission = (submission.keywords.lower().splitlines() for submission in track_submissions)
+        track_keywords = [keyword for keywords in track_keywords_per_submission for keyword in keywords]
+        # track_keywords_map = {key: value for key, value in Counter(track_keywords).items()}
+        track_keywords_list = [[key, value] for key, value in Counter(track_keywords).most_common(20)]
+        keywords_group_by_track[track] = track_keywords_list
+
+        accepted_papers_per_track = track_submissions.filter(decision=Submission.ACCEPT_DECISION)
+        acceptance_rate_by_track[track] = accepted_papers_per_track.count() / track_submissions.count()
+
+        track_accepted_authors_per_submission = [submission.authors.replace(' and ', ', ').split(', ') for submission in
+                                           accepted_papers_per_track]
+        track_accepted_authors = [author for authors in track_accepted_authors_per_submission for author in authors]
+        track_top_accepted_authors = Counter(track_accepted_authors).most_common(10)
+        top_authors_by_track[track] = {'names': [ele[0] for ele in track_top_accepted_authors],
+                                       'counts': [ele[1] for ele in track_top_accepted_authors]}
+
+        if track == "Full Papers" or track == "Short Papers":
+            comparable_acceptance_rate[track].append(accepted_papers_per_track.count() / track_submissions.count())
+
+    accepted_authors_per_submission = [submission.authors.replace(' and ', ', ').split(', ') for submission in
+                                       accepted_submissions]
+    accepted_authors = [author for authors in accepted_authors_per_submission for author in authors]
+    top_accepted_authors = Counter(accepted_authors).most_common(10)
+    top_accepted_authors_map = {'names': [ele[0] for ele in top_accepted_authors],
+                                'counts': [ele[1] for ele in top_accepted_authors]}
+
+    return {
+        'acceptance_rate': acceptance_rate,
+        'time_series': list(submitted_time_series),
+        'last_edit_series': list(last_edit_time_series),
+        'overall_keywords_map': all_keywords_map,
+        'overall_keywords_list': all_keywords_list,
+        'accepted_keywords_map': accepted_keywords_map,
+        'accepted_keywords_list': accepted_keywords_list,
+        'rejected_keywords_map': rejected_keywords_map,
+        'rejected_keywords_list': rejected_keywords_list,
+        'keywords_group_by_track': keywords_group_by_track,
+        'acceptance_rate_by_track': acceptance_rate_by_track,
+        'top_accepted_authors_map': top_accepted_authors_map,
+        'top_authors_by_track':  top_authors_by_track,
+        'comparable_acceptance_rate': comparable_acceptance_rate,
+    }
 
 
 class UserSerializer(serializers.ModelSerializer):

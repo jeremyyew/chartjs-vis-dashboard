@@ -16,7 +16,7 @@ urlpatterns = [
 
     path('getAuthorInfo/', views.get_author_info, name='getAuthorInfo'),
     path('getReviewInfo/', getInsight.getReviewInfo, name='getReviewInfo'),
-    path('getSubmissionInfo/', getInsight.getSubmissionInfo, name='getSubmissionInfo'),
+    path('getSubmissionInfo/', views.get_submission_info, name='getSubmissionInfo'),
 
     path('api/get_analyzed_data/', views.get_analyzed_data),
 

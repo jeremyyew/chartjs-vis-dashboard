@@ -59,6 +59,10 @@ def get_analyzed_data(request):
             top_accepted_affiliations = analyze_author_submission_data(author_csv_file_id, submission_csv_file_id)
             parsed_result['topAcceptedAffiliations'] = {'labels': [ele[0] for ele in top_accepted_affiliations],
                                                         'data': [ele[1] for ele in top_accepted_affiliations]}
+        if review_csv_file_id:
+            top_reviewed_authors = analyze_author_review_data(author_csv_file_id, review_csv_file_id)
+            parsed_result['topReviewedAuthors'] = {'labels': [ele[0] for ele in top_reviewed_authors],
+                                                   'data': [ele[1] for ele in top_reviewed_authors]}
         result.append({'infoType': 'author', 'infoData': parsed_result})
     if submission_csv_file_id:
         analyzed_data = analyze_submission_data(submission_csv_file_id)
@@ -668,6 +672,21 @@ def analyze_author_submission_data(author_csv_file_id, submission_csv_file_id):
         top_accepted_affiliations = cursor.fetchall()
 
     return top_accepted_affiliations
+
+
+def analyze_author_review_data(author_csv_file_id, review_csv_file_id):
+    with connection.cursor() as cursor:
+        cursor.execute('''SELECT CONCAT(first_name, ' ', last_name), COUNT(*)
+                          FROM dataanalysis_author
+                          INNER JOIN dataanalysis_review
+                                   ON dataanalysis_author.submission_id=dataanalysis_review.submission_id AND
+                                      dataanalysis_author.user_file_id=%s AND dataanalysis_review.user_file_id=%s
+                          GROUP by first_name, last_name
+                          ORDER BY count DESC
+                          LIMIT 10''', [author_csv_file_id, review_csv_file_id])
+        top_reviewed_authors = cursor.fetchall()
+
+    return top_reviewed_authors
 
 
 class UserSerializer(serializers.ModelSerializer):

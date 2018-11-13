@@ -3,13 +3,12 @@
   <el-tabs
     id="main-tabs"
     type="border-card"
-    :value="activeTab"
+    :value="storeState.activeTab.value"
     @tab-click="handleTabClick"
   >
     <el-tab-pane
       label="Authors"
       name="author"
-      lazy
     >
       <div v-if="author.chartData && author.inputFileName">
         <AuthorViz
@@ -24,7 +23,6 @@
     <el-tab-pane
       label="Submissions"
       name="submission"
-      lazy
     >
       <div v-if="submission.chartData && submission.inputFileName">
         <SubmissionViz
@@ -39,7 +37,6 @@
     <el-tab-pane
       label="Reviews"
       name="review"
-      lazy
     >
       <div v-if="review.chartData && review.inputFileName">
         <ReviewViz
@@ -54,7 +51,6 @@
     <el-tab-pane
       label="Reviews x Submissions"
       name="reviewXSubmission"
-      lazy
     >Reviews x Submissions</el-tab-pane>
   </el-tabs>
 </template>
@@ -63,6 +59,7 @@
 import AuthorViz from '@/components/AuthorViz';
 import ReviewViz from '@/components/ReviewViz';
 import SubmissionViz from './SubmissionViz';
+import Store from '@/store';
 
 export default {
   name: 'ResultTabs',
@@ -72,13 +69,13 @@ export default {
       type: Object,
       required: true,
     },
-    lastUpdatedViz: {
-      value: {
-        type: String,
-        required: true,
-        default: 'author',
-      },
-    },
+    // lastUpdatedViz: {
+    //   value: {
+    //     type: String,
+    //     required: true,
+    //     default: 'author',
+    //   },
+    // },
     // {
     //   type: String,
     //   default: "author",
@@ -87,7 +84,7 @@ export default {
   },
   data() {
     return {
-      activeTab: this.lastUpdatedViz.value,
+      storeState: Store.state,
     };
     // return this.result
   },
@@ -103,15 +100,15 @@ export default {
     },
   },
   watch: {
-    lastUpdatedViz(next) {
-      if (next.value !== this.activeTab) {
-        this.activeTab = next.value;
-      }
-    },
+    // lastUpdatedViz(next) {
+    //   if (next.value !== this.activeTab) {
+    //     this.activeTab = next.value;
+    //   }
+    // },
   },
   methods: {
     handleTabClick(tab) {
-      this.activeTab = tab.name;
+      Store.switchActiveTab(tab.name);
     },
   },
 };
@@ -122,4 +119,6 @@ export default {
     height: 90%
     overflow: scroll
 
+  .el-tab-pane
+    /*display: block !important*/
 </style>

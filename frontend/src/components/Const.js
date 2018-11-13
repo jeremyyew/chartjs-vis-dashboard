@@ -23,6 +23,7 @@ export default {
     AUTHOR: 'author',
     REVIEW: 'review',
     SUBMISSION: 'submission',
+    RESULT_SUBMISSION: 'result_submission',
   },
   colorScheme2: ['rgba(231, 76, 60, 0.4)', 'rgba(52, 152, 219, 0.4)'],
   colorScheme3: ['rgba(231, 76, 60, 0.4)', 'rgba(241, 196, 15, 0.4)', 'rgba(52, 152, 219, 0.4)'],

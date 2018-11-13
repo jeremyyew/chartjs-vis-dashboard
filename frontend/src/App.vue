@@ -464,22 +464,32 @@ export default {
     async generatePdf() {
       const pdfGenerator = new utils.PdfGenerator();
       this.isSavingPdf = true;
-      await pdfGenerator.generate(
-        [
-          CHART_IDS.TOP_SUBMITTED_AFFILIATION_BAR_PIE_ID,
-          CHART_IDS.TOP_AUTHOR_BAR_ID,
-          CHART_IDS.TOP_COUNTRY_BAR_ID,
-          CHART_IDS.TOP_SUBMITTED_AFFILIATION_BAR_PIE_ID,
-          CHART_IDS.SUBMISSION_TIME_SERIES_ID,
-          CHART_IDS.HISTORICAL_ACCEPTANCE_ID,
-          CHART_IDS.ACCEPTANCE_BY_TRACK_ID,
-          CHART_IDS.TOP_ACCEPTED_AUTHORS_ID,
-          CHART_IDS.TOP_ACCEPTED_AUTHORS_BY_TRACK_ID,
-          CHART_IDS.SUBMISSIONS_WORD_CLOUD_ALL_ID,
-          CHART_IDS.SUBMISSIONS_WORD_CLOUD_ACCEPTED_ID,
-          CHART_IDS.SUBMISSIONS_WORD_CLOUD_BY_TRACK_ID,
-        ],
-      );
+      // try {
+        await pdfGenerator.generate(
+          [
+            CHART_IDS.TOP_SUBMITTED_AFFILIATION_BAR_PIE_ID,
+            CHART_IDS.TOP_AUTHOR_BAR_ID,
+            CHART_IDS.TOP_COUNTRY_BAR_ID,
+            CHART_IDS.TOP_SUBMITTED_AFFILIATION_BAR_PIE_ID,
+            CHART_IDS.SUBMISSION_TIME_SERIES_ID,
+            CHART_IDS.HISTORICAL_ACCEPTANCE_ID,
+            CHART_IDS.ACCEPTANCE_BY_TRACK_ID,
+            CHART_IDS.TOP_ACCEPTED_AUTHORS_ID,
+            CHART_IDS.TOP_ACCEPTED_AUTHORS_BY_TRACK_ID,
+            CHART_IDS.SUBMISSIONS_WORD_CLOUD_ALL_ID,
+            CHART_IDS.SUBMISSIONS_WORD_CLOUD_ACCEPTED_ID,
+            CHART_IDS.SUBMISSIONS_WORD_CLOUD_BY_TRACK_ID,
+          ],
+        );
+      // } catch (err) {
+      //   this.$notify({
+      //     title: 'Error printing pdf',
+      //     type: 'error',
+      //     message: err,
+      //     duration: 2500,
+      //   });
+      //   this.isSavingPdf = false;
+      // }
       this.isSavingPdf = false;
     },
     setUserAuthenticated() {
@@ -618,7 +628,8 @@ export default {
           const inputFileName = nameArray[nameArray.length - 1];
 
           // Update result props passed to ResultTabs
-          this.lastUpdatedViz = { value: infoType };
+          // this.lastUpdatedViz = { value: infoType };
+          Store.switchActiveTab(infoType);
           this.result[infoType] = {
             inputFileName,
             chartData: infoData,

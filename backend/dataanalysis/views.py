@@ -98,6 +98,7 @@ def get_analyzed_data(request):
             'scoreDistribution': analyzed_data['score_distribution'],
             'recommendDistribution': analyzed_data['recommend_distribution'],
             'scoreRecommendCounts': analyzed_data['score_recommend_counts'],
+            'recommendCountsList': analyzed_data['recommend_counts_list'],
         }
         result.append({'infoType': 'review', 'infoData': parsed_result})
 
@@ -553,6 +554,7 @@ def get_review_info(request):
         'scoreDistribution': analyzed_data['score_distribution'],
         'recommendDistribution': analyzed_data['recommend_distribution'],
         'scoreRecommendCounts': analyzed_data['score_recommend_counts'],
+        'recommendCountsList': analyzed_data['recommend_counts_list'],
     }
 
     return JsonResponse({'infoType': 'review', 'infoData': parsed_result})
@@ -602,6 +604,7 @@ def analyze_review_data(csv_file_id):
     score_list = []
     recommend_list = []
     confidence_list = []
+    recommend_counts_list = []
 
     submission_id_review_map = {}
 
@@ -635,6 +638,7 @@ def analyze_review_data(csv_file_id):
         confidence_list.append(sum(confidences) / len(confidences))
         recommends = [1.0 if is_recommended(overall_evaluation_score_formatted) else 0.0
                       for overall_evaluation_score_formatted in reviews_scores_per_submission]
+        recommend_counts = sum(recommends)
         weighted_score = sum(x * y for x, y in list(zip(scores, confidences))) / sum(confidences)
         weighted_recommend = sum(x * y for x, y in list(zip(recommends, confidences))) / sum(confidences)
 
@@ -645,6 +649,7 @@ def analyze_review_data(csv_file_id):
         submission_id_review_map[submission_id] = {'score': weighted_score, 'recommend': weighted_recommend}
         score_list.append(weighted_score)
         recommend_list.append(weighted_recommend)
+        recommend_counts_list.append(recommend_counts)
 
     scores = (review.overall_evaluation_score for review in
               reviews.distinct('overall_evaluation_score').order_by('overall_evaluation_score'))
@@ -667,7 +672,8 @@ def analyze_review_data(csv_file_id):
         'recommend_distribution': {'labels': recommend_distribution_labels,
                                    'counts': recommend_distribution_counts},
         'score_recommend_counts': {'labels': [ele[0] for ele in score_recommend_counts.items()],
-                                   'data': [ele[1] for ele in score_recommend_counts.items()]}
+                                   'data': [ele[1] for ele in score_recommend_counts.items()]},
+        'recommend_counts_list': recommend_counts_list
     }
 
 

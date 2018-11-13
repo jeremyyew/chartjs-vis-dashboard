@@ -99,6 +99,9 @@ def get_analyzed_data(request):
             'recommendDistribution': analyzed_data['recommend_distribution'],
             'scoreRecommendCounts': analyzed_data['score_recommend_counts'],
             'recommendCountsList': analyzed_data['recommend_counts_list'],
+            'recommendationsWeightedScorePerSubmission': [{'x': x, 'y': y} for x, y in
+                                                          zip(analyzed_data['recommend_counts_list'],
+                                                              analyzed_data['score_list'])],
         }
         result.append({'infoType': 'review', 'infoData': parsed_result})
 
@@ -555,6 +558,9 @@ def get_review_info(request):
         'recommendDistribution': analyzed_data['recommend_distribution'],
         'scoreRecommendCounts': analyzed_data['score_recommend_counts'],
         'recommendCountsList': analyzed_data['recommend_counts_list'],
+        'recommendationsWeightedScorePerSubmission': [{'x': x, 'y': y} for x, y in
+                                                      zip(analyzed_data['recommend_counts_list'],
+                                                          analyzed_data['score_list'])],
     }
 
     return JsonResponse({'infoType': 'review', 'infoData': parsed_result})

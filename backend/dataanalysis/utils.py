@@ -1,6 +1,8 @@
 import csv
 import codecs
 import hashlib
+from decimal import Decimal
+from itertools import tee
 
 
 def isNumber(inputStr):
@@ -112,6 +114,47 @@ def try_int(s):
         return int(s)
     except ValueError:
         return None
+
+
+# Basic re-implementation of numpy linspace
+def linspace(start, stop, num):
+    """
+    Return evenly spaced numbers over a specified interval.
+    Returns `num` evenly spaced samples, calculated over the
+    interval [`start`, `stop`].
+    The endpoint of the interval can optionally be excluded.
+    Parameters
+    ----------
+    start : scalar
+        The starting value of the sequence.
+    stop : scalar
+        The end value of the sequence.
+    num : int
+        Number of samples to generate.
+    Returns
+    -------
+    samples : list
+        There are `num` equally spaced samples in the closed interval
+        ``[start, stop]`` .
+    """
+    decimal_start = Decimal(start)
+    decimal_stop = Decimal(stop)
+
+    current = decimal_start
+    step = (decimal_stop - decimal_start) / (num - 1)
+    return (decimal_start + i * step for i in range(num))
+
+    # while current <= decimal_stop:
+    #     yield current
+    #     current += step
+
+
+def pairwise(iterable):
+    """s -> (s0,s1), (s1,s2), (s2, s3), ..."""
+    a, b = tee(iterable)
+    next(b, None)
+    return zip(a, b)
+
 
 
 if __name__ == "__main__":

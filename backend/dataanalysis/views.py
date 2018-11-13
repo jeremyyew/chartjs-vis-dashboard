@@ -1,5 +1,6 @@
 import json
 from collections import Counter
+from decimal import Decimal
 from itertools import accumulate
 
 from django.contrib.auth.models import User
@@ -9,7 +10,7 @@ from django.db import transaction, connection
 from django.db.models import Count, Q
 from django.db.models.functions import TruncDate
 from django.shortcuts import render, redirect
-from django.utils.dateparse import parse_datetime
+from django.utils.dateparse import parse_datetime, parse_date, parse_time
 from django.utils.timezone import make_aware
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from rest_framework import status, serializers
@@ -19,9 +20,9 @@ from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
 from rest_framework.exceptions import APIException
 from rest_framework.permissions import AllowAny
 
-from .models import CsvFile, Author, UserCsvFile, Submission
+from .models import CsvFile, Author, UserCsvFile, Submission, Review
 from .utils import parseCSVFileFromDjangoFile, isNumber, returnTestChartData, parseCSVFile, sha256sum, try_int, \
-    parseSubmissionTime
+    parseSubmissionTime, linspace, pairwise
 from .getInsight import parseAuthorCSVFile, getReviewScoreInfo, getAuthorInfo, getReviewInfo, getSubmissionInfo
 
 
@@ -77,8 +78,19 @@ def get_analyzed_data(request):
         result.append({'infoType': 'submission', 'infoData': parsed_result})
 
     if review_csv_file_id:
-        # TODO: add review
-        print('review csv to be added')
+        analyzed_data = analyze_review_data(review_csv_file_id)
+
+        parsed_result = {
+            'IDReviewMap': analyzed_data['id_review_map'],
+            'scoreList': analyzed_data['score_list'],
+            'meanScore': analyzed_data['mean_score'],
+            'meanRecommend': analyzed_data['mean_recommend'],
+            'meanConfidence': analyzed_data['mean_confidence'],
+            'recommendList': analyzed_data['recommend_list'],
+            'scoreDistribution': analyzed_data['score_distribution'],
+            'recommendDistribution': analyzed_data['recommend_distribution'],
+        }
+        result.append({'infoType': 'review', 'infoData': parsed_result})
 
     return JsonResponse({'data': result})
 
@@ -473,6 +485,167 @@ def analyze_submission_data(csv_file_id):
         'top_accepted_authors_map': top_accepted_authors_map,
         'top_authors_by_track':  top_authors_by_track,
         'comparable_acceptance_rate': comparable_acceptance_rate,
+    }
+
+
+@api_view(['POST'])
+@permission_classes((AllowAny, ))
+def get_review_info(request):
+    """
+    review.csv
+    data format:
+    review ID | paper ID? | reviewer ID | reviewer name | unknown | text | scores | overall score | unknown | unknown | unknown | unknown | date | time | recommend?
+    File has NO header
+
+    score calculation principles:
+    Weighted Average of the scores, using reviewer's confidence as the weights
+
+    recommended principles:
+    Yes: 1; No: 0; weighted average of the 1 and 0's, also using reviewer's confidence as the weights
+    """
+    if not request.body:
+        print('Unable to find getReviewInfo data!')
+        return HttpResponseNotFound('Page not found for CSV')
+
+    data = json.loads(request.body)
+
+    session_id = data['sessionId']
+    session = SessionStore(session_key=session_id)
+
+    csv_file = session['file']
+
+    file_hash = sha256sum(csv_file)
+    csv_file.seek(0)
+
+    csv_file_query_set = CsvFile.objects.filter(file_hash=file_hash)
+    num_csv_file_with_hash = csv_file_query_set.count()
+
+    user = request.user if request.user.is_authenticated else None
+    if num_csv_file_with_hash == 0:
+        review_data = [ele for ele in parseCSVFile(csv_file) if ele]
+
+        csv_file_id = save_reviews(review_data, data, file_hash, user)
+    elif num_csv_file_with_hash == 1:
+        csv_file_id = csv_file_query_set[0].id
+        if user:
+            UserCsvFile.objects.get_or_create(user_id=user.id, csv_file_id=csv_file_id)
+    else:
+        raise APIException('Duplicate files found in database when impossible')
+
+    analyzed_data = analyze_review_data(csv_file_id)
+
+    parsed_result = {
+        'IDReviewMap': analyzed_data['id_review_map'],
+        'scoreList': analyzed_data['score_list'],
+        'meanScore': analyzed_data['mean_score'],
+        'meanRecommend': analyzed_data['mean_recommend'],
+        'meanConfidence': analyzed_data['mean_confidence'],
+        'recommendList': analyzed_data['recommend_list'],
+        'scoreDistribution': analyzed_data['score_distribution'],
+        'recommendDistribution': analyzed_data['recommend_distribution'],
+    }
+
+    return JsonResponse({'infoType': 'review', 'infoData': parsed_result})
+
+
+def save_reviews(review_data, data, file_hash, user):
+    with transaction.atomic():
+        submission_id_index = data['submissionIDIndex']
+        evaluation_index = data['evaluationIndex']
+
+        csv_file_model = CsvFile(file_type=CsvFile.REVIEW_FILE_TYPE, file_hash=file_hash)
+        csv_file_model.save()
+        csv_file_id = csv_file_model.id
+
+        reviews = (Review(
+            review_no=int(review[0]),
+            submission_id=int(review[submission_id_index]),
+            review_assignment_no=int(review[2]),
+            reviewer_name=review[3],
+            field_no=int(review[4]),
+            review_comments=review[5],
+            overall_evaluation_score_formatted=review[evaluation_index],
+            overall_evaluation_score=int(review[7]),
+            subreviewer_info_col_one=review[8],
+            subreviewer_info_col_two=review[9],
+            subreviewer_info_col_three=review[10],
+            subreviewer_info_col_four=review[11],
+            submission_date=parse_date(review[12]),
+            submission_time=parse_time(review[13]),
+            recommendation_for_best_paper=True if review[14] == 'yes' else False,
+            user_file_id=csv_file_id
+        ) for review in review_data)
+        # TODO: divide into slices
+        csv_file_model.review_set.bulk_create(reviews)
+
+        if user:
+            user_csv_file_model = UserCsvFile(user_id=user.id, csv_file_id=csv_file_id)
+            user_csv_file_model.save()
+    return csv_file_id
+
+
+def analyze_review_data(csv_file_id):
+    reviews = Review.objects.filter(user_file_id=csv_file_id)
+
+    submission_ids = (review.submission_id for review in reviews.distinct('submission_id').order_by('submission_id'))
+
+    score_list = []
+    recommend_list = []
+    confidence_list = []
+
+    submission_id_review_map = {}
+
+    # Idea: from -3 to 3 (min to max scores possible), every 0.25 will be a gap
+    num_scores_in_distribution = int(Decimal(3 + 3) / Decimal('0.25')) + 1
+    num_recommend_in_distribution = int(Decimal(1 - 0) / Decimal('0.1')) + 1
+
+    scores_spaced = linspace(-3, 3, num_scores_in_distribution)
+    recommend_spaced = linspace(0, 1, num_recommend_in_distribution)
+
+    # Minus 1 because each score/recommend is paired
+    score_distribution_counts = [0] * (num_scores_in_distribution - 1)
+    recommend_distribution_counts = [0] * (num_recommend_in_distribution - 1)
+
+    score_distribution_labels = [str(x) + " ~ " + str(y) for x, y in pairwise(scores_spaced)]
+    recommend_distribution_labels = [str(x) + " ~ " + str(y) for x, y in pairwise(recommend_spaced)]
+
+    def is_recommended(overall_evaluation_score_formatted):
+        evaluation_score_info = overall_evaluation_score_formatted.splitlines()
+        if len(evaluation_score_info) < 3:
+            print(overall_evaluation_score_formatted)
+        else:
+            return evaluation_score_info[2].split(': ')[1] == 'yes'
+
+    for submission_id in submission_ids:
+        reviews_scores_per_submission = [review.overall_evaluation_score_formatted for review in
+                                         reviews.filter(submission_id=submission_id)]
+        confidences = [float(review.splitlines()[1].split(": ")[1]) for review in reviews_scores_per_submission]
+        scores = [float(review.splitlines()[0].split(": ")[1]) for review in reviews_scores_per_submission]
+
+        confidence_list.append(sum(confidences) / len(confidences))
+        recommends = [1.0 if is_recommended(overall_evaluation_score_formatted) else 0.0
+                      for overall_evaluation_score_formatted in reviews_scores_per_submission]
+        weighted_score = sum(x * y for x, y in list(zip(scores, confidences))) / sum(confidences)
+        weighted_recommend = sum(x * y for x, y in list(zip(recommends, confidences))) / sum(confidences)
+
+        score_indexumn = min(int((weighted_score + 3) / 0.25), 23)
+        recommend_indexumn = min(int(weighted_recommend / 0.1), 9)
+        score_distribution_counts[score_indexumn] += 1
+        recommend_distribution_counts[recommend_indexumn] += 1
+        submission_id_review_map[submission_id] = {'score': weighted_score, 'recommend': weighted_recommend}
+        score_list.append(weighted_score)
+        recommend_list.append(weighted_recommend)
+
+    return {
+        'id_review_map': submission_id_review_map,
+        'score_list': score_list,
+        'mean_score': sum(score_list) / len(score_list),
+        'mean_recommend': sum(recommend_list) / len(recommend_list),
+        'mean_confidence': sum(confidence_list) / len(confidence_list),
+        'recommend_list': recommend_list,
+        'score_distribution': {'labels': score_distribution_labels, 'counts': score_distribution_counts},
+        'recommend_distribution': {'labels': recommend_distribution_labels,
+                                   'counts': recommend_distribution_counts}
     }
 
 

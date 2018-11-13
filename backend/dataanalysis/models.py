@@ -85,12 +85,14 @@ class Submission(models.Model):
 
 class Review(models.Model):
     review_no = models.IntegerField()
-    submission_no = models.IntegerField()  # use many to one?
+    submission_id = models.IntegerField()
+    # better to use foreign key so we can join? But we want auto generated id for Submission for now
+    # submission = models.ForeignKey(Submission, on_delete=models.CASCADE)
     review_assignment_no = models.IntegerField()
     reviewer_name = models.CharField(max_length=255)
     field_no = models.IntegerField('expertise level', validators=[MinValueValidator(1), MaxValueValidator(5)])
     review_comments = models.TextField()
-    overall_evaluation_score_formatted = models.CharField(max_length=255)  # this field is ignored
+    overall_evaluation_score_formatted = models.TextField()
     overall_evaluation_score = models.IntegerField()
 
     # subreviewer info that we ignore but store first if we want to use next time

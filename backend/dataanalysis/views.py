@@ -55,6 +55,10 @@ def get_analyzed_data(request):
             'topAffiliations': {'labels': [ele[0] for ele in top_affiliations],
                                 'data': [ele[1] for ele in top_affiliations]}
         }
+        if submission_csv_file_id:
+            top_accepted_affiliations = analyze_author_submission_data(author_csv_file_id, submission_csv_file_id)
+            parsed_result['topAcceptedAffiliations'] = {'labels': [ele[0] for ele in top_accepted_affiliations],
+                                                        'data': [ele[1] for ele in top_accepted_affiliations]}
         result.append({'infoType': 'author', 'infoData': parsed_result})
     if submission_csv_file_id:
         analyzed_data = analyze_submission_data(submission_csv_file_id)
@@ -362,7 +366,7 @@ def save_submissions(submission_data, data, file_hash, user):
         csv_file_id = csv_file_model.id
 
         submissions = (Submission(
-            submission_no=int(submission[0]),
+            submission_id=int(submission[0]),
             track_no=int(submission[1]),
             track_name=submission[track_name_index],
             title=submission[3],
@@ -647,6 +651,23 @@ def analyze_review_data(csv_file_id):
         'recommend_distribution': {'labels': recommend_distribution_labels,
                                    'counts': recommend_distribution_counts}
     }
+
+
+def analyze_author_submission_data(author_csv_file_id, submission_csv_file_id):
+    with connection.cursor() as cursor:
+        # SELECT organization, count(DISTINCT submission_Id) if we want to count only a single author per submission
+        cursor.execute('''SELECT organization, count(organization)
+                          FROM dataanalysis_author
+                          INNER JOIN dataanalysis_submission
+                                   ON dataanalysis_author.submission_id=dataanalysis_submission.submission_id AND
+                                      dataanalysis_author.user_file_id=%s AND dataanalysis_submission.user_file_id=%s
+                          WHERE decision='accept'
+                          GROUP by organization
+                          ORDER by count DESC
+                          LIMIT 10''', [author_csv_file_id, submission_csv_file_id])
+        top_accepted_affiliations = cursor.fetchall()
+
+    return top_accepted_affiliations
 
 
 class UserSerializer(serializers.ModelSerializer):

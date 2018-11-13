@@ -97,6 +97,7 @@ def get_analyzed_data(request):
             'recommendList': analyzed_data['recommend_list'],
             'scoreDistribution': analyzed_data['score_distribution'],
             'recommendDistribution': analyzed_data['recommend_distribution'],
+            'scoreRecommendCounts': analyzed_data['score_recommend_counts'],
         }
         result.append({'infoType': 'review', 'infoData': parsed_result})
 
@@ -551,6 +552,7 @@ def get_review_info(request):
         'recommendList': analyzed_data['recommend_list'],
         'scoreDistribution': analyzed_data['score_distribution'],
         'recommendDistribution': analyzed_data['recommend_distribution'],
+        'scoreRecommendCounts': analyzed_data['score_recommend_counts'],
     }
 
     return JsonResponse({'infoType': 'review', 'infoData': parsed_result})
@@ -644,6 +646,16 @@ def analyze_review_data(csv_file_id):
         score_list.append(weighted_score)
         recommend_list.append(weighted_recommend)
 
+    scores = (review.overall_evaluation_score for review in
+              reviews.distinct('overall_evaluation_score').order_by('overall_evaluation_score'))
+    count_number_of_recommendations_per_score_queries = {
+        str(score): Count('pk',
+                          filter=Q(overall_evaluation_score=score,
+                                   overall_evaluation_score_formatted__contains='Recommend for best paper: yes'))
+        for score in scores
+    }
+    score_recommend_counts = reviews.aggregate(**count_number_of_recommendations_per_score_queries)
+
     return {
         'id_review_map': submission_id_review_map,
         'score_list': score_list,
@@ -653,7 +665,9 @@ def analyze_review_data(csv_file_id):
         'recommend_list': recommend_list,
         'score_distribution': {'labels': score_distribution_labels, 'counts': score_distribution_counts},
         'recommend_distribution': {'labels': recommend_distribution_labels,
-                                   'counts': recommend_distribution_counts}
+                                   'counts': recommend_distribution_counts},
+        'score_recommend_counts': {'labels': [ele[0] for ele in score_recommend_counts.items()],
+                                   'data': [ele[1] for ele in score_recommend_counts.items()]}
     }
 
 

@@ -630,9 +630,7 @@ def analyze_review_data(csv_file_id):
 
     def is_recommended(overall_evaluation_score_formatted):
         evaluation_score_info = overall_evaluation_score_formatted.splitlines()
-        if len(evaluation_score_info) < 3:
-            print(overall_evaluation_score_formatted)
-        else:
+        if len(evaluation_score_info) >= 3:
             return evaluation_score_info[2].split(': ')[1] == 'yes'
 
     for submission_id in submission_ids:

@@ -790,13 +790,10 @@ export default {
             return;
           }
 
-          // TODO: remove defaultUploadForm.data and uploadForm.data after submission and review added
-          this[dataField].defaultUploadForm.data = x.data;
-          this[dataField].uploadForm.data = x.data;
-
-          this[dataField].previewData = x.previewData;
           this[dataField].defaultUploadForm.sessionId = x.sessionId;
           this[dataField].uploadForm.sessionId = x.sessionId;
+
+          this[dataField].previewData = x.previewData;
           this[dataField].dialogOpen = true;
         })
         .catch((err) => {

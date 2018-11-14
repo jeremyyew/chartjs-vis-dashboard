@@ -9,7 +9,7 @@
 - [ ] Remove old print methods
 - [ ] Fix word clouds?
 - [ ] Loading + printing overlay
-- [ ] Docs: change in component architecture
+- [ ] Docs: change in component architecture, force-rerender
 
 ### Previous approach: component-level methods and data
 Previously the saving of visualizations into PDF was done via standalone component-level methods such as `saveAuthor` or `saveSubmission`. These were lengthy and highly repetitive. 

@@ -61,8 +61,7 @@ class Submission(models.Model):
         (NO_DECISION, 'No decision'),
     )
 
-    # TODO: rename to submission_friendly_id, to prevent conflict with the actual submission_id
-    submission_no = models.IntegerField()
+    submission_id = models.IntegerField()
     # TODO: verify if it works with all data
     track_no = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(8)])
     # TODO: verify if it works with all data

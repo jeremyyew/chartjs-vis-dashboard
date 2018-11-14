@@ -181,19 +181,21 @@ export default {
   },
   methods: {
     computeScoreRecommendationScatterData() {
+      const { recommendationsWeightedScorePerSubmission } = this.chartData;
       return {
         datasets: [{
           label: 'Accepted papers',
-          data: scoreRecommendationScatterMock.data,
+          data: recommendationsWeightedScorePerSubmission,
         }],
       };
     },
     computeScoreRecommendationData() {
+      const { labels, data } = this.chartData.scoreRecommendCounts;
       const return_obj = {
-        labels: dummyLabels,
+        labels: labels,
         datasets: [{
           label: 'No. of Recommendations',
-          data: [50, 45, 40, 35, 30, 25, 20, 15, 10, 5],
+          data: data,
           backgroundColor: 'rgba(52, 152, 219, 0.4)',
           pointBackgroundColor: 'white',
           borderWidth: 1,

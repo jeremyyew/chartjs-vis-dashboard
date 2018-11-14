@@ -125,15 +125,15 @@
       computeTopReviewedAuthorData(len) {
         const scheme = this.chooseColorScheme(len);
         const topReviewedAuthorData = {
-          labels: dummyLabels.slice(0, len),
+          labels: this.chartData.topReviewedAuthors.labels.slice(0, len),
           datasets: [
             {
-              label: 'Submission Counts',
+              label: 'Review Counts',
               backgroundColor: scheme,
               pointBackgroundColor: 'white',
               borderWidth: 1,
               pointBorderColor: '#249EBF',
-              data: dummyData.slice(0, len),
+              data: this.chartData.topReviewedAuthors.data.slice(0, len),
             },
           ],
         };

@@ -155,7 +155,7 @@
         const scheme = this.chooseColorScheme(len);
 
         return {
-          labels: dummyTopAcceptedAffiliationData.labels.slice(0, len),
+          labels: this.chartData.topAcceptedAffiliations.labels.slice(0, len),
           datasets: [
             {
               label: 'No. of Accepted Papers',
@@ -163,7 +163,7 @@
               pointBackgroundColor: 'white',
               borderWidth: 1,
               pointBorderColor: '#249EBF',
-              data: dummyTopAcceptedAffiliationData.data.slice(0, len),
+              data: this.chartData.topAcceptedAffiliations.data.slice(0, len),
             },
           ],
         };

@@ -55,6 +55,14 @@ def get_analyzed_data(request):
             'topAffiliations': {'labels': [ele[0] for ele in top_affiliations],
                                 'data': [ele[1] for ele in top_affiliations]}
         }
+        if submission_csv_file_id:
+            top_accepted_affiliations = analyze_author_submission_data(author_csv_file_id, submission_csv_file_id)
+            parsed_result['topAcceptedAffiliations'] = {'labels': [ele[0] for ele in top_accepted_affiliations],
+                                                        'data': [ele[1] for ele in top_accepted_affiliations]}
+        if review_csv_file_id:
+            top_reviewed_authors = analyze_author_review_data(author_csv_file_id, review_csv_file_id)
+            parsed_result['topReviewedAuthors'] = {'labels': [ele[0] for ele in top_reviewed_authors],
+                                                   'data': [ele[1] for ele in top_reviewed_authors]}
         result.append({'infoType': 'author', 'infoData': parsed_result})
     if submission_csv_file_id:
         analyzed_data = analyze_submission_data(submission_csv_file_id)
@@ -89,6 +97,11 @@ def get_analyzed_data(request):
             'recommendList': analyzed_data['recommend_list'],
             'scoreDistribution': analyzed_data['score_distribution'],
             'recommendDistribution': analyzed_data['recommend_distribution'],
+            'scoreRecommendCounts': analyzed_data['score_recommend_counts'],
+            'recommendCountsList': analyzed_data['recommend_counts_list'],
+            'recommendationsWeightedScorePerSubmission': [{'x': x, 'y': y} for x, y in
+                                                          zip(analyzed_data['recommend_list'],
+                                                              analyzed_data['score_list'])],
         }
         result.append({'infoType': 'review', 'infoData': parsed_result})
 
@@ -161,7 +174,6 @@ def parseCSV(request):
     s['file'] = csvFile
     s.create()
 
-    # TODO: remove after adding submission and review
     rowCSV = parseCSVFile(csvFile)
 
     previewData = []
@@ -173,8 +185,7 @@ def parseCSV(request):
 
         previewData.append(rowData)
 
-    # TODO: remove data after adding submission and review
-    return JsonResponse({'data' : rowCSV, 'previewData': previewData, 'sessionId': s.session_key})
+    return JsonResponse({'previewData': previewData, 'sessionId': s.session_key})
 
 
 @api_view(['POST'])
@@ -188,7 +199,7 @@ def get_author_info(request):
 
     if not request.body:
         print('Unable to find author data!')
-        return HttpResponseNotFound('Page not found for CSV')
+        raise APIException('Page not found for CSV')
 
     data = json.loads(request.body)
 
@@ -299,7 +310,7 @@ def get_submission_info(request):
     """
     if not request.body:
         print('Unable to find submission data!')
-        return HttpResponseNotFound('Page not found for CSV')
+        raise APIException('Page not found for CSV')
 
     data = json.loads(request.body)
 
@@ -362,7 +373,7 @@ def save_submissions(submission_data, data, file_hash, user):
         csv_file_id = csv_file_model.id
 
         submissions = (Submission(
-            submission_no=int(submission[0]),
+            submission_id=int(submission[0]),
             track_no=int(submission[1]),
             track_name=submission[track_name_index],
             title=submission[3],
@@ -505,7 +516,7 @@ def get_review_info(request):
     """
     if not request.body:
         print('Unable to find getReviewInfo data!')
-        return HttpResponseNotFound('Page not found for CSV')
+        raise APIException('Page not found for CSV')
 
     data = json.loads(request.body)
 
@@ -543,6 +554,11 @@ def get_review_info(request):
         'recommendList': analyzed_data['recommend_list'],
         'scoreDistribution': analyzed_data['score_distribution'],
         'recommendDistribution': analyzed_data['recommend_distribution'],
+        'scoreRecommendCounts': analyzed_data['score_recommend_counts'],
+        'recommendCountsList': analyzed_data['recommend_counts_list'],
+        'recommendationsWeightedScorePerSubmission': [{'x': x, 'y': y} for x, y in
+                                                      zip(analyzed_data['recommend_list'],
+                                                          analyzed_data['score_list'])],
     }
 
     return JsonResponse({'infoType': 'review', 'infoData': parsed_result})
@@ -592,6 +608,7 @@ def analyze_review_data(csv_file_id):
     score_list = []
     recommend_list = []
     confidence_list = []
+    recommend_counts_list = []
 
     submission_id_review_map = {}
 
@@ -611,9 +628,7 @@ def analyze_review_data(csv_file_id):
 
     def is_recommended(overall_evaluation_score_formatted):
         evaluation_score_info = overall_evaluation_score_formatted.splitlines()
-        if len(evaluation_score_info) < 3:
-            print(overall_evaluation_score_formatted)
-        else:
+        if len(evaluation_score_info) >= 3:
             return evaluation_score_info[2].split(': ')[1] == 'yes'
 
     for submission_id in submission_ids:
@@ -625,6 +640,7 @@ def analyze_review_data(csv_file_id):
         confidence_list.append(sum(confidences) / len(confidences))
         recommends = [1.0 if is_recommended(overall_evaluation_score_formatted) else 0.0
                       for overall_evaluation_score_formatted in reviews_scores_per_submission]
+        recommend_counts = sum(recommends)
         weighted_score = sum(x * y for x, y in list(zip(scores, confidences))) / sum(confidences)
         weighted_recommend = sum(x * y for x, y in list(zip(recommends, confidences))) / sum(confidences)
 
@@ -635,6 +651,17 @@ def analyze_review_data(csv_file_id):
         submission_id_review_map[submission_id] = {'score': weighted_score, 'recommend': weighted_recommend}
         score_list.append(weighted_score)
         recommend_list.append(weighted_recommend)
+        recommend_counts_list.append(recommend_counts)
+
+    scores = (review.overall_evaluation_score for review in
+              reviews.distinct('overall_evaluation_score').order_by('overall_evaluation_score'))
+    count_number_of_recommendations_per_score_queries = {
+        str(score): Count('pk',
+                          filter=Q(overall_evaluation_score=score,
+                                   overall_evaluation_score_formatted__contains='Recommend for best paper: yes'))
+        for score in scores
+    }
+    score_recommend_counts = reviews.aggregate(**count_number_of_recommendations_per_score_queries)
 
     return {
         'id_review_map': submission_id_review_map,
@@ -645,8 +672,43 @@ def analyze_review_data(csv_file_id):
         'recommend_list': recommend_list,
         'score_distribution': {'labels': score_distribution_labels, 'counts': score_distribution_counts},
         'recommend_distribution': {'labels': recommend_distribution_labels,
-                                   'counts': recommend_distribution_counts}
+                                   'counts': recommend_distribution_counts},
+        'score_recommend_counts': {'labels': [ele[0] for ele in score_recommend_counts.items()],
+                                   'data': [ele[1] for ele in score_recommend_counts.items()]},
+        'recommend_counts_list': recommend_counts_list
     }
+
+
+def analyze_author_submission_data(author_csv_file_id, submission_csv_file_id):
+    with connection.cursor() as cursor:
+        # SELECT organization, count(DISTINCT submission_id) if we want to count only a single author per submission
+        cursor.execute('''SELECT organization, COUNT(organization)
+                          FROM dataanalysis_author
+                          INNER JOIN dataanalysis_submission
+                                   ON dataanalysis_author.submission_id=dataanalysis_submission.submission_id AND
+                                      dataanalysis_author.user_file_id=%s AND dataanalysis_submission.user_file_id=%s
+                          WHERE decision='accept'
+                          GROUP by organization
+                          ORDER by count DESC
+                          LIMIT 10''', [author_csv_file_id, submission_csv_file_id])
+        top_accepted_affiliations = cursor.fetchall()
+
+    return top_accepted_affiliations
+
+
+def analyze_author_review_data(author_csv_file_id, review_csv_file_id):
+    with connection.cursor() as cursor:
+        cursor.execute('''SELECT CONCAT(first_name, ' ', last_name), COUNT(*)
+                          FROM dataanalysis_author
+                          INNER JOIN dataanalysis_review
+                                   ON dataanalysis_author.submission_id=dataanalysis_review.submission_id AND
+                                      dataanalysis_author.user_file_id=%s AND dataanalysis_review.user_file_id=%s
+                          GROUP by first_name, last_name
+                          ORDER BY count DESC
+                          LIMIT 10''', [author_csv_file_id, review_csv_file_id])
+        top_reviewed_authors = cursor.fetchall()
+
+    return top_reviewed_authors
 
 
 class UserSerializer(serializers.ModelSerializer):

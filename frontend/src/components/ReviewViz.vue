@@ -202,7 +202,7 @@ export default {
           pointBorderColor: '#249EBF',
         }],
       };
-      console.log(`************\n${JSON.stringify(return_obj, undefined, 4)}`);
+      // console.log(`************\n${JSON.stringify(return_obj, undefined, 4)}`);
       return return_obj;
     },
     computeScoreDistributionData(type) {
@@ -221,7 +221,7 @@ export default {
           pointBorderColor: '#249EBF',
         }],
       };
-      console.log(`************\n${JSON.stringify(return_obj, undefined, 4)}`);
+      // console.log(`************\n${JSON.stringify(return_obj, undefined, 4)}`);
       return return_obj;
     },
     indexOfMax(arr) {

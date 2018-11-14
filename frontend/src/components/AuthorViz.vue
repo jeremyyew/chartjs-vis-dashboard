@@ -26,25 +26,25 @@
       />
     </el-select>
     <el-switch
-      v-model="topAcceptedAffiliationChartIncluded"
+      v-model="storeState.charts[CHART_IDS.TOP_ACCEPTED_AFFILIATION_BAR_PIE_ID].included"
       active-color="#13ce66"
       active-text="Included in Report"
       inactive-text="Not Included"
     />
     <div
-      id="topAcceptedAffiliationChart"
+      :id="CHART_IDS.TOP_ACCEPTED_AFFILIATION_BAR_PIE_ID"
       ref="topAcceptedAffiliationChart"
     >
       <hori-bar-chart
         v-if="topAcceptedAffiliationChartType=='bar'"
         :data-input="topAcceptedAffiliationData"
-        :title-text="'Top Affiliations'"
+        :title-text="'Top Accepted Affiliations'"
         class="chart"
       />
       <pie-chart
         v-else-if="topAcceptedAffiliationChartType=='pie'"
         :data-input="topAcceptedAffiliationData"
-        :title-text="'Top Affiliations'"
+        :title-text="'Top Accepted Affiliations'"
         class="chart"
       />
     </div>
@@ -64,14 +64,14 @@
       />
     </el-select>
     <el-switch
-      v-model="authorChartIncluded"
+      v-model="storeState.charts[CHART_IDS.TOP_AUTHOR_BAR_ID].included"
       active-color="#13ce66"
       active-text="Included in Report"
       inactive-text="Not Included"
     />
     <bar-chart
-      id="topauthorchart"
-      ref="topauthorchart"
+      :id="CHART_IDS.TOP_AUTHOR_BAR_ID"
+      ref="topAuthorChart"
       :data-input="topAuthorData"
       :title-text="'Top Authors'"
       :x-label="'Authors'"
@@ -107,14 +107,14 @@
       />
     </el-select>
     <el-switch
-      v-model="countryChartIncluded"
+      v-model="storeState.charts[CHART_IDS.TOP_COUNTRY_BAR_ID].included"
       active-color="#13ce66"
       active-text="Included in Report"
       inactive-text="Not Included"
     />
     <div
-      id="topcountrychart"
-      ref="topcountrychart"
+      :id="CHART_IDS.TOP_COUNTRY_BAR_ID"
+      ref="topCountryChart"
     >
       <hori-bar-chart
         v-if="countryChartType=='bar'"
@@ -157,14 +157,14 @@
       />
     </el-select>
     <el-switch
-      v-model="affiliationChartIncluded"
+      v-model="storeState.charts[CHART_IDS.TOP_SUBMITTED_AFFILIATION_BAR_PIE_ID].included"
       active-color="#13ce66"
       active-text="Included in Report"
       inactive-text="Not Included"
     />
     <div
-      id="topaffiliationchart"
-      ref="topaffiliationchart"
+      :id="CHART_IDS.TOP_SUBMITTED_AFFILIATION_BAR_PIE_ID"
+      ref="topAffiliationChart"
     >
       <hori-bar-chart
         v-if="affiliationChartType=='bar'"
@@ -185,7 +185,7 @@
       type="success"
       plain
       style="margin-top: 10px"
-      @click="saveAuthorNew"
+      @click=""
     >Save
     </el-button>
   </div>
@@ -195,18 +195,18 @@
 import BarChart from '@/components/BarChart';
 import HoriBarChart from '@/components/HoriBarChart';
 import PieChart from '@/components/PieChart';
-
+import Utils from '@/utils';
 import EditableText from '@/components/EditableText';
-
 import Const from './Const';
-
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-
+import Store from '@/store';
 // visualization 4.1
 import {
   dummyTopAcceptedAffiliationData,
 } from '../mocks/TopAcceptedAffiliationMock';
+
+const { CHART_IDS } = Const;
 
 export default {
   name: 'AuthorViz',
@@ -223,6 +223,8 @@ export default {
     const countryInitialText = `And from the country information (generated from the author data), we can see that the top 1 country, in this case ${this.chartData.topCountries.labels[0]}, has made ${String(((this.chartData.topCountries.data[0] - this.chartData.topCountries.data[1]) / this.chartData.topCountries.data[1] * 100).toFixed(2))}% more submission than the second-placed ${this.chartData.topCountries.labels[1]}.`;
 
     return {
+      CHART_IDS,
+      storeState: Store.state,
       msg: 'Author Info Analysis',
       authorText: {
         val: authorInitialText,
@@ -291,7 +293,6 @@ export default {
       authorDataLength: 3,
       countryDataLength: 3,
       affiliationDataLength: 3,
-      authorChartIncluded: true,
       countryChartIncluded: true,
       affiliationChartIncluded: true,
       topAuthorData: this.computeAuthorData(3),
@@ -337,6 +338,12 @@ export default {
     topAcceptedAffiliationDataLength(newValue, oldValue) {
       this.topAcceptedAffiliationData = this.computeTopAcceptedAffiliationData(newValue);
     },
+  },
+  created() {
+    Store.registerPrintableChart(CHART_IDS.TOP_ACCEPTED_AFFILIATION_BAR_PIE_ID);
+    Store.registerPrintableChart(CHART_IDS.TOP_AUTHOR_BAR_ID);
+    Store.registerPrintableChart(CHART_IDS.TOP_COUNTRY_BAR_ID);
+    Store.registerPrintableChart(CHART_IDS.TOP_SUBMITTED_AFFILIATION_BAR_PIE_ID);
   },
   methods: {
     chooseColorScheme(len) {
@@ -432,78 +439,6 @@ export default {
           },
         ],
       };
-    },
-    saveAuthorNew() {
-      const fileName = 'Author Submission Visual Analysis';
-      const leftMargin = Const.leftMargin;
-      const rightMargin = Const.rightMargin;
-      const contentWidth = Const.contentWidth;
-      const initialTopMargin = Const.topMargin;
-      const doc = new jsPDF('p', 'pt');
-      const title = 'Author Submission Visual Analysis';
-      doc.setFont('Times');
-      doc.setFontSize(Const.pdfTitleFontSize);
-      const titleLength = doc.getStringUnitWidth(title) * Const.pdfTitleFontSize;
-      doc.text((contentWidth - titleLength) / 2.0 + leftMargin, initialTopMargin, title);
-      const startingTopMargin = initialTopMargin + Const.pdfTitleFontSize;
-      doc.setFontSize(Const.pdfTextFontSize);
-
-      let numOfAddedSections = 0;
-
-      html2canvas(document.getElementById('topauthorchart')).then((authorCanvas) => {
-        let topMarginAfterAuthor = startingTopMargin;
-        if (this.authorChartIncluded) {
-          numOfAddedSections += 1;
-          const authorImageData = authorCanvas.toDataURL('image/png');
-          const authorImageWidth = Const.imageWidth;
-          const authorImageHeight = authorCanvas.height * authorImageWidth / authorCanvas.width;
-          doc.addImage(authorImageData, 'PNG', leftMargin, startingTopMargin, authorImageWidth, authorImageHeight);
-
-          const authorTextLines = doc.splitTextToSize(this.authorText.val, contentWidth);
-          doc.text(leftMargin, startingTopMargin + authorImageHeight + 20, authorTextLines);
-
-          // Note: here pdfLineHeight is the line height considering the white space between lines
-          const authorTextLinesHeight = Const.pdfLineHeight * Const.pdfTextFontSize * authorTextLines.length;
-          topMarginAfterAuthor = startingTopMargin + authorImageHeight + authorTextLinesHeight + 30;
-        }
-
-        html2canvas(document.getElementById('topcountrychart')).then((countryCanvas) => {
-          let topMarginAfterCountry = topMarginAfterAuthor;
-          if (this.countryChartIncluded) {
-            numOfAddedSections += 1;
-            const countryImageData = countryCanvas.toDataURL('image/png');
-            const countryImageWidth = Const.imageWidth;
-            const countryImageHeight = countryCanvas.height * countryImageWidth / countryCanvas.width;
-            doc.addImage(countryImageData, 'PNG', leftMargin, topMarginAfterAuthor, countryImageWidth, countryImageHeight);
-
-            const countryTextLines = doc.splitTextToSize(this.countryText.val, contentWidth);
-            doc.text(leftMargin, topMarginAfterAuthor + countryImageHeight + 20, countryTextLines);
-
-            if (numOfAddedSections % 2 === 1) {
-              const countryTextLinesHeight = Const.pdfLineHeight * Const.pdfTextFontSize * countryTextLines.length;
-              topMarginAfterCountry = topMarginAfterAuthor + countryImageHeight + countryTextLinesHeight + 20;
-            }
-          }
-
-          html2canvas(document.getElementById('topaffiliationchart')).then((affiliationCanvas) => {
-            if (this.affiliationChartIncluded) {
-              if (numOfAddedSections % 2 == 0 && numOfAddedSections > 0) {
-                doc.addPage();
-                topMarginAfterCountry = Const.topMargin;
-              }
-              const affiliationImageData = affiliationCanvas.toDataURL('image/png');
-              const affiliationImageWidth = Const.imageWidth;
-              const affiliationImageHeight = affiliationCanvas.height * affiliationImageWidth / affiliationCanvas.width;
-              doc.addImage(affiliationImageData, 'PNG', leftMargin, topMarginAfterCountry, affiliationImageWidth, affiliationImageHeight);
-
-              const affiliationTextLines = doc.splitTextToSize(this.affiliationText.val, contentWidth);
-              doc.text(leftMargin, topMarginAfterCountry + affiliationImageHeight + 20, affiliationTextLines);
-            }
-
-            doc.save(`${fileName}.pdf`);
-          });
-        });
-      });
     },
   },
 };

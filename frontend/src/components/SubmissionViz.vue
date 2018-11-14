@@ -1,13 +1,13 @@
 <template>
   <div>
     <el-switch
-      v-model="timeSeriesChartIncluded"
+      v-model="storeState.charts[CHART_IDS.SUBMISSION_TIME_SERIES_ID].included"
       active-color="#13ce66"
       active-text="Included in Report"
       inactive-text="Not Included"
     />
     <time-line-chart
-      id="timeserieschart"
+      :id="CHART_IDS.SUBMISSION_TIME_SERIES_ID"
       ref="timeserieschart"
       :data-input="timeSeriesData"
       :title-text="'Submission Time Series'"
@@ -20,13 +20,13 @@
     />
 
     <el-switch
-      v-model="historicalAcceptanceChartIncluded"
+      v-model="storeState.charts[CHART_IDS.HISTORICAL_ACCEPTANCE_ID].included"
       active-color="#13ce66"
       active-text="Included in Report"
       inactive-text="Not Included"
     />
     <line-chart
-      id="historicalchart"
+      :id="CHART_IDS.HISTORICAL_ACCEPTANCE_ID"
       ref="historicalchart"
       :data-input="historicalAcceptanceRate"
       :title-text="'Past Years Acceptance Rates'"
@@ -47,13 +47,13 @@
       />
     </el-select>
     <el-switch
-      v-model="acceptanceRateByTrackChartIncluded"
+      v-model="storeState.charts[CHART_IDS.ACCEPTANCE_BY_TRACK_ID].included"
       active-color="#13ce66"
       active-text="Included in Report"
       inactive-text="Not Included"
     />
     <div
-      id="acceptancechart"
+      :id="CHART_IDS.ACCEPTANCE_BY_TRACK_ID"
       ref="acceptancechart"
     >
       <bar-chart-deci
@@ -85,13 +85,13 @@
       />
     </el-select>
     <el-switch
-      v-model="topAcceptedAuthorsChartIncluded"
+      v-model="storeState.charts[CHART_IDS.TOP_ACCEPTED_AUTHORS_ID].included"
       active-color="#13ce66"
       active-text="Included in Report"
       inactive-text="Not Included"
     />
     <hori-bar-chart
-      id="topacceptedauthorchart"
+      :id="CHART_IDS.TOP_ACCEPTED_AUTHORS_ID"
       ref="topacceptedauthorchart"
       :data-input="topAcceptedAuthorsData"
       :title-text="'Top Accepted Authors/Contributors'"
@@ -128,13 +128,13 @@
       />
     </el-select>
     <el-switch
-      v-model="topAcceptedAuthorsByTrackChartIncluded"
+      v-model="storeState.charts[CHART_IDS.TOP_ACCEPTED_AUTHORS_BY_TRACK_ID].included"
       active-color="#13ce66"
       active-text="Included in Report"
       inactive-text="Not Included"
     />
     <hori-bar-chart
-      id="topacceptedauthorbytrackchart"
+      :id="CHART_IDS.TOP_ACCEPTED_AUTHORS_BY_TRACK_ID"
       ref="topacceptedauthorbytrackchart"
       :data-input="topAcceptedAuthorsByTrackData"
       :title-text="'Top Accepted Authors'"
@@ -147,19 +147,19 @@
 
     <!--Note: due to the constraint of the component, the style width and height must be specified-->
     <el-switch
-      v-model="wordCloudAllIncluded"
+      v-model="storeState.charts[CHART_IDS.SUBMISSIONS_WORD_CLOUD_ALL_ID].included"
       active-color="#13ce66"
       active-text="Included in Report"
       inactive-text="Not Included"
     />
     <div
-      id="wordcloudall"
+      :id="CHART_IDS.SUBMISSIONS_WORD_CLOUD_ALL_ID"
       ref="wordcloudall"
     >
       <h4>Word Cloud for All Submissions</h4>
       <vue-word-cloud
         :words="wordCloudTotal"
-        :animation-duration="50"
+        :animation-duration="0"
         :color="([, weight]) => weight > 10 ? 'Red' : weight > 5 ? 'Blue' : 'Black'"
         font-family="Roboto"
         style="width: 70%;height: 200px"
@@ -167,19 +167,19 @@
     </div>
 
     <el-switch
-      v-model="wordCloudAcceptedIncluded"
+      v-model="storeState.charts[CHART_IDS.SUBMISSIONS_WORD_CLOUD_ACCEPTED_ID].included"
       active-color="#13ce66"
       active-text="Included in Report"
       inactive-text="Not Included"
     />
     <div
-      id="wordcloudaccept"
+      :id="CHART_IDS.SUBMISSIONS_WORD_CLOUD_ACCEPTED_ID"
       ref="wordcloudaccept"
     >
       <h4>Word Cloud for Accepted Papers</h4>
       <vue-word-cloud
         :words="acceptedWordCloud"
-        :animation-duration="50"
+        :animation-duration="0"
         :color="([, weight]) => weight > 10 ? 'Red' : weight > 5 ? 'Blue' : 'Black'"
         font-family="Roboto"
         style="width: 70%;height: 200px"
@@ -187,46 +187,44 @@
     </div>
 
     <el-switch
-      v-model="wordCloudByTrackIncluded"
+      v-model="storeState.charts[CHART_IDS.SUBMISSIONS_WORD_CLOUD_BY_TRACK_ID].included"
       active-color="#13ce66"
       active-text="Included in Report"
       inactive-text="Not Included"
     />
+    <el-select
+      v-model="wordCloudSelectedTrack"
+      placeholder="Select Length"
+      style="margin-top: 10px;margin-right: 10px"
+    >
+      <el-option
+        v-for="item in trackOptions"
+        :key="item.value"
+        :label="item.label"
+        :value="item.value"
+      />
+    </el-select>
+    <!--visualization 1.2-->
+    <el-select
+      v-model="wordCloudSelectedFilter"
+      placeholder="Select a Filter"
+      style="margin-top: 10px;margin-right: 10px"
+    >
+      <el-option
+        v-for="item in filterOptions"
+        :key="item.value"
+        :label="item.label"
+        :value="item.value"
+      />
+    </el-select>
     <div
-      id="wordcloudtrack"
+      :id="CHART_IDS.SUBMISSIONS_WORD_CLOUD_BY_TRACK_ID"
       ref="wordcloudtrack"
     >
       <h4>Word Cloud for Submissions by Track</h4>
-      <el-select
-        v-model="wordCloudSelectedTrack"
-        placeholder="Select Length"
-        style="margin-top: 10px;margin-right: 10px"
-      >
-        <el-option
-          v-for="item in trackOptions"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        />
-      </el-select>
-
-
-      <!--visualization 1.2-->
-      <el-select
-        v-model="wordCloudSelectedFilter"
-        placeholder="Select a Filter"
-        style="margin-top: 10px;margin-right: 10px"
-      >
-        <el-option
-          v-for="item in filterOptions"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        />
-      </el-select>
       <vue-word-cloud
         :words="wordCloudByTrack[wordCloudSelectedTrack]"
-        :animation-duration="100"
+        :animation-duration="0"
         :color="([, weight]) => weight > 10 ? 'Red' : weight > 5 ? 'Blue' : 'Black'"
         font-family="Roboto"
         style="width: 70%;height: 200px"
@@ -253,10 +251,12 @@ import PieChart from '@/components/PieChart';
 import EditableText from '@/components/EditableText';
 import Utils from '@/utils';
 import Const from './Const';
-
+import Store from '@/store';
 import VueWordCloud from 'vuewordcloud';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+
+const { CHART_IDS } = Const;
 
 export default {
   name: 'SubmissionViz',
@@ -281,6 +281,8 @@ export default {
     const topValue = acceptanceRate[topIndex] * 100;
 
     return {
+      storeState: Store.state,
+      CHART_IDS,
       msg: 'Submission Info Analysis',
       acceptanceRate: this.chartData.acceptanceRate.toFixed(2),
       acceptanceRateSelectedTrack: 'Full Papers',
@@ -410,6 +412,16 @@ export default {
     wordCloudSelectedFilter(newValue, oldValue) {
       this.wordCloudByTrack = this.computeFilteredWordCloudByTrack(newValue);
     },
+  },
+  created() {
+    Store.registerPrintableChart(CHART_IDS.SUBMISSION_TIME_SERIES_ID);
+    Store.registerPrintableChart(CHART_IDS.HISTORICAL_ACCEPTANCE_ID);
+    Store.registerPrintableChart(CHART_IDS.ACCEPTANCE_BY_TRACK_ID);
+    Store.registerPrintableChart(CHART_IDS.TOP_ACCEPTED_AUTHORS_ID);
+    Store.registerPrintableChart(CHART_IDS.TOP_ACCEPTED_AUTHORS_BY_TRACK_ID);
+    Store.registerPrintableChart(CHART_IDS.SUBMISSIONS_WORD_CLOUD_ALL_ID);
+    Store.registerPrintableChart(CHART_IDS.SUBMISSIONS_WORD_CLOUD_ACCEPTED_ID);
+    Store.registerPrintableChart(CHART_IDS.SUBMISSIONS_WORD_CLOUD_BY_TRACK_ID);
   },
   methods: {
     computeFilteredWordCloudByTrack(filter) {
@@ -625,135 +637,24 @@ export default {
       const startingTopMargin = initialTopMargin + Const.pdfTitleFontSize;
       doc.setFontSize(Const.pdfTextFontSize);
 
-      let numOfAddedSections = 0;
-
-      html2canvas(document.getElementById('timeserieschart')).then((timeCanvas) => {
-        let topMarginAfterTime = startingTopMargin;
-        if (this.timeSeriesChartIncluded) {
-          numOfAddedSections += 1;
-
-          const timeImageData = timeCanvas.toDataURL('image/png');
-          const timeImageWidth = Const.imageWidth;
-          const timeImageHeight = timeCanvas.height * timeImageWidth / timeCanvas.width;
-          doc.addImage(timeImageData, 'PNG', leftMargin, startingTopMargin, timeImageWidth, timeImageHeight);
-
-          const timeTextLines = doc.splitTextToSize(this.timeseriesText.val, contentWidth);
-          doc.text(leftMargin, startingTopMargin + timeImageHeight + 20, timeTextLines);
-
-          // Note: here pdfLineHeight is the line height considering the white space between lines
-          const timeTextLinesHeight = Const.pdfLineHeight * Const.pdfTextFontSize * timeTextLines.length;
-          topMarginAfterTime = startingTopMargin + timeImageHeight + timeTextLinesHeight + 20;
-        }
+      const numOfAddedSections = 0;
 
 
-        html2canvas(document.getElementById('historicalchart')).then((historicalCanvas) => {
-          let topMarginAfterHistorical = topMarginAfterTime;
-          if (this.historicalAcceptanceChartIncluded) {
-            numOfAddedSections += 1;
-
-            const historicalImageData = historicalCanvas.toDataURL('image/png');
-            const historicalImageWidth = Const.imageWidth;
-            const historicalImageHeight = historicalCanvas.height * historicalImageWidth / historicalCanvas.width;
-            doc.addImage(historicalImageData, 'PNG', leftMargin, topMarginAfterTime, historicalImageWidth, historicalImageHeight);
-
-            const historicalTextLines = doc.splitTextToSize(this.historicalAcceptanceText.val, contentWidth);
-            doc.text(leftMargin, topMarginAfterTime + historicalImageHeight + 20, historicalTextLines);
-
-            if (numOfAddedSections % 2 == 1) {
-              const historicalTextLinesHeight = Const.pdfLineHeight * Const.pdfTextFontSize * historicalTextLines.length;
-              topMarginAfterHistorical = topMarginAfterTime + historicalImageHeight + historicalTextLinesHeight + 20;
-            }
+      html2canvas(document.getElementById(CHART_IDS.SUBMISSIONS_WORD_CLOUD_ALL_ID)).then((wordAllCanvas) => {
+        let topMarginAfterTopAccAuthorsTrack = 0;
+        if (this.wordCloudAllIncluded) {
+          if (numOfAddedSections % 2 == 0 && numOfAddedSections > 0) {
+            doc.addPage();
+            topMarginAfterTopAccAuthorsTrack = Const.topMargin;
           }
 
-          html2canvas(document.getElementById('acceptancechart')).then((acceptanceCanvas) => {
-            let topMarginAfterAccept = topMarginAfterHistorical;
-            if (this.acceptanceRateByTrackChartIncluded) {
-              if (numOfAddedSections % 2 == 0 && numOfAddedSections > 0) {
-                doc.addPage();
-                topMarginAfterHistorical = Const.topMargin;
-              }
+          const wordAllImageData = wordAllCanvas.toDataURL('image/png');
+          const wordAllImageWidth = Const.imageWidth;
+          const wordAllImageHeight = wordAllCanvas.height * wordAllImageWidth / wordAllCanvas.width;
+          doc.addImage(wordAllImageData, 'PNG', leftMargin, topMarginAfterTopAccAuthorsTrack, wordAllImageWidth, wordAllImageHeight);
+        }
 
-              numOfAddedSections += 1;
-              const acceptImageData = acceptanceCanvas.toDataURL('image/png');
-              const acceptImageWidth = Const.imageWidth;
-              const acceptImageHeight = acceptanceCanvas.height * acceptImageWidth / acceptanceCanvas.width;
-              doc.addImage(acceptImageData, 'PNG', leftMargin, topMarginAfterHistorical, acceptImageWidth, acceptImageHeight);
-
-              const acceptTextLines = doc.splitTextToSize(this.acceptanceRateByTrackText.val, contentWidth);
-              doc.text(leftMargin, topMarginAfterHistorical + acceptImageHeight + 20, acceptTextLines);
-
-              if (numOfAddedSections % 2 == 1) {
-                const acceptanceLinesHeight = Const.pdfLineHeight * Const.pdfTextFontSize * acceptTextLines.length;
-                topMarginAfterAccept = topMarginAfterHistorical + acceptImageHeight + acceptanceLinesHeight + 20;
-              }
-            }
-
-            html2canvas(document.getElementById('topacceptedauthorchart')).then((accAuthorCanvas) => {
-              let topMarginAfterTopAccAuthors = topMarginAfterAccept;
-              if (this.topAcceptedAuthorsChartIncluded) {
-                if (numOfAddedSections % 2 == 0 && numOfAddedSections > 0) {
-                  doc.addPage();
-                  topMarginAfterAccept = Const.topMargin;
-                }
-
-                numOfAddedSections += 1;
-                const accAuthorImageData = accAuthorCanvas.toDataURL('image/png');
-                const accAuthorImageWidth = Const.imageWidth;
-                const accAuthorImageHeight = accAuthorCanvas.height * accAuthorImageWidth / accAuthorCanvas.width;
-                doc.addImage(accAuthorImageData, 'PNG', leftMargin, topMarginAfterAccept, accAuthorImageWidth, accAuthorImageHeight);
-
-                const topAccAuthorsTextLines = doc.splitTextToSize(this.topAcceptedAuthorsText.val, contentWidth);
-                doc.text(leftMargin, topMarginAfterAccept + accAuthorImageHeight + 20, topAccAuthorsTextLines);
-
-                if (numOfAddedSections % 2 == 1) {
-                  const topAccAuthorsTextLinesHeight = Const.pdfLineHeight * Const.pdfTextFontSize * topAccAuthorsTextLines.length;
-                  topMarginAfterTopAccAuthors = topMarginAfterAccept + accAuthorImageHeight + topAccAuthorsTextLinesHeight + 20;
-                }
-              }
-
-              html2canvas(document.getElementById('topacceptedauthorbytrackchart')).then((accAuthorTrackCanvas) => {
-                let topMarginAfterTopAccAuthorsTrack = topMarginAfterTopAccAuthors;
-                if (this.topAcceptedAuthorsByTrackChartIncluded) {
-                  if (numOfAddedSections % 2 == 0 && numOfAddedSections > 0) {
-                    doc.addPage();
-                    topMarginAfterTopAccAuthors = Const.topMargin;
-                  }
-
-                  numOfAddedSections += 1;
-
-                  const accAuthorTrackImageData = accAuthorTrackCanvas.toDataURL('image/png');
-                  const accAuthorTrackImageWidth = Const.imageWidth;
-                  const accAuthorTrackImageHeight = accAuthorTrackCanvas.height * accAuthorTrackImageWidth / accAuthorTrackCanvas.width;
-                  doc.addImage(accAuthorTrackImageData, 'PNG', leftMargin, topMarginAfterTopAccAuthors, accAuthorTrackImageWidth, accAuthorTrackImageHeight);
-
-                  const topAccAuthorsTrackTextLines = doc.splitTextToSize(this.topAcceptedAuthorsByTrackText.val, contentWidth);
-                  doc.text(leftMargin, topMarginAfterTopAccAuthors + accAuthorTrackImageHeight + 20, topAccAuthorsTrackTextLines);
-
-                  if (numOfAddedSections % 2 == 1) {
-                    const topAccAuthorsTrackLinesHeight = Const.pdfLineHeight * Const.pdfTextFontSize * topAccAuthorsTrackTextLines.length;
-                    topMarginAfterTopAccAuthorsTrack = topMarginAfterTopAccAuthors + accAuthorTrackImageHeight + topAccAuthorsTrackLinesHeight + 20;
-                  }
-                }
-
-                html2canvas(document.getElementById('wordcloudall')).then((wordAllCanvas) => {
-                  if (this.wordCloudAllIncluded) {
-                    if (numOfAddedSections % 2 == 0 && numOfAddedSections > 0) {
-                      doc.addPage();
-                      topMarginAfterTopAccAuthorsTrack = Const.topMargin;
-                    }
-
-                    const wordAllImageData = wordAllCanvas.toDataURL('image/png');
-                    const wordAllImageWidth = Const.imageWidth;
-                    const wordAllImageHeight = wordAllCanvas.height * wordAllImageWidth / wordAllCanvas.width;
-                    doc.addImage(wordAllImageData, 'PNG', leftMargin, topMarginAfterTopAccAuthorsTrack, wordAllImageWidth, wordAllImageHeight);
-                  }
-
-                  doc.save(`${fileName}.pdf`);
-                });
-              });
-            });
-          });
-        });
+        doc.save(`${fileName}.pdf`);
       });
     },
   },

@@ -1,4 +1,18 @@
 export default {
+  CHART_IDS: {
+    TOP_AUTHOR_BAR_ID: 'topAuthorBarChart',
+    TOP_COUNTRY_BAR_ID: 'topCountryBarChart',
+    TOP_ACCEPTED_AFFILIATION_BAR_PIE_ID: 'topAcceptedAffiliationBarAndPieChart',
+    TOP_SUBMITTED_AFFILIATION_BAR_PIE_ID: 'topSubmittedAffiliationBarAndPieChart',
+    SUBMISSION_TIME_SERIES_ID: 'submissionTimeSeriesChart',
+    HISTORICAL_ACCEPTANCE_ID: 'historicalAcceptanceChart',
+    ACCEPTANCE_BY_TRACK_ID: 'acceptanceByTrackChart',
+    TOP_ACCEPTED_AUTHORS_ID: 'topAcceptedAuthorsChart',
+    TOP_ACCEPTED_AUTHORS_BY_TRACK_ID: 'topAcceptedAuthorsByTrackChart',
+    SUBMISSIONS_WORD_CLOUD_ALL_ID: 'wordCloudAll',
+    SUBMISSIONS_WORD_CLOUD_ACCEPTED_ID: 'wordCloudAccepted',
+    SUBMISSIONS_WORD_CLOUD_BY_TRACK_ID: 'wordCloudTrack',
+  },
   scaleLabelConfig: {
     display: true,
     fontStyle: 'bold',
@@ -9,6 +23,8 @@ export default {
     AUTHOR: 'author',
     REVIEW: 'review',
     SUBMISSION: 'submission',
+    AUTHOR_REVIEW: 'author_review',
+    AUTHOR_SUBMISSION: 'author_submission',
   },
   colorScheme2: ['rgba(231, 76, 60, 0.4)', 'rgba(52, 152, 219, 0.4)'],
   colorScheme3: ['rgba(231, 76, 60, 0.4)', 'rgba(241, 196, 15, 0.4)', 'rgba(52, 152, 219, 0.4)'],

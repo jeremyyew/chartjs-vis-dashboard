@@ -16,9 +16,9 @@
             align="middle"
             style="height: inherit; line-height: 15px;"
           >
-            <el-col :span="6" />
+            <el-col :span="4" />
             <el-col
-              :span="12"
+              :span="16"
             >
               <span
                 id="app-title"
@@ -27,7 +27,7 @@
             </el-col>
             <el-col
               id="sign-in-col"
-              :span="6"
+              :span="4"
             >
               <el-button
                 v-if="!isAuthenticated"
@@ -282,9 +282,17 @@
               :result="result"
               :last-updated-viz="lastUpdatedViz"
             />
-            <center>
-              <router-view :key="$route.fullPath" />
-            </center>
+            <el-row
+              type="flex"
+            >
+              <el-button
+                type="success"
+                style="margin-top: 10px"
+                :icon="pdfIcon"
+                @click="generatePdf"
+              >Save all as PDF
+              </el-button>
+            </el-row>
           </el-main>
         </el-container>
         <el-footer id="main-footer">
@@ -313,10 +321,12 @@
 <script>
 import ResultTabs from '@/components/ResultTabs';
 import Auth from '@/components/Auth';
+import StorePersisted from '@/storePersisted';
 import Store from '@/store';
 import utils from '@/utils';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
+import Const from '@/components/Const';
 import { upload } from './components/Upload';
 import MappingHeaderDialog from './components/MappingHeaderDialog';
 
@@ -326,6 +336,7 @@ const STATUS_SUCCESS = 2;
 const STATUS_FAILED = 3;
 
 const { stringify } = utils;
+const { CHART_IDS } = Const;
 
 const REFRESH_TOKEN_MS = 15 * 60 * 1000;
 let refreshTokenTimer;
@@ -348,7 +359,8 @@ export default {
       }
     };
     return {
-      storeState: Store.state,
+      isSavingPdf: false,
+      storePersistedState: StorePersisted.state,
       authDialogOpen: false,
       isRegistrationLoading: false,
       isLoginLoading: false,
@@ -588,6 +600,9 @@ export default {
     };
   },
   computed: {
+    pdfIcon() {
+      return this.isSavingPdf ? 'el-icon-loading' : 'el-icon-download';
+    },
     isInitial() {
       return this.currentStatus === STATUS_INITIAL;
     },
@@ -604,11 +619,9 @@ export default {
   watch: {
   },
   created() {
-    console.log(`Store.state: ${stringify(Store.state)}`);
-    console.log(`storeState: ${stringify(this.storeState)}`);
-    this.$persist(['storeState']);
-
-
+    // console.log(`StorePersisted.state: ${stringify(StorePersisted.state)}`);
+    // console.log(`storePersistedState: ${stringify(this.storePersistedState)}`);
+    this.$persist(['storePersistedState']);
     if (this.$auth.getToken() !== null) {
       this.refreshToken();
     }
@@ -625,6 +638,37 @@ export default {
     //     duration: 2500,
     //   });
     // },
+    async generatePdf() {
+      const pdfGenerator = new utils.PdfGenerator();
+      this.isSavingPdf = true;
+      // try {
+      await pdfGenerator.generate(
+        [
+          CHART_IDS.TOP_SUBMITTED_AFFILIATION_BAR_PIE_ID,
+          CHART_IDS.TOP_AUTHOR_BAR_ID,
+          CHART_IDS.TOP_COUNTRY_BAR_ID,
+          CHART_IDS.TOP_SUBMITTED_AFFILIATION_BAR_PIE_ID,
+          CHART_IDS.SUBMISSION_TIME_SERIES_ID,
+          CHART_IDS.HISTORICAL_ACCEPTANCE_ID,
+          CHART_IDS.ACCEPTANCE_BY_TRACK_ID,
+          CHART_IDS.TOP_ACCEPTED_AUTHORS_ID,
+          CHART_IDS.TOP_ACCEPTED_AUTHORS_BY_TRACK_ID,
+          CHART_IDS.SUBMISSIONS_WORD_CLOUD_ALL_ID,
+          CHART_IDS.SUBMISSIONS_WORD_CLOUD_ACCEPTED_ID,
+          CHART_IDS.SUBMISSIONS_WORD_CLOUD_BY_TRACK_ID,
+        ],
+      );
+      // } catch (err) {
+      //   this.$notify({
+      //     title: 'Error printing pdf',
+      //     type: 'error',
+      //     message: err,
+      //     duration: 2500,
+      //   });
+      //   this.isSavingPdf = false;
+      // }
+      this.isSavingPdf = false;
+    },
     setUserAuthenticated() {
       this.isAuthenticated = true;
       this.username = jwt_decode(this.$auth.getToken()).username;
@@ -637,7 +681,7 @@ export default {
               inputFileName: `${data.infoType}.csv`,
               chartData: data.infoData,
             };
-            this.updateResultData(data.infoType, result);
+            this.updateResultData(data.infoType, result, false);
           });
         })
         .catch(() => {
@@ -756,14 +800,16 @@ export default {
       this.uploadedFiles = [];
       this.uploadError = null;
     },
-    updateResultData(infoType, result) {
+    updateResultData(infoType, result, switchTab = true) {
       this.currentStatus = STATUS_SUCCESS;
-      this.lastUpdatedViz = { value: infoType };
+      if (switchTab) {
+        Store.switchActiveTab(infoType);
+      }
       this.result[infoType] = result;
     },
     handleError(err) {
       this.uploadError = err.response;
-      this.currentStatus = STATUS_FAILED
+      this.currentStatus = STATUS_FAILED;
     },
     uploadCSV(fieldName, fileList, dataField) {
       if (!fileList.length) return;
@@ -811,6 +857,7 @@ export default {
   @import "@fortawesome/fontawesome-free/css/brands.css";
   @import "@fortawesome/fontawesome-free/css/fontawesome.css";
   $content-padding: 20px;
+  $element-shadow: 0 2px 4px 0 rgba(0,0,0,.12),0 0 6px 0 rgba(0,0,0,.04);
   #upload {
   }
 
@@ -937,6 +984,16 @@ export default {
   }
 
   #main-header {
+    z-index: 1000;
+    position: sticky;
+    top: 0;
+    box-shadow: $element-shadow;
+  }
+
+  #main-footer {
+    position: sticky;
+    bottom: 0;
+    box-shadow: $element-shadow;
   }
 
   .side-line {

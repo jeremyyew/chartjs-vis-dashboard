@@ -662,7 +662,7 @@ export default {
         authorDataLength: 3,
         countryDataLength: 3,
         affiliationDataLength: 3,
-        authorChartIncluded: true,
+        // authorChartIncluded: true,
         countryChartIncluded: true,
         affiliationChartIncluded: true,
         topAuthorData: this.computeAuthorData(3),

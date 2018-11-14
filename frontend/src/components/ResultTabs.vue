@@ -9,6 +9,8 @@
     <el-tab-pane
       label="Authors"
       name="author"
+      :key="tabKeys[Const.VIZ_TYPES.AUTHOR]"
+      lazy
     >
       <div v-if="author.chartData && author.inputFileName">
         <AuthorViz
@@ -27,6 +29,8 @@
     <el-tab-pane
       label="Submissions"
       name="submission"
+      :key="tabKeys[Const.VIZ_TYPES.SUBMISSION]"
+      lazy
     >
       <div v-if="submission.chartData && submission.inputFileName">
         <SubmissionViz
@@ -45,6 +49,8 @@
     <el-tab-pane
       label="Reviews"
       name="review"
+      :key="tabKeys[Const.VIZ_TYPES.REVIEW]"
+      lazy
     >
       <div v-if="review.chartData && review.inputFileName">
         <ReviewViz
@@ -62,6 +68,8 @@
     <el-tab-pane
       label="Authors x Reviews"
       name="AuthorsxReviews"
+      :key="tabKeys[Const.VIZ_TYPES.AUTHOR_REVIEW]"
+      lazy
     >
       <div v-if="author.chartData && review.chartData && review.inputFileName && author.inputFileName">
         <AuthorReviewViz
@@ -80,6 +88,8 @@
     <el-tab-pane
       label="Authors x Submissions"
       name="AuthorsxSubmissions"
+      :key="tabKeys[Const.VIZ_TYPES.AUTHOR_SUBMISSION]"
+      lazy
     >
       <div v-if="author.chartData && submission.chartData && submission.inputFileName && author.inputFileName">
         <AuthorSubmissionViz
@@ -104,6 +114,7 @@ import SubmissionViz from './SubmissionViz';
 import AuthorReviewViz from './AuthorReviewViz';
 import AuthorSubmissionViz from './AuthorSubmissionViz';
 import Store from '@/store';
+import Const from '@/components/Const';
 
 export default {
   name: 'ResultTabs',
@@ -128,7 +139,15 @@ export default {
   },
   data() {
     return {
-      activeTab: this.lastUpdatedViz.value,
+      Const,
+      storeState: Store.state,
+      tabKeys: {
+        submission: 0,
+        author: 100,
+        review: 200,
+        author_review: 300,
+        author_submission: 400,
+      },
     };
     // return this.result
   },
@@ -156,6 +175,11 @@ export default {
   methods: {
     handleTabClick(tab) {
       Store.switchActiveTab(tab.name);
+      this.forceRerender(tab.name);
+    },
+    forceRerender(tab) {
+      console.log("FORCE RERENDERING: " + tab);
+      this.tabKeys[tab] += 1;
     },
   },
 };

@@ -19,7 +19,7 @@ const Store = {
   },
   logIndex: 0,
   log(key, prevState) {
-    console.log(`************************************\n${this.logIndex}: <${key}>: STORE STATE CHANGE: ${utils.stringify(prevState)} -> ${utils.stringify(this.state)}\n************************************`);
+    // console.log(`************************************\n${this.logIndex}: <${key}>: STORE STATE CHANGE: ${utils.stringify(prevState)} -> ${utils.stringify(this.state)}\n************************************`);
     this.logIndex += 1;
   },
   registerPrintableChart(id, included = true) {

@@ -642,22 +642,22 @@ export default {
       const pdfGenerator = new utils.PdfGenerator();
       this.isSavingPdf = true;
       // try {
-        await pdfGenerator.generate(
-          [
-            CHART_IDS.TOP_SUBMITTED_AFFILIATION_BAR_PIE_ID,
-            CHART_IDS.TOP_AUTHOR_BAR_ID,
-            CHART_IDS.TOP_COUNTRY_BAR_ID,
-            CHART_IDS.TOP_SUBMITTED_AFFILIATION_BAR_PIE_ID,
-            CHART_IDS.SUBMISSION_TIME_SERIES_ID,
-            CHART_IDS.HISTORICAL_ACCEPTANCE_ID,
-            CHART_IDS.ACCEPTANCE_BY_TRACK_ID,
-            CHART_IDS.TOP_ACCEPTED_AUTHORS_ID,
-            CHART_IDS.TOP_ACCEPTED_AUTHORS_BY_TRACK_ID,
-            CHART_IDS.SUBMISSIONS_WORD_CLOUD_ALL_ID,
-            CHART_IDS.SUBMISSIONS_WORD_CLOUD_ACCEPTED_ID,
-            CHART_IDS.SUBMISSIONS_WORD_CLOUD_BY_TRACK_ID,
-          ],
-        );
+      await pdfGenerator.generate(
+        [
+          CHART_IDS.TOP_SUBMITTED_AFFILIATION_BAR_PIE_ID,
+          CHART_IDS.TOP_AUTHOR_BAR_ID,
+          CHART_IDS.TOP_COUNTRY_BAR_ID,
+          CHART_IDS.TOP_SUBMITTED_AFFILIATION_BAR_PIE_ID,
+          CHART_IDS.SUBMISSION_TIME_SERIES_ID,
+          CHART_IDS.HISTORICAL_ACCEPTANCE_ID,
+          CHART_IDS.ACCEPTANCE_BY_TRACK_ID,
+          CHART_IDS.TOP_ACCEPTED_AUTHORS_ID,
+          CHART_IDS.TOP_ACCEPTED_AUTHORS_BY_TRACK_ID,
+          CHART_IDS.SUBMISSIONS_WORD_CLOUD_ALL_ID,
+          CHART_IDS.SUBMISSIONS_WORD_CLOUD_ACCEPTED_ID,
+          CHART_IDS.SUBMISSIONS_WORD_CLOUD_BY_TRACK_ID,
+        ],
+      );
       // } catch (err) {
       //   this.$notify({
       //     title: 'Error printing pdf',
@@ -681,7 +681,7 @@ export default {
               inputFileName: `${data.infoType}.csv`,
               chartData: data.infoData,
             };
-            this.updateResultData(data.infoType, result);
+            this.updateResultData(data.infoType, result, false);
           });
         })
         .catch(() => {
@@ -800,14 +800,16 @@ export default {
       this.uploadedFiles = [];
       this.uploadError = null;
     },
-    updateResultData(infoType, result) {
+    updateResultData(infoType, result, switchTab = true) {
       this.currentStatus = STATUS_SUCCESS;
-      Store.switchActiveTab(infoType);
+      if (switchTab) {
+        Store.switchActiveTab(infoType);
+      }
       this.result[infoType] = result;
     },
     handleError(err) {
       this.uploadError = err.response;
-      this.currentStatus = STATUS_FAILED
+      this.currentStatus = STATUS_FAILED;
     },
     uploadCSV(fieldName, fileList, dataField) {
       if (!fileList.length) return;

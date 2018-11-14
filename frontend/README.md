@@ -4,9 +4,12 @@
 
 ## Saving visualizations in a PDF document
 ### TODO:
-- [ ] Replace ids with constants 
-- [ ] Refactor all existing printable charts to use new approach
-- [ ] Remove saveAuthor and other such methods
+- [ ] Proper keys for tabs
+- [ ] Refactor review, author_review, author_submission
+- [ ] Remove old print methods
+- [ ] Fix word clouds?
+- [ ] Loading + printing overlay
+- [ ] Docs: change in component architecture
 
 ### Previous approach: component-level methods and data
 Previously the saving of visualizations into PDF was done via standalone component-level methods such as `saveAuthor` or `saveSubmission`. These were lengthy and highly repetitive. 
@@ -104,3 +107,6 @@ npm test
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
 
 More details regarding this visualization project will come up once the main components are up.
+
+# Known Bugs 
+1. Word cloud does not print.

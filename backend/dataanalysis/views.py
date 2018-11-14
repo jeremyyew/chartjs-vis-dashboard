@@ -174,7 +174,6 @@ def parseCSV(request):
     s['file'] = csvFile
     s.create()
 
-    # TODO: remove after adding submission and review
     rowCSV = parseCSVFile(csvFile)
 
     previewData = []
@@ -186,8 +185,7 @@ def parseCSV(request):
 
         previewData.append(rowData)
 
-    # TODO: remove data after adding submission and review
-    return JsonResponse({'data' : rowCSV, 'previewData': previewData, 'sessionId': s.session_key})
+    return JsonResponse({'previewData': previewData, 'sessionId': s.session_key})
 
 
 @api_view(['POST'])

@@ -20,6 +20,10 @@
         No author data
       </div>
     </el-tab-pane>
+
+
+
+
     <el-tab-pane
       label="Submissions"
       name="submission"
@@ -34,6 +38,10 @@
         No submission data
       </div>
     </el-tab-pane>
+
+
+
+
     <el-tab-pane
       label="Reviews"
       name="review"
@@ -48,10 +56,44 @@
         No review data
       </div>
     </el-tab-pane>
+
+
+    <!--Authors x Submissions -->
     <el-tab-pane
-      label="Reviews x Submissions"
-      name="reviewXSubmission"
-    >Reviews x Submissions</el-tab-pane>
+      label="Authors x Reviews"
+      name="AuthorsxReviews"
+    >
+      <div v-if="author.chartData && review.chartData && review.inputFileName && author.inputFileName">
+        <AuthorReviewViz
+          :chart-data="submission.chartData"
+          :input-file-name="submission.inputFileName"
+        />
+      </div>
+      <div v-else>
+        No author or review data
+      </div>
+    </el-tab-pane>
+    <!--Authors x Reviews ends-->
+
+
+    <!--Author x Submissions-->
+    <el-tab-pane
+      label="Authors x Submissions"
+      name="AuthorsxSubmissions"
+    >
+      <div v-if="author.chartData && submission.chartData && submission.inputFileName && author.inputFileName">
+        <AuthorSubmissionViz
+          :chart-data="submission.chartData"
+          :input-file-name="submission.inputFileName"
+        />
+      </div>
+      <div v-else>
+        No author or submission data
+      </div>
+    </el-tab-pane>
+    <!--Authors x Submissions ends-->
+
+
   </el-tabs>
 </template>
 
@@ -59,11 +101,13 @@
 import AuthorViz from '@/components/AuthorViz';
 import ReviewViz from '@/components/ReviewViz';
 import SubmissionViz from './SubmissionViz';
+import AuthorReviewViz from './AuthorReviewViz';
+import AuthorSubmissionViz from './AuthorSubmissionViz';
 import Store from '@/store';
 
 export default {
   name: 'ResultTabs',
-  components: { SubmissionViz, ReviewViz, AuthorViz },
+  components: { SubmissionViz, ReviewViz, AuthorViz, AuthorReviewViz, AuthorSubmissionViz },
   props: {
     result: {
       type: Object,
@@ -84,7 +128,7 @@ export default {
   },
   data() {
     return {
-      storeState: Store.state,
+      activeTab: this.lastUpdatedViz.value,
     };
     // return this.result
   },
@@ -97,6 +141,9 @@ export default {
     },
     submission() {
       return this.result.submission;
+    },
+    reviewsubmission() {
+
     },
   },
   watch: {
@@ -115,10 +162,8 @@ export default {
 </script>
 
 <style scoped lang="sass">
-  #main-tabs
-    height: 90%
+  #main-tabs .el-tab-pane
+    height: 600px
     overflow: scroll
 
-  .el-tab-pane
-    /*display: block !important*/
 </style>

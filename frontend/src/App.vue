@@ -205,7 +205,24 @@
             <!--<router-link to="/te">-->
             <!--<el-button type="success">WY</el-button>-->
             <!--</router-link>-->
-
+            <MappingHeaderDialog
+              :mapping-data="mappingAuthorData"
+              :data-type-name="'mappingAuthorData'"
+              @dataProcessSuccess="updateResultData"
+              @dataProcessFailed="handleError"
+            />
+            <MappingHeaderDialog
+              :mapping-data="mappingSubmissionData"
+              :data-type-name="'mappingSubmissionData'"
+              @dataProcessSuccess="updateResultData"
+              @dataProcessFailed="handleError"
+            />
+            <MappingHeaderDialog
+              :mapping-data="mappingReviewData"
+              :data-type-name="'mappingReviewData'"
+              @dataProcessSuccess="updateResultData"
+              @dataProcessFailed="handleError"
+            />
             <center id="upload">
               <form
                 v-if="isInitial || isSaving || isSuccess"
@@ -213,26 +230,48 @@
                 novalidate
               >
                 <!--The type multipart/form-data is important, otherwise Django will not accept-->
-                <h2>Upload File</h2>
+                <h2>Upload Files</h2>
+                <h4>Drag files into their respective boxes, or click to browse</h4>
                 <div class="dropbox">
                   <input
                     type="file"
-                    multiple
                     :name="uploadFieldName"
                     :disable="isSaving"
                     accept=".csv"
-                    class="input-file"
-                    @change="filesChange($event.target.name, $event.target.files);
-                             fileCount = $event.target.files.length"
+                    class="input-author-file"
+                    @change="uploadCSV($event.target.name, $event.target.files,
+                                       'mappingAuthorData')"
                   >
-                  <p
-                    v-if="isInitial || isSuccess"
-                    style="margin-bottom:0px;padding-top:20px;font-size:15px"
-                  >
-                    Drag your file(s) here to begin<br> or click to browse
+                  <p style="margin-bottom:0px;padding-top:32px;font-size:18px">
+                    <strong>author.csv</strong>
                   </p>
-                  <p v-if="isSaving">
-                    Uploading {{ fileCount }} files...
+                </div>
+                <div class="dropbox">
+                  <input
+                    type="file"
+                    :name="uploadFieldName"
+                    :disable="isSaving"
+                    accept=".csv"
+                    class="input-submission-file"
+                    @change="uploadCSV($event.target.name, $event.target.files,
+                                       'mappingSubmissionData')"
+                  >
+                  <p style="margin-bottom:0px;padding-top:32px;font-size:18px">
+                    <strong>submission.csv</strong>
+                  </p>
+                </div>
+                <div class="dropbox">
+                  <input
+                    type="file"
+                    :name="uploadFieldName"
+                    :disable="isSaving"
+                    accept=".csv"
+                    class="input-review-file"
+                    @change="uploadCSV($event.target.name, $event.target.files,
+                                       'mappingReviewData')"
+                  >
+                  <p style="margin-bottom:0px;padding-top:32px;font-size:18px">
+                    <strong>review.csv</strong>
                   </p>
                 </div>
               </form>
@@ -280,7 +319,6 @@
 </template>
 
 <script>
-import { upload } from './components/Upload';
 import ResultTabs from '@/components/ResultTabs';
 import Auth from '@/components/Auth';
 import StorePersisted from '@/storePersisted';
@@ -289,12 +327,13 @@ import utils from '@/utils';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import Const from '@/components/Const';
+import { upload } from './components/Upload';
+import MappingHeaderDialog from './components/MappingHeaderDialog';
 
 const STATUS_INITIAL = 0;
 const STATUS_SAVING = 1;
 const STATUS_SUCCESS = 2;
-const
-  STATUS_FAILED = 3;
+const STATUS_FAILED = 3;
 
 const { stringify } = utils;
 const { CHART_IDS } = Const;
@@ -304,7 +343,7 @@ let refreshTokenTimer;
 
 export default {
   name: 'App',
-  components: { ResultTabs },
+  components: { MappingHeaderDialog, ResultTabs },
   data() {
     const validatePassword = (rule, value, callback) => {
       if (this.registerForm.checkPassword !== '') {
@@ -407,6 +446,144 @@ export default {
         review: {},
         submission: {},
       },
+      mappingAuthorData: {
+        placeHolder: [],
+        previewData: [],
+        numCols: 0,
+        minCols: 4,
+        defaultMinCol: 6,
+        dialogOpen: false,
+        methodName: 'getAuthorInfo',
+        fileID: '.input-author-file',
+        defaultUploadForm: {
+          firstNameIndex: 1,
+          lastNameIndex: 2,
+          countryIndex: 4,
+          affiliationIndex: 5,
+        },
+        initialUploadForm: {
+          firstNameIndex: -1,
+          lastNameIndex: -1,
+          countryIndex: -1,
+          affiliationIndex: -1,
+        },
+        uploadForm: {
+          firstNameIndex: -1,
+          lastNameIndex: -1,
+          countryIndex: -1,
+          affiliationIndex: -1,
+        },
+        options: [
+          {
+            value: 'firstNameIndex',
+            label: 'First Name',
+          },
+          {
+            value: 'lastNameIndex',
+            label: 'Last Name',
+          },
+          {
+            value: 'countryIndex',
+            label: 'Country',
+          },
+          {
+            value: 'affiliationIndex',
+            label: 'Affiliation',
+          },
+        ],
+      },
+      mappingSubmissionData: {
+        placeHolder: [],
+        previewData: [],
+        numCols: 0,
+        minCols: 6,
+        defaultMinCol: 10,
+        dialogOpen: false,
+        methodName: 'getSubmissionInfo',
+        fileID: '.input-submission-file',
+        defaultUploadForm: {
+          trackNameIndex: 2,
+          authorIndex: 4,
+          submissionTimeIndex: 5,
+          lastEditTimeIndex: 6,
+          keywordIndex: 8,
+          decisionIndex: 9,
+        },
+        initialUploadForm: {
+          trackNameIndex: -1,
+          authorIndex: -1,
+          submissionTimeIndex: -1,
+          lastEditTimeIndex: -1,
+          keywordIndex: -1,
+          decisionIndex: -1,
+        },
+        uploadForm: {
+          trackNameIndex: -1,
+          authorIndex: -1,
+          submissionTimeIndex: -1,
+          lastEditTimeIndex: -1,
+          keywordIndex: -1,
+          decisionIndex: -1,
+        },
+        options: [
+          {
+            value: 'trackNameIndex',
+            label: 'Track Name',
+          },
+          {
+            value: 'authorIndex',
+            label: 'Author',
+          },
+          {
+            value: 'submissionTimeIndex',
+            label: 'Submission Time',
+          },
+          {
+            value: 'lastEditTimeIndex',
+            label: 'Last Edit Time',
+          },
+          {
+            value: 'keywordIndex',
+            label: 'Keyword',
+          },
+          {
+            value: 'decisionIndex',
+            label: 'Decision',
+          },
+        ],
+      },
+      mappingReviewData: {
+        placeHolder: [],
+        previewData: [],
+        numCols: 0,
+        minCols: 2,
+        defaultMinCol: 7,
+        dialogOpen: false,
+        methodName: 'getReviewInfo',
+        fileID: '.input-review-file',
+        defaultUploadForm: {
+          submissionIDIndex: 1,
+          evaluationIndex: 6,
+        },
+        initialUploadForm: {
+          submissionIDIndex: -1,
+          evaluationIndex: -1,
+        },
+        uploadForm: {
+          submissionIDIndex: -1,
+          evaluationIndex: -1,
+        },
+        options: [
+          {
+            value: 'submissionIDIndex',
+            label: 'Submission ID',
+          },
+          {
+            value: 'evaluationIndex',
+            label: 'Evaluation',
+          },
+        ],
+      },
       lastUpdatedViz: { value: 'author' },
       options: [
         {
@@ -496,6 +673,23 @@ export default {
       this.isAuthenticated = true;
       this.username = jwt_decode(this.$auth.getToken()).username;
       refreshTokenTimer = setTimeout(this.refreshToken, REFRESH_TOKEN_MS);
+
+      axios.post(process.env.VUE_APP_API_BASE_URL + process.env.VUE_APP_ANALYZE_DATA_URL)
+        .then((response) => {
+          response.data.data.forEach((data) => {
+            const result = {
+              inputFileName: `${data.infoType}.csv`,
+              chartData: data.infoData,
+            };
+            this.updateResultData(data.infoType, result);
+          });
+        })
+        .catch(() => {
+          this.$message({
+            message: 'Unable to retrieve data. Please try again later.',
+            type: 'error',
+          });
+        });
     },
     login() {
       this.$refs.loginForm.validate((valid) => {
@@ -503,19 +697,22 @@ export default {
           return false;
         }
         this.isLoginLoading = true;
-        this.$auth.login(this.loginForm).then(() => {
-          this.setUserAuthenticated();
-          this.authDialogOpen = false;
-        }).catch((error) => {
-          const errorMessage = error.response.data.non_field_errors[0];
+        this.$auth.login(this.loginForm)
+          .then(() => {
+            this.setUserAuthenticated();
+            this.authDialogOpen = false;
+          })
+          .catch((error) => {
+            const errorMessage = error.response.data.non_field_errors[0];
 
-          this.$message({
-            message: errorMessage !== undefined ? errorMessage : 'Unexpected login failure. Please try again later.',
-            type: 'error',
+            this.$message({
+              message: errorMessage !== undefined ? errorMessage : 'Unexpected login failure. Please try again later.',
+              type: 'error',
+            });
+          })
+          .finally(() => {
+            this.isLoginLoading = false;
           });
-        }).finally(() => {
-          this.isLoginLoading = false;
-        });
 
         return true;
       });
@@ -531,20 +728,23 @@ export default {
           username: this.registerForm.username,
           email: this.registerForm.email,
           password: this.registerForm.password,
-        }).then((response) => {
-          this.$message({
-            message: 'Sign up successful!',
-            type: 'success',
+        })
+          .then((response) => {
+            this.$message({
+              message: 'Sign up successful!',
+              type: 'success',
+            });
+            // TODO: trigger login automatically?
+          })
+          .catch((error) => {
+            this.$message({
+              message: error.response.data.detail,
+              type: 'error',
+            });
+          })
+          .finally(() => {
+            this.isRegistrationLoading = false;
           });
-          // TODO: trigger login automatically?
-        }).catch((error) => {
-          this.$message({
-            message: error.response.data.detail,
-            type: 'error',
-          });
-        }).finally(() => {
-          this.isRegistrationLoading = false;
-        });
         return true;
       });
     },
@@ -567,13 +767,6 @@ export default {
           this.setUserAuthenticated();
           this.authDialogOpen = false;
           this.isLoginLoading = false;
-
-          axios.post(`${process.env.VUE_APP_API_BASE_URL}api/checkauth/`)
-            .then((responseInner) => {
-              console.log(responseInner.data);
-            })
-            .catch((error) => {
-            });
         })
         .catch((error) => {
           // We want to use finally to set the login loading to false.
@@ -588,8 +781,8 @@ export default {
         .then(() => {
           clearTimeout(refreshTokenTimer);
           this.isAuthenticated = false;
-          // Because we want to allow calling logout at any point of time, e.g. during create, this (and child)
-          // components might not have been mounted yet
+          // Because we want to allow calling logout at any point of time, e.g. during create,
+          // this (and child) components might not have been mounted yet
           this.$nextTick(() => {
             this.$message({
               message: 'You have been signed out!',
@@ -607,64 +800,21 @@ export default {
       this.uploadedFiles = [];
       this.uploadError = null;
     },
-    save(formData) {
-      // upload data to the server
-      this.currentStatus = STATUS_SAVING;
-
-      upload(formData)
-        .then((x) => {
-          // console.log("inside success function!");
-          // console.log(x);
-          // this.uploadedFiles = [].concat(x);
-          this.currentStatus = STATUS_SUCCESS;
-          this.testChartsDataInput = x;
-
-          const infoType = x.infoType;
-          const infoData = x.infoData;
-
-          const nameArray = document.querySelector('.input-file')
-            .value
-            .split('\\');
-          const inputFileName = nameArray[nameArray.length - 1];
-
-          // Update result props passed to ResultTabs
-          // this.lastUpdatedViz = { value: infoType };
-          Store.switchActiveTab(infoType);
-          this.result[infoType] = {
-            inputFileName,
-            chartData: infoData,
-          };
-
-          // Note: use router.push to navigate through diff pages programmatically
-          // router.push({
-          //   name: 'Result',
-          //   params: {
-          //     inputFileName,
-          //     chartData: infoData,
-          //     infoType,
-          //   },
-          // });
-
-          // Note: adding the below code to make sure that reuploading the same file will give you sth
-          // Can consider changing this and the same code in catch block to finally();
-          document.querySelector('.input-file').value = '';
-        })
-        .catch((err) => {
-          this.uploadError = err.response;
-          this.currentStatus = STATUS_FAILED;
-          document.querySelector('.input-file').value = '';
-        });
+    updateResultData(infoType, result) {
+      this.currentStatus = STATUS_SUCCESS;
+      Store.switchActiveTab(infoType);
+      this.result[infoType] = result;
     },
-    filesChange(fieldName, fileList) {
-      console.log(document.querySelector('.input-file')
-        .value
-        .split('\\'));
-      // handle file changes
-      const formData = new FormData();
-
+    handleError(err) {
+      this.uploadError = err.response;
+      this.currentStatus = STATUS_FAILED
+    },
+    uploadCSV(fieldName, fileList, dataField) {
       if (!fileList.length) return;
 
-      // append the files to FormData
+      this.currentStatus = STATUS_SAVING;
+
+      const formData = new FormData();
       Array
         .from(Array(fileList.length)
           .keys())
@@ -672,8 +822,32 @@ export default {
           formData.append(fieldName, fileList[x], fileList[x].name);
         });
 
-      // save it
-      this.save(formData);
+      upload(formData, 'parse')
+        .then((x) => {
+          this[dataField].numCols = Object.keys(x.previewData[0]).length;
+          if (this[dataField].numCols < this[dataField].minCols) {
+            this.$message({
+              message: '.csv file provided does not contain enough columns for processing!',
+              type: 'error',
+            });
+            document.querySelector(this[dataField].fileID).value = '';
+            return;
+          }
+
+          // TODO: remove defaultUploadForm.data and uploadForm.data after submission and review added
+          this[dataField].defaultUploadForm.data = x.data;
+          this[dataField].uploadForm.data = x.data;
+
+          this[dataField].previewData = x.previewData;
+          this[dataField].defaultUploadForm.sessionId = x.sessionId;
+          this[dataField].uploadForm.sessionId = x.sessionId;
+          this[dataField].dialogOpen = true;
+        })
+        .catch((err) => {
+          this.uploadError = err.response;
+          this.currentStatus = STATUS_FAILED;
+          document.querySelector(this[dataField].fileID).value = '';
+        });
     },
   },
 };
@@ -681,7 +855,7 @@ export default {
 </script>
 
 <style lang="scss">
-  @import "@fortawesome/fontawesome-free/css/all.css";
+  @import "@fortawesome/fontawesome-free/css/brands.css";
   @import "@fortawesome/fontawesome-free/css/fontawesome.css";
   $content-padding: 20px;
   $element-shadow: 0 2px 4px 0 rgba(0,0,0,.12),0 0 6px 0 rgba(0,0,0,.04);
@@ -700,7 +874,25 @@ export default {
     cursor: pointer;
   }
 
-  .input-file {
+  .input-author-file {
+    opacity: 0; /* invisible but it's there! */
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    cursor: pointer;
+    left: 0; /*put this otherwise the input box will shift by half of the parent width */
+  }
+
+  .input-submission-file {
+    opacity: 0; /* invisible but it's there! */
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    cursor: pointer;
+    left: 0; /*put this otherwise the input box will shift by half of the parent width */
+  }
+
+  .input-review-file {
     opacity: 0; /* invisible but it's there! */
     width: 100%;
     height: 100%;

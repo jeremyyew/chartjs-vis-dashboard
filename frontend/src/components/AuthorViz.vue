@@ -74,6 +74,8 @@
       ref="topAuthorChart"
       :data-input="topAuthorData"
       :title-text="'Top Authors'"
+      :x-label="'Authors'"
+      :y-label="'Submission Counts'"
       class="chart"
     />
     <!--using text.sync for two-way data binding to editable text child component-->

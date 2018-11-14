@@ -28,7 +28,7 @@ SECRET_KEY = 'r%i-k_ch54-wt@6x+u$38g$^8=jccze7*m%^4q9@&u847c+m$9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ['ENV'] == 'development'
 
-ALLOWED_HOSTS = ['warm-plateau-64202.herokuapp.com']
+ALLOWED_HOSTS = ['chairdatavis.herokuapp.com']
 
 
 # Application definition
@@ -94,6 +94,19 @@ DATABASES = {
     }
 }
 
+# Cache
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_bmemcached.memcached.BMemcached',
+        'LOCATION': os.environ['MEMCACHEDCLOUD_SERVERS'].split(','),
+        'OPTIONS': {
+            'username': os.environ['MEMCACHEDCLOUD_USERNAME'],
+            'password': os.environ['MEMCACHEDCLOUD_PASSWORD']
+        }
+    }
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -127,6 +140,11 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Sessions
+# Not a good idea to use PickleSerializer but since we want to store file objects in the session we have to do this
+# It's also not a good idea to store file objects in the session
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
@@ -147,6 +165,10 @@ locals()['DATABASES']['default'] = dj_database_url.config(
     conn_max_age=django_heroku.MAX_CONN_AGE, ssl_require=ssl_require)
 
 # Social Auth
+
+# Use JSONB field to store extracted extra_data
+SOCIAL_AUTH_POSTGRES_JSONFIELD = True
+
 SOCIAL_AUTH_RAISE_EXCEPTIONS = True
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
 

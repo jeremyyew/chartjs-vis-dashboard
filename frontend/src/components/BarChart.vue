@@ -1,11 +1,12 @@
 <script>
 // Importing Line class from the vue-chartjs wrapper
 import { Bar } from 'vue-chartjs';
+import utils from '@/utils';
 // Exporting this so it can be used in other components
 
 export default {
   extends: Bar,
-  props: ['dataInput', 'titleText'],
+  props: ['dataInput', 'titleText', 'xLabel', 'yLabel'],
   data() {
     return {
       // Chart.js options that controls the appearance of the chart
@@ -29,6 +30,7 @@ export default {
             gridLines: {
               display: true,
             },
+            scaleLabel: utils.labelUtil(this.yLabel),
           }],
           xAxes: [{
             gridLines: {
@@ -37,6 +39,7 @@ export default {
             ticks: {
               autoSkip: false,
             },
+            scaleLabel: utils.labelUtil(this.xLabel),
           }],
         },
         legend: {

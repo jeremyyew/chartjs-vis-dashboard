@@ -20,6 +20,8 @@
       ref="scorechart"
       :data-input="scoreRecommendationData"
       :title-text="'Score vs Recommendation'"
+      :x-label="'Score'"
+      :y-label="'No. of Recommendations'"
       class="chart"
     />
 
@@ -34,6 +36,8 @@
       ref="scorechart"
       :data-input="scoreDistributionData"
       :title-text="'Score Distribution'"
+      :x-label="''"
+      :y-label="'Score Counts'"
       class="chart"
     />
     <editable-text
@@ -52,6 +56,8 @@
       ref="recommendchart"
       :data-input="recommendDistributionData"
       :title-text="'Recommendation Distribution'"
+      :x-label="''"
+      :y-label="'Recommendation Counts'"
       class="chart"
     />
     <editable-text

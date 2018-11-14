@@ -69,8 +69,8 @@
     >
       <div v-if="author.chartData && review.chartData && review.inputFileName && author.inputFileName">
         <AuthorReviewViz
-          :chart-data="submission.chartData"
-          :input-file-name="submission.inputFileName"
+          :chart-data="author.chartData"
+          :input-file-name="author.inputFileName"
         />
       </div>
       <div v-else>
@@ -88,8 +88,8 @@
     >
       <div v-if="author.chartData && submission.chartData && submission.inputFileName && author.inputFileName">
         <AuthorSubmissionViz
-          :chart-data="submission.chartData"
-          :input-file-name="submission.inputFileName"
+          :chart-data="author.chartData"
+          :input-file-name="author.inputFileName"
         />
       </div>
       <div v-else>
@@ -148,7 +148,10 @@ export default {
     submission() {
       return this.result.submission;
     },
-    reviewsubmission() {
+    author_submission() {
+
+    },
+    author_review() {
 
     },
   },

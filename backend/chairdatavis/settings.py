@@ -30,6 +30,8 @@ DEBUG = os.environ['ENV'] == 'development'
 
 ALLOWED_HOSTS = ['chairdatavis.herokuapp.com']
 
+SECURE_SSL_REDIRECT = os.environ['ENV'] != 'development'
+
 
 # Application definition
 
